@@ -1,5 +1,5 @@
 # 💫 About Me:
-I'm currently working on the Neo Developer League and Kuzu Inc<br>I'm a highschool student aspiring to become a software developer<br>
+I'm currently working on the Neo Developer League and Kuzu Inc<br>I'm a first year Software Engineering student at the University of Waterloo<br>
 
 
 ## 🌐 Socials:
