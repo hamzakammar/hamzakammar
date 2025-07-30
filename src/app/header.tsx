@@ -9,8 +9,8 @@ export default function Header() {
           <div className="flex items-center">
             <h1 className="text-xl font-bold text-white bottom-30">Hamza Ammar</h1>
             <span className="mx-3"></span>
-            <h1 className="text-md text-gray-500">SE '30 @UW</h1>
-          </div>
+            <h1 className="text-md text-gray-500">SE &#39;30 @UW</h1>
+            </div>
           
           <nav className="flex items-center space-x-6">
             <a

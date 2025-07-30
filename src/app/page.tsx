@@ -1,5 +1,4 @@
 import Intro from "./intro";
-import AboutMe from "./aboutme";
 import Experience from "./experience";
 import Projects from "./projects";
 import Header from "./header";
