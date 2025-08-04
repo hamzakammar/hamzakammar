@@ -2,7 +2,11 @@
 import { TypeAnimation } from 'react-type-animation';
 import { useState } from 'react';
 
-export default function Intro() {
+interface IntroProps {
+  onIntroComplete?: () => void;
+}
+
+export default function Intro({ onIntroComplete }: IntroProps) {
     const [showSecond, setShowSecond] = useState(false);
     return (
         <div className="flex flex-col items-center justify-center min-h-screen relative">
@@ -12,7 +16,12 @@ export default function Intro() {
                         sequence={[
                             "Hey, I'm Hamza",
                             1000,
-                            () => setShowSecond(true)
+                            () => {
+                                setShowSecond(true);
+                                if (onIntroComplete) {
+                                    onIntroComplete(); // Trigger immediately
+                                }
+                            }
                         ]}
                         wrapper="div"
                         speed={25}

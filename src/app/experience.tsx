@@ -41,7 +41,7 @@ const experiences = [
 
 export default function Experience() {
   return (
-    <div className="max-w-2xl ml-8 px-4 py-12 text-white">
+    <div id="experience" className="max-w-2xl ml-8 px-4 py-12 text-white">
       <h1 className="text-2xl font-bold mb-10 text-center text-gold">Experience</h1>
       <div className="space-y-8">
         {experiences.map((exp, idx) => (
