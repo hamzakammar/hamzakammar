@@ -63,7 +63,7 @@ export default function WorkingOn({ trigger = false }: WorkingOnProps) {
           {currentAnimation >= 3 && (
             <TypeAnimation
               sequence={[
-                "Prev. at Kuzu db",
+                "Prev. at Kuzu db, MapFLOW",
                 1000,
               ]}
               wrapper="div"

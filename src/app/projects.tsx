@@ -2,6 +2,21 @@
 import React from 'react';
 
 const projects = [
+  
+  {
+    title: 'Flourishing Realty Website',
+    date: 'August 2025',
+    link: 'https://flourishing.homes',
+    description: 'Added support for rental properties to the Flourishing Realty website',
+    tech: ['React.js', 'Typescript', 'Node.js', 'Next.js', 'AWS', 'MySQL'],
+  },
+  {
+    title: 'Sahil Go',
+    date: 'July 2025 - Present',
+    link: '',
+    description: 'Creating an app for beach ”Sahil” communities to organize games and bring the community together',
+    tech: ['Swift', 'Firebase'],
+  },
   {
     title: 'UniMap',
     date: 'Summer 2022 (Modified 2025)',

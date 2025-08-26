@@ -1,5 +1,5 @@
 # 💫 About Me:
-I'm currently working on the Neo Developer League and Kuzu Inc<br>I'm a highschool student aspiring to become a software developer<br>
+I'm a high school student passionate about software development and technology. Previously, I interned at Kùzu Inc., working on graph database tooling and backend infrastructure. I've also been a Data Manager at Mapflow Inc., organizing research metadata. Additionally, I have experience in competitive robotics as a team member of the 2702 Rebels, contributing to mechanical design and programming.
 
 
 ## 🌐 Socials:
