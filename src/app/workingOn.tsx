@@ -29,7 +29,7 @@ export default function WorkingOn({ trigger = false }: WorkingOnProps) {
               sequence={[
                 "UW SE '30",
                 1000,
-                () => setCurrentAnimation(2)
+                () => setCurrentAnimation(3)
               ]}
               wrapper="div"
               speed={2}
