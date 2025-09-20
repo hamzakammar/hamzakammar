@@ -39,13 +39,13 @@ export default function WorkingOn({ trigger = false }: WorkingOnProps) {
           )}
         </div>
       </div>
-      
+{/*       
       <div className="text-center mb-8">
         <div className="h-24 flex items-center justify-center">
           {currentAnimation >= 2 && (
             <TypeAnimation
               sequence={[
-                "Working on... This website",
+                "Working on... ",
                 1000,
                 () => setCurrentAnimation(3)
               ]}
@@ -56,7 +56,7 @@ export default function WorkingOn({ trigger = false }: WorkingOnProps) {
             />
           )}
         </div>
-      </div>
+      </div> */}
       
       <div className="text-center mb-8">
         <div className="h-24 flex items-center justify-center">
