@@ -1,5 +1,5 @@
 # 💫 About Me:
-I'm a high school student passionate about software development and technology. Previously, I interned at Kùzu Inc., working on graph database tooling and backend infrastructure. I've also been a Data Manager at Mapflow Inc., organizing research metadata. Additionally, I have experience in competitive robotics as a team member of the 2702 Rebels, contributing to mechanical design and programming.
+I’m a first-year Software Engineering student at the University of Waterloo, passionate about software development and technology. Previously, I interned at Kùzu Inc., where I worked on graph database tooling and backend infrastructure, and served as a Data Manager at Mapflow Inc., organizing research metadata. I also gained hands-on technical experience as a member of the 2702 Rebels robotics team, contributing to both mechanical design and programming.
 
 
 ## 🌐 Socials:
