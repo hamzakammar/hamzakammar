@@ -33,11 +33,15 @@ export default function Intro({ onIntroComplete }: IntroProps) {
                     <div className="text-center text-gray-400 mt-4 h-12 flex items-center justify-center">
                         <TypeAnimation
                             sequence={[
-                                "Founder",
+                                "Student",
                                 1000,
                                 "Builder",
                                 1000,
                                 "Engineer",
+                                1000,
+                                "Problem Solver",
+                                1000,
+                                "Learner",
                                 1000
                             ]}
                             wrapper="div"

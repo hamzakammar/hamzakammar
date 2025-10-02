@@ -26,7 +26,7 @@ export default function Home() {
         <WorkingOn trigger={workingOnTrigger} />
       </div>
     </div>
-    <div className="flex">
+    <div className="flex justify-between w-full">
       <Experience />
       <Projects />
     </div>

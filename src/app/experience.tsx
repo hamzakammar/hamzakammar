@@ -20,14 +20,14 @@ const experiences = [
     title: 'High School Leader',
     company: 'Engineering Science Quest',
     date: 'Summer 2023',
-    description: 'Delivered hands-on STEM workshops to youth aged 7–14, combining coding, robotics, and critical thinking challenges. Designed curriculum and engaged students through collaborative experiments.',
+    description: 'Led 8 STEM camps for 200+ students, creating a safe, engaging, and hands-on learning environment',
     tech: ['Leadership', 'Teaching']
   },
   {
     title: 'Data Manager',
     company: 'Mapflow Inc.',
     date: 'Nov 2022 – Oct 2024',
-    description: 'Managed and structured medical research metadata into JSON for geospatial AI pipelines.',
+    description: 'Consolidated medical research into structured datasets, saving 2000+ pharmacists ∼15 minutes per patient',
     tech: ['Data modeling', 'JSON',]
   },
   {
@@ -35,14 +35,14 @@ const experiences = [
     company: '2702 Rebels',
     date: 'Oct 2022 - Sept 2024',
     description: 'Contributed to mechanical design, prototyping, and programming for competitive robotics. Collaborated under tight timelines, attended regional competitions, and supported public outreach efforts.',
-    tech: ["Java", "SolidWorks CAD"]
+    tech: ["SolidWorks CAD"]
   }
 ];
 
 export default function Experience() {
   return (
     <div id="experience" className="max-w-2xl ml-8 px-4 py-12 text-white">
-      <h1 className="text-2xl font-bold mb-10 text-center text-gold">Experience</h1>
+      <h1 className="text-2xl font-bold mb-10 text-center text-gold text-4xl">Experience</h1>
       <div className="space-y-8">
         {experiences.map((exp, idx) => (
           <div 
