@@ -15,6 +15,27 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Hamza Ammar",
+  description: "Resume, projects and experience — Hamza Ammar",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+  },
+  openGraph: {
+    title: "Hamza Ammar",
+    description: "Resume, projects and experience — Hamza Ammar",
+    url: "/",
+    siteName: "Hamza Ammar",
+    images: [
+      {
+        url: "/HA.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Hamza Ammar",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

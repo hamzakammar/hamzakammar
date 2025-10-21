@@ -27,7 +27,7 @@ export default function WorkingOn({ trigger = false }: WorkingOnProps) {
           {currentAnimation >= 1 && (
             <TypeAnimation
               sequence={[
-                "UW SE '30",
+                "UW Software Engineer",
                 1000,
                 () => setCurrentAnimation(3)
               ]}

@@ -1,5 +1,6 @@
-'use client';
+ 'use client';
 import React from 'react';
+import Image from 'next/image';
 
 export default function Header() {
   return (
@@ -7,6 +8,9 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
+            <div className="flex items-center mr-3">
+              <Image src="/HA.jpg" alt="Hamza Ammar" width={36} height={36} className="rounded-sm object-cover" priority />
+            </div>
             <h1 className="text-xl font-bold text-gold">Hamza Ammar</h1>
           </div>
           
