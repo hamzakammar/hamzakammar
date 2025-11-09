@@ -25,7 +25,7 @@ const experiences = [
   {
     title: 'Founder, Chair',
     company: 'NeoDev League',
-    date: '2022 – Present',
+    date: 'May 2024 – Present',
     description: 'Built and led a developer community focused on peer learning, mentorship, and hands-on projects.',
     skills: ['Leadership', 'Event Planning', 'Community Building'],
     image: '/neodev.png',
