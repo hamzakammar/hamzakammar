@@ -41,19 +41,21 @@ const experiences = [
 
 export default function Experience() {
   return (
-    <div id="experience" className="max-w-2xl ml-8 px-4 py-12 text-white">
-      <h1 className="text-2xl font-bold mb-10 text-center text-gold text-4xl">Experience</h1>
-      <div className="space-y-8">
+    <div id="experience" className="bg-gray-900/80 backdrop-blur-md border-2 border-gold/40 rounded-xl p-6 shadow-2xl hover:border-gold/60 transition-all duration-300">
+      <h1 className="text-3xl font-bold mb-6 text-gold">EXPERIENCE</h1>
+      <div className="space-y-6 max-h-[50vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gold/50 scrollbar-track-gray-800">
         {experiences.map((exp, idx) => (
           <div 
             key={idx} 
-            className="relative pl-6 border-l border-gold/40 transition-all duration-300 hover:text-gold hover:scale-110 cursor-pointer group"
+            className="relative pl-6 border-l-2 border-gold/40 transition-all duration-300 hover:border-gold group"
           >
-            <div className="absolute w-3 h-3 bg-gold rounded-full -left-1.5 top-1.5 transition-all duration-300 group-hover:bg-white group-hover:scale-150"></div>
-            <div className="mb-1 text-sm text-gray-300 group-hover:text-gold">{exp.date}</div>
-            <h2 className="text-lg font-semibold text-white group-hover:text-gold">{exp.title} @ {exp.company}</h2>
-            <p className="text-sm text-gray-200 mt-1 group-hover:text-gold">{exp.description}</p>
-            <p className="text-xs text-gray-400 mt-1 group-hover:text-gold"><strong>Stack:</strong> {exp.tech.join(', ')}</p>
+            <div className="absolute w-3 h-3 bg-gold rounded-full -left-[7px] top-1.5 transition-all duration-300 group-hover:bg-white group-hover:scale-125"></div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-gray-400 group-hover:text-gold transition-colors">{exp.date}</span>
+              <span className="text-gray-500">•</span>
+              <h2 className="text-base font-semibold text-white group-hover:text-gold transition-colors">{exp.title}</h2>
+              <span className="text-sm text-gray-300 group-hover:text-gold/80 transition-colors">@ {exp.company}</span>
+            </div>
           </div>
         ))}
       </div>
