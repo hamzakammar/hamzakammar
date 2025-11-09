@@ -1,8 +1,6 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
-import Header from "./header";
-import { link } from 'fs';
 
 const experiences = [
   {
@@ -97,7 +95,7 @@ export default function Home() {
             />
           </div>
           <p className="text-gray-400 text-lg leading-relaxed">
-            I'm Hamza, a Software Engineering student <br /> @ UWaterloo. 
+            I&apos;m Hamza, a Software Engineering student <br /> @ UWaterloo. 
           </p>
         </div>
       </section>
