@@ -4,6 +4,15 @@ import Image from 'next/image';
 
 const experiences = [
   {
+    title: 'Humanoid Software Developer',
+    company: 'WATonomous',
+    date: 'Sep 2025 – Present',
+    skills: ['C++', 'Isaac Sim', 'Robotics', 'Computer Vision'],
+    image: '/watonomous.png',
+    backgroundImage: '/watonomous-bg.png',
+    link: 'https://www.watonomous.ca/projects/humanoid',    
+  },
+  {
     title: 'Software Developer',
     company: 'Kùzu Inc.',
     date: 'Summer 2024',
@@ -11,7 +20,7 @@ const experiences = [
     skills: ['C++', 'Graph Databases', 'Backend'],
     image: '/kuzu.png',
     backgroundImage: '/kuzu-bg.png',
-    link: '',
+    link: 'https://kuzudb.github.io/',
   },
   {
     title: 'Founder, Chair',
@@ -21,7 +30,7 @@ const experiences = [
     skills: ['Leadership', 'Event Planning', 'Community Building'],
     image: '/neodev.png',
     backgroundImage: '/neodev-bg.png',
-    link: '',
+    link: 'https://neoleague.dev',
   },
   {
     title: 'High School Leader',
@@ -31,7 +40,7 @@ const experiences = [
     skills: ['Leadership', 'Teaching', 'STEM'],
     image: '/esq.png',
     backgroundImage: '/esq-bg.png',
-    link: '',
+    link: 'https://uwaterloo.ca/engineering-outreach/engineering-science-quest',
   },
   {
     title: 'Data Manager',
@@ -41,7 +50,7 @@ const experiences = [
     skills: ['Data Modeling', 'JSON', 'Healthcare'],
     image: '/mapflow.png',
     backgroundImage: '/mapflow-bg.png',
-    link: '',
+    link: 'https://mapflow.ca',
   },
 ];
 
@@ -202,7 +211,7 @@ export default function Home() {
             GitHub
           </a>
           <a href="https://twitter.com/hamzakammar" target="_blank" rel="noopener noreferrer" className="block text-gray-400 hover:text-white transition-colors">
-            Twitter
+            X
           </a>
           <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className="block text-gray-400 hover:text-white transition-colors">
             Resume
