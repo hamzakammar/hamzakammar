@@ -92,7 +92,7 @@ export default function Home() {
     <main className="max-w-3xl mx-auto px-6 py-20">
       {/* Intro */}
       <section className="mb-20">
-        <h1 className="text-4xl font-bold mb-4">hello there!</h1>
+        <h1 className="text-4xl font-bold mb-4">Hey there!</h1>
         <div className="flex items-center gap-4">
           <div className="w-64 h-64 rounded-full overflow-hidden flex-shrink-0">
             <Image 
@@ -120,7 +120,12 @@ export default function Home() {
               onMouseLeave={() => setHoveredExp(null)}
               className="rounded-lg overflow-hidden transition-all duration-300 hover:bg-gray-900"
             >
-              <div className="flex items-center gap-4 p-4 cursor-pointer">
+              <a 
+                href={exp.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 p-4 cursor-pointer block"
+              >
                 <div className="w-12 h-12 bg-gray-800 rounded-lg flex-shrink-0 overflow-hidden">
                   <Image 
                     src={exp.image} 
@@ -134,7 +139,7 @@ export default function Home() {
                   <h3 className="font-semibold">{exp.company}</h3>
                   <p className="text-sm text-gray-400">{exp.title}</p>
                 </div>
-              </div>
+              </a>
               <div 
                 className={`bg-gray-900 overflow-hidden transition-all duration-500 ease-in-out ${
                   hoveredExp === idx ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
@@ -219,6 +224,21 @@ export default function Home() {
 
         </div>
       </section>
+
+      {/* SE Webring */}
+      <section className="mt-12 pt-8 border-t border-gray-800">
+        <div className="text-center">
+          <a 
+            href="https://se-webring.xyz/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-block text-gray-400 hover:text-white transition-colors"
+          >
+            <span className="text-sm">← SE Webring →</span>
+          </a>
+        </div>
+      </section>
+
     </main>
    </div>
   );
