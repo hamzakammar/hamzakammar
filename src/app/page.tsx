@@ -58,7 +58,7 @@ const projects = [
   {
     title: 'Course Connect',
     date: 'September 2025 - Present',
-    link: '',
+    link: 'https://github.com/hamzakammar/course-connect',
   },
   {
     title: 'Flourishing Realty Website',
