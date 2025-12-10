@@ -1,3 +1,4 @@
+![visitor badge](https://visitor-badge.glitch.me/badge?page_id=jwenjian.visitor-badge)
 # 💫 About Me:
 I’m a first-year Software Engineering student at the University of Waterloo. Always open to new roles!
 # 📊 GitHub Stats:
