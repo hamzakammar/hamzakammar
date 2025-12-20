@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 const experiences = [
@@ -84,6 +84,11 @@ const projects = [
 
 export default function Home() {
   const [hoveredExp, setHoveredExp] = useState<number | null>(null);
+  const [currentUrl, setCurrentUrl] = useState('');
+
+  useEffect(() => {
+    setCurrentUrl(window.location.href);
+  }, []);
 
   return (
    <div className="min-h-screen bg-black text-white">
@@ -225,19 +230,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SE Webring */}
-      <section className="mt-12 pt-8 border-t border-gray-800">
-        <div className="text-center">
-          <a 
-            href="https://se-webring.xyz/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-block text-gray-400 hover:text-white transition-colors"
-          >
-            <span className="text-sm">← SE Webring →</span>
-          </a>
-        </div>
-      </section>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+        <a href={`https://se30webring.com?from=${currentUrl}&dir=prev`} style={{ textDecoration: 'none', color: '#FFCE1A', fontSize: '1.5rem', lineHeight: 1, display: 'flex', alignItems: 'center' }}>←</a>
+        <a href="https://se30webring.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          <img 
+            src="https://se30webring.com/assets/icon-yellow.svg" 
+            alt="SE '30 Webring" 
+            style={{ width: '32px', height: '32px' }} 
+          />
+        </a>
+        <a href={`https://se30webring.com?from=${currentUrl}&dir=next`} style={{ textDecoration: 'none', color: '#FFCE1A', fontSize: '1.5rem', lineHeight: 1, display: 'flex', alignItems: 'center' }}>→</a>
+      </div>
 
     </main>
    </div>
