@@ -58,7 +58,7 @@ const projects = [
   {
     title: 'Course Connect',
     date: 'September 2025 - Present',
-    link: 'https://github.com/hamzakammar/course-connect',
+    link: 'https://cc.hamzaammar.ca',
   },
   {
     title: 'Flourishing Realty Website',
@@ -92,10 +92,8 @@ export default function Home() {
 
   return (
    <div className="min-h-screen bg-black text-white">
-    {/* <Header /> */}
     
     <main className="max-w-3xl mx-auto px-6 py-20">
-      {/* Intro */}
       <section className="mb-20">
         <h1 className="text-4xl font-bold mb-4">Hey there!</h1>
         <div className="flex items-center gap-4">
@@ -114,7 +112,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Experience */}
       <section className="mb-20">
         <h2 className="text-2xl font-bold mb-6 uppercase tracking-wider">Experience</h2>
         <div className="space-y-2">
