@@ -4,13 +4,13 @@ import Image from 'next/image';
 
 const experiences = [
   {
-    title: 'Humanoid Software Developer',
-    company: 'WATonomous',
-    date: 'Sep 2025 – Present',
-    skills: ['C++', 'Isaac Sim', 'Robotics', 'Computer Vision'],
-    image: '/watonomous.png',
-    backgroundImage: '/watonomous-bg.png',
-    link: 'https://www.watonomous.ca/projects/humanoid',    
+    title: 'Founding Engineer',
+    company: 'Dealish',
+    date: 'Dec 2025 – Present',
+    skills: ['React Native', 'Supabase', 'Mobile Development', 'TypeScript'],
+    image: '/dealish.png',
+    backgroundImage: '/dealish-bg.png',
+    link: 'https://www.dealish.io',    
   },
   {
     title: 'Software Developer',
@@ -55,6 +55,11 @@ const experiences = [
 ];
 
 const projects = [
+  {
+    title: 'ChessBot',
+    date: 'November 2025',
+    link: 'https://github.com/j3rry1iu/ChessHacks-Training',
+  },
   {
     title: 'Course Connect',
     date: 'September 2025 - Present',
