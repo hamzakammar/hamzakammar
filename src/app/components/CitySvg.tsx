@@ -5,7 +5,12 @@ import { useState, useEffect } from "react";
 
 export default function CitySvg({ isDay = false }) {
   return (
-    <svg className={isDay ? "day" : ""}>
+    <svg      
+    preserveAspectRatio="xMidYMid slice"
+     viewBox="0 0 1200 700"
+     aria-label="Portfolio city"
+className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
+    >
     <rect width="1200" height="700" fill="var(--bg)" />
 
     <g id="foundations" opacity="0.55">

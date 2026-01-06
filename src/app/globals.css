@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 :root {
   --background: #0a0a0a;
   --foreground: #f5f5f5;
@@ -47,3 +52,38 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #5a5a5a;
 }
+
+
+/* ---- City SVG tokens + classes ---- */
+.citySvg {
+  --bg: #0b0d10;
+  --grid: #1d232b;
+  --road: #e6e8eb;
+  --bldg-fill: #11161c;
+  --bldg-stroke: #e6e8eb;
+  --text: #e6e8eb;
+  --muted: #9aa4af;
+  --accent: #ff4d4d;
+}
+
+.citySvg.day {
+  --bg: #f6f7f9;
+  --grid: #d9dee6;
+  --road: #1f2328;
+  --bldg-fill: #ffffff;
+  --bldg-stroke: #1f2328;
+  --text: #111418;
+  --muted: #505965;
+  --accent: #0b5fff;
+}
+
+.citySvg .label { font: 600 20px system-ui; fill: var(--text); }
+.citySvg .sub   { font: 500 14px system-ui; fill: var(--muted); }
+.citySvg .node  { font: 600 16px system-ui; fill: var(--text); }
+
+.citySvg .gridLine { stroke: var(--grid); stroke-width: 1; }
+.citySvg .road { stroke: var(--road); stroke-width: 7; stroke-linecap: round; }
+.citySvg .district { fill: none; stroke: var(--bldg-stroke); stroke-width: 3; rx: 18; }
+.citySvg .bldg { fill: var(--bldg-fill); stroke: var(--bldg-stroke); stroke-width: 3; rx: 12; }
+.citySvg .connector { stroke: var(--bldg-stroke); stroke-width: 2; opacity: .6; }
+.citySvg .pulse { fill: var(--accent); }
