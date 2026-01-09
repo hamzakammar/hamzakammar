@@ -1,9 +1,32 @@
+'use client';
 import React from "react";
-import { useState, useEffect } from "react";
+import { motion, useScroll, useTransform, useSpring} from "framer-motion";
 
 
 
 export default function CitySvg({ isDay = false }) {
+    const { scrollYProgress } = useScroll();
+
+    const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 30,
+    mass: 0.8,
+    });
+    const foundationsOpacity = useTransform(smoothProgress, [0.00, 0.18], [0.15, 0.55]);
+    const roadsOpacity = useTransform(smoothProgress, [0.10, 0.30], [0, 1]);
+    const roadsY = useTransform(smoothProgress, [0.10, 0.30], [8, 0]);
+
+    // Systems
+    const systemsOpacity = useTransform(smoothProgress, [0.22, 0.55], [0, 1]);
+    const systemsY = useTransform(smoothProgress, [0.22, 0.55], [10, 0]);
+
+    // Production
+    const productionOpacity = useTransform(smoothProgress, [0.40, 0.72], [0, 1]);
+    const productionY = useTransform(smoothProgress, [0.40, 0.72], [10, 0]);
+
+    // Building
+    const buildingOpacity = useTransform(smoothProgress, [0.58, 0.85], [0, 1]);
+    const buildingY = useTransform(smoothProgress, [0.58, 0.85], [10, 0]);
   return (
     <svg      
     preserveAspectRatio="xMidYMid slice"
@@ -13,7 +36,7 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
     >
     <rect width="1200" height="700" fill="var(--bg)" />
 
-    <g id="foundations" opacity="0.55">
+    <motion.g id="foundations" opacity="0.55">
         <line className="gridLine" x1="100" y1="80" x2="100" y2="640"/>
         <line className="gridLine" x1="200" y1="80" x2="200" y2="640"/>
         <line className="gridLine" x1="300" y1="80" x2="300" y2="640"/>
@@ -34,9 +57,9 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
         <line className="gridLine" x1="80" y1="620" x2="1120" y2="620"/>
 
         <text x="90" y="60" className="sub">Algorithms · Data Structures · Learning</text>
-    </g>
+    </motion.g>
 
-    <g id="roads">
+    <motion.g id="roads" style={{ opacity: roadsOpacity, y: roadsY }}>
         <line className="road" x1="120" y1="360" x2="1080" y2="360"/>
         <text x="520" y="345" className="sub">Unimap Rd</text>
 
@@ -47,9 +70,9 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
         <circle className="pulse" cx="600" cy="330" r="5"/>
         <circle className="pulse" cx="600" cy="360" r="5"/>
         <circle className="pulse" cx="600" cy="390" r="5"/>
-    </g>
+    </motion.g>
 
-    <g id="systems">
+    <motion.g id="systems" style={{ opacity: systemsOpacity, y: systemsY }}>
         <rect className="district" x="120" y="120" width="380" height="210"/>
         <text x="140" y="150" className="label">Systems</text>
         <text x="140" y="174" className="sub">Thinking beyond features</text>
@@ -64,9 +87,9 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
 
         <line className="connector" x1="370" y1="223" x2="350" y2="240"/>
         <line className="connector" x1="370" y1="281" x2="350" y2="265"/>
-    </g>
+    </motion.g>
 
-    <g id="building">
+    <motion.g id="building" style={{ opacity: buildingOpacity, y: buildingY }}>
         <rect className="district" x="650" y="120" width="450" height="240"/>
         <text x="670" y="150" className="label">Building</text>
         <text x="670" y="174" className="sub">Turning ideas into lived systems</text>
@@ -78,9 +101,9 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
 
         <rect className="bldg" x="690" y="190" width="90" height="40"/>
         <text x="714" y="216" className="node">Rep</text>
-    </g>
+    </motion.g>
 
-    <g id="production">
+    <motion.g id="production" style={{ opacity: productionOpacity, y: productionY }}>
         <rect className="district" x="720" y="400" width="380" height="210"/>
         <text x="740" y="430" className="label">Production</text>
         <text x="740" y="454" className="sub">When software met reality</text>
@@ -89,7 +112,7 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
         <text x="795" y="540" className="node">MapFLOW</text>
         <rect className="bldg" x="940" y="470" width="140" height="130"/>
         <text x="980" y="545" className="node">CC</text>
-    </g>
+    </motion.g>
 
 
     </svg>
