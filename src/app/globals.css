@@ -83,7 +83,8 @@ body {
 
 .citySvg .gridLine { stroke: var(--grid); stroke-width: 1; }
 .citySvg .road { stroke: var(--road); stroke-width: 7; stroke-linecap: round; }
-.citySvg .district { fill: none; stroke: var(--bldg-stroke); stroke-width: 3; rx: 18; }
-.citySvg .bldg { fill: var(--bldg-fill); stroke: var(--bldg-stroke); stroke-width: 3; rx: 12; }
+.citySvg .district { fill: var(--bldg-fill); stroke: var(--bldg-stroke); stroke-width: 3; rx: 18; }
+.citySvg .bldg { fill: var(--bldg-fill); stroke: var(--bldg-stroke); stroke-width: 3; rx: 12; transition: opacity 0.2s ease; }
+.citySvg .bldg-hover { opacity: 0.7; }
 .citySvg .connector { stroke: var(--bldg-stroke); stroke-width: 2; opacity: .6; }
 .citySvg .pulse { fill: var(--accent); }

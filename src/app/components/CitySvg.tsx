@@ -1,16 +1,20 @@
 'use client';
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useSpring} from "framer-motion";
-
+import { Projects } from "@/app/data/projects";
 
 
 export default function CitySvg({ isDay = false }) {
+    const [hoverId, setHoverId] = useState<string | null>(null);
+    const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+    const [clickAnimKey, setClickAnimKey] = useState(0);
+
     const { scrollYProgress } = useScroll();
 
     const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.8,
+        stiffness: 120,
+        damping: 30,
+        mass: 0.8,
     });
     const foundationsOpacity = useTransform(smoothProgress, [0.00, 0.18], [0.15, 0.55]);
     const roadsOpacity = useTransform(smoothProgress, [0.10, 0.30], [0, 1]);
@@ -27,6 +31,8 @@ export default function CitySvg({ isDay = false }) {
     // Building
     const buildingOpacity = useTransform(smoothProgress, [0.58, 0.85], [0, 1]);
     const buildingY = useTransform(smoothProgress, [0.58, 0.85], [10, 0]);
+
+    const activeProject = Projects.find(p => p.id === activeProjectId);
   return (
     <svg      
     preserveAspectRatio="xMidYMid slice"
@@ -36,7 +42,7 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
     >
     <rect width="1200" height="700" fill="var(--bg)" />
 
-    <motion.g id="foundations" opacity="0.55">
+    <motion.g id="foundations" style={{ opacity: foundationsOpacity }}>
         <line className="gridLine" x1="100" y1="80" x2="100" y2="640"/>
         <line className="gridLine" x1="200" y1="80" x2="200" y2="640"/>
         <line className="gridLine" x1="300" y1="80" x2="300" y2="640"/>
@@ -77,13 +83,24 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
         <text x="140" y="150" className="label">Systems</text>
         <text x="140" y="174" className="sub">Thinking beyond features</text>
 
-        <rect className="bldg" x="150" y="190" width="200" height="120"/>
-        <text x="215" y="260" className="node">Kùzu</text>
-        <rect className="bldg" x="370" y="200" width="110" height="46"/>
-        <text x="404" y="230" className="node">Algo</text>
-
-        <rect className="bldg" x="370" y="258" width="110" height="46"/>
-        <text x="413" y="288" className="node">ML</text>
+        <g data-id="kuzu" cursor="pointer"
+           onMouseEnter={() => setHoverId('kuzu')}
+           onMouseLeave={() => setHoverId(null)}>
+            <rect className={`bldg ${hoverId === 'kuzu' ? 'bldg-hover' : ''}`} x="150" y="190" width="200" height="120"/>
+            <text x="215" y="260" className="node">Kùzu</text>
+        </g>
+        <g data-id="algorithms" cursor="pointer"
+           onMouseEnter={() => setHoverId('algorithms')}
+           onMouseLeave={() => setHoverId(null)}>
+            <rect className={`bldg ${hoverId === 'algorithms' ? 'bldg-hover' : ''}`} x="370" y="200" width="110" height="46"/>
+            <text x="404" y="230" className="node">Algo</text>
+        </g>
+        <g data-id="ml" cursor="pointer"
+           onMouseEnter={() => setHoverId('ml')}
+           onMouseLeave={() => setHoverId(null)}>
+            <rect className={`bldg ${hoverId === 'ml' ? 'bldg-hover' : ''}`} x="370" y="258" width="110" height="46"/>
+            <text x="413" y="288" className="node">ML</text>
+        </g>
 
         <line className="connector" x1="370" y1="223" x2="350" y2="240"/>
         <line className="connector" x1="370" y1="281" x2="350" y2="265"/>
@@ -94,13 +111,28 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
         <text x="670" y="150" className="label">Building</text>
         <text x="670" y="174" className="sub">Turning ideas into lived systems</text>
 
-        <rect className="bldg" x="680" y="200" width="230" height="140"/>
-        <text x="760" y="280" className="node">Dealish</text>
-        <rect className="bldg" x="930" y="220" width="150" height="120"/>
-        <text x="980" y="290" className="node">Neo</text>
+        <g data-id="dealish" cursor="pointer"
+           onMouseEnter={() => setHoverId('dealish')}
+           onMouseLeave={() => setHoverId(null)}
+           onClick={() => { setActiveProjectId("dealish"); setClickAnimKey(prev => prev + 1); }}>
 
-        <rect className="bldg" x="690" y="190" width="90" height="40"/>
-        <text x="714" y="216" className="node">Rep</text>
+            <rect className={`bldg ${hoverId === 'dealish' ? 'bldg-hover' : ''}`} x="680" y="200" width="230" height="140"/>
+            <text x="760" y="280" className="node">Dealish</text>
+        </g>
+        <g data-id="NeoDev" cursor="pointer"
+           onMouseEnter={() => setHoverId('NeoDev')}
+           onMouseLeave={() => setHoverId(null)}
+           onClick={() => { setActiveProjectId("neodev"); setClickAnimKey(prev => prev + 1); }}
+           >
+            <rect className={`bldg ${hoverId === 'NeoDev' ? 'bldg-hover' : ''}`} x="930" y="220" width="150" height="120"/>
+            <text x="980" y="290" className="node">Neo</text>
+        </g>
+        <g data-id="classRep" cursor="pointer"
+           onMouseEnter={() => setHoverId('classRep')}
+           onMouseLeave={() => setHoverId(null)}>
+            <rect className={`bldg ${hoverId === 'classRep' ? 'bldg-hover' : ''}`} x="690" y="190" width="90" height="40"/>
+            <text x="714" y="216" className="node">Rep</text>
+        </g>
     </motion.g>
 
     <motion.g id="production" style={{ opacity: productionOpacity, y: productionY }}>
@@ -108,12 +140,40 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
         <text x="740" y="430" className="label">Production</text>
         <text x="740" y="454" className="sub">When software met reality</text>
 
-        <rect className="bldg" x="750" y="480" width="170" height="100"/>
-        <text x="795" y="540" className="node">MapFLOW</text>
-        <rect className="bldg" x="940" y="470" width="140" height="130"/>
-        <text x="980" y="545" className="node">CC</text>
+        <g data-id="mapflow" cursor="pointer"
+           onMouseEnter={() => setHoverId('mapflow')}
+           onMouseLeave={() => setHoverId(null)}>
+            <rect className={`bldg ${hoverId === 'mapflow' ? 'bldg-hover' : ''}`} x="750" y="480" width="170" height="100"/>
+            <text x="795" y="540" className="node">MapFLOW</text>
+        </g>
+        <g data-id="cc" cursor="pointer"
+           onMouseEnter={() => setHoverId('cc')}
+           onMouseLeave={() => setHoverId(null)}>
+            <rect className={`bldg ${hoverId === 'cc' ? 'bldg-hover' : ''}`} x="940" y="470" width="140" height="130"/>
+            <text x="980" y="545" className="node">CC</text>
+        </g>
     </motion.g>
 
+    {activeProject && (
+        <motion.text
+         key={clickAnimKey}
+         x="300"
+         y="500"
+         className="activeProjectInfo text-lg font-semibold"
+         fill="var(--text)"
+         textAnchor="middle"
+         initial={{ opacity: 0, y: 50 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ duration: 0.5 }}
+        >
+            {activeProject.title} - {activeProject.tagline}
+            {activeProject.highlights.length > 0 && activeProject.highlights.map((highlight, index) => (
+                <tspan key={index} x="300" dy="1.5em" className="sub">
+                    {highlight}
+                </tspan>
+            ))}
+        </motion.text>
+    )}
 
     </svg>
   );
