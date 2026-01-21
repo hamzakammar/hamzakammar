@@ -43,6 +43,10 @@ export const Projects: Project[] = [
       "Led sponsorships, logistics, and technical platforms"
     ],
     stack: ["Leadership", "Community", "Event Ops"],
-    status: "ongoing"
+    status: "ongoing",
+    links: {
+        demo: "https://neoleague.dev",
+        github: "https://github.com/neoleague/NeoDevLeague"
+        }
   }
 ];

@@ -172,6 +172,25 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
                     {highlight}
                 </tspan>
             ))}
+            {activeProject.links && (
+                <tspan x="300" dy="1.5em" className="sub">
+                    {activeProject.links.demo && (
+                        <>
+                            <a href={activeProject.links.demo} target="_blank" rel="noopener noreferrer">Demo</a>
+                            {activeProject.links.github || activeProject.links.writeup ? ' · ' : ''}
+                        </>
+                    )}
+                    {activeProject.links.github && (
+                        <>
+                            <a href={activeProject.links.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+                            {activeProject.links.writeup ? ' · ' : ''}
+                        </>
+                    )}
+                    {activeProject.links.writeup && (
+                        <a href={activeProject.links.writeup} target="_blank" rel="noopener noreferrer">Writeup</a>
+                    )}
+                </tspan>
+            )}
         </motion.text>
     )}
 
