@@ -56,6 +56,11 @@ const experiences = [
 
 const projects = [
   {
+    title: 'Academic MCP',
+    date: 'January 2026',
+    link: 'https://github.com/hamzakammar/mcp-workspace',
+  },
+  {
     title: 'ChessBot',
     date: 'November 2025',
     link: 'https://github.com/j3rry1iu/ChessHacks-Training',
