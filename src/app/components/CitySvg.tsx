@@ -1,15 +1,22 @@
 'use client';
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion, useScroll, useTransform, useSpring} from "framer-motion";
-import { Projects } from "@/app/data/projects";
+import { Projects, Project } from "@/app/data/projects";
 
+interface CitySvgProps {
+  isDay?: boolean;
+  scrollTarget?: React.RefObject<HTMLElement>;
+  onProjectClick?: (id: string) => void;
+}
 
-export default function CitySvg({ isDay = false }) {
+export default function CitySvg({ isDay = false, scrollTarget, onProjectClick }: CitySvgProps) {
     const [hoverId, setHoverId] = useState<string | null>(null);
-    const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+    const [activeProject, setActiveProject] = useState<Project | null>(null);
     const [clickAnimKey, setClickAnimKey] = useState(0);
 
-    const { scrollYProgress } = useScroll();
+    const { scrollYProgress } = useScroll({
+      target: scrollTarget as React.RefObject<HTMLElement> | undefined
+    });
 
     const smoothProgress = useSpring(scrollYProgress, {
         stiffness: 120,
@@ -32,8 +39,14 @@ export default function CitySvg({ isDay = false }) {
     const buildingOpacity = useTransform(smoothProgress, [0.58, 0.85], [0, 1]);
     const buildingY = useTransform(smoothProgress, [0.58, 0.85], [10, 0]);
 
-    const activeProject = Projects.find(p => p.id === activeProjectId);
+    const handleProjectClick = (id: string) => {
+      setClickAnimKey(prev => prev + 1);
+      const found = Projects.find(p => p.id === id);
+      setActiveProject(found || null);
+      onProjectClick?.(id);
+    };
   return (
+    <>
     <svg      
     preserveAspectRatio="xMidYMid slice"
      viewBox="0 0 1200 700"
@@ -85,7 +98,8 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
 
         <g data-id="kuzu" cursor="pointer"
            onMouseEnter={() => setHoverId('kuzu')}
-           onMouseLeave={() => setHoverId(null)}>
+           onMouseLeave={() => setHoverId(null)}
+           onClick={() => handleProjectClick("kuzu")}>
             <rect className={`bldg ${hoverId === 'kuzu' ? 'bldg-hover' : ''}`} x="150" y="190" width="200" height="120"/>
             <text x="215" y="260" className="node">Kùzu</text>
         </g>
@@ -114,7 +128,7 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
         <g data-id="dealish" cursor="pointer"
            onMouseEnter={() => setHoverId('dealish')}
            onMouseLeave={() => setHoverId(null)}
-           onClick={() => { setActiveProjectId("dealish"); setClickAnimKey(prev => prev + 1); }}>
+           onClick={() => handleProjectClick("dealish")}>
 
             <rect className={`bldg ${hoverId === 'dealish' ? 'bldg-hover' : ''}`} x="680" y="200" width="230" height="140"/>
             <text x="760" y="280" className="node">Dealish</text>
@@ -122,14 +136,15 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
         <g data-id="NeoDev" cursor="pointer"
            onMouseEnter={() => setHoverId('NeoDev')}
            onMouseLeave={() => setHoverId(null)}
-           onClick={() => { setActiveProjectId("neodev"); setClickAnimKey(prev => prev + 1); }}
+           onClick={() => handleProjectClick("neodev")}
            >
             <rect className={`bldg ${hoverId === 'NeoDev' ? 'bldg-hover' : ''}`} x="930" y="220" width="150" height="120"/>
             <text x="980" y="290" className="node">Neo</text>
         </g>
         <g data-id="classRep" cursor="pointer"
            onMouseEnter={() => setHoverId('classRep')}
-           onMouseLeave={() => setHoverId(null)}>
+           onMouseLeave={() => setHoverId(null)}
+           onClick={() => handleProjectClick("classRep")}>
             <rect className={`bldg ${hoverId === 'classRep' ? 'bldg-hover' : ''}`} x="690" y="190" width="90" height="40"/>
             <text x="714" y="216" className="node">Rep</text>
         </g>
@@ -142,58 +157,69 @@ className={`citySvg w-full h-full ${isDay ? 'day' : ''}`}
 
         <g data-id="mapflow" cursor="pointer"
            onMouseEnter={() => setHoverId('mapflow')}
-           onMouseLeave={() => setHoverId(null)}>
+           onMouseLeave={() => setHoverId(null)}
+           onClick={() => handleProjectClick("mapflow")}>
             <rect className={`bldg ${hoverId === 'mapflow' ? 'bldg-hover' : ''}`} x="750" y="480" width="170" height="100"/>
             <text x="795" y="540" className="node">MapFLOW</text>
         </g>
         <g data-id="cc" cursor="pointer"
            onMouseEnter={() => setHoverId('cc')}
-           onMouseLeave={() => setHoverId(null)}>
+           onMouseLeave={() => setHoverId(null)}
+           onClick={() => handleProjectClick("CC")}>
             <rect className={`bldg ${hoverId === 'cc' ? 'bldg-hover' : ''}`} x="940" y="470" width="140" height="130"/>
             <text x="980" y="545" className="node">CC</text>
         </g>
     </motion.g>
 
-    {activeProject && (
-        <motion.text
-         key={clickAnimKey}
-         x="300"
-         y="500"
-         className="activeProjectInfo text-lg font-semibold"
-         fill="var(--text)"
-         textAnchor="middle"
-         initial={{ opacity: 0, y: 50 }}
-         animate={{ opacity: 1, y: 0 }}
-         transition={{ duration: 0.5 }}
-        >
-            {activeProject.title} - {activeProject.tagline}
-            {activeProject.highlights.length > 0 && activeProject.highlights.map((highlight, index) => (
-                <tspan key={index} x="300" dy="1.5em" className="sub">
-                    {highlight}
-                </tspan>
-            ))}
-            {activeProject.links && (
-                <tspan x="300" dy="1.5em" className="sub">
-                    {activeProject.links.demo && (
-                        <>
-                            <a href={activeProject.links.demo} target="_blank" rel="noopener noreferrer">Demo</a>
-                            {activeProject.links.github || activeProject.links.writeup ? ' · ' : ''}
-                        </>
-                    )}
-                    {activeProject.links.github && (
-                        <>
-                            <a href={activeProject.links.github} target="_blank" rel="noopener noreferrer">GitHub</a>
-                            {activeProject.links.writeup ? ' · ' : ''}
-                        </>
-                    )}
-                    {activeProject.links.writeup && (
-                        <a href={activeProject.links.writeup} target="_blank" rel="noopener noreferrer">Writeup</a>
-                    )}
-                </tspan>
-            )}
-        </motion.text>
-    )}
+    {/* The Physical Billboard Structure */}
+    <motion.g 
+      id="billboard-structure" 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }}
+    >
+      {/* The "Legs" of the billboard */}
+      <line x1="250" y1="620" x2="250" y2="560" stroke="white" strokeWidth="5" />
+      <line x1="450" y1="620" x2="450" y2="560" stroke="white" strokeWidth="5" />
+      
+      {/* The Screen Backing */}
+      <rect x="200" y="370" width="300" height="210" fill="#000" stroke="white" strokeWidth="2" />
+      
+      {/* The Content Area */}
+      <foreignObject x="215" y="390" width="270" height="150">
+        <div className="w-full h-full overflow-hidden flex flex-col p-3 font-mono">
+          {activeProject ? (
+            <div className="animate-in fade-in zoom-in duration-300">
+              <h3 className="text-[14px] text-blue-400 font-bold uppercase tracking-tighter mb-1">
+                {activeProject.title}
+              </h3>
+              <p className="text-[10px] text-blue-300/70 uppercase tracking-wider mb-2">
+                {activeProject.tagline}
+              </p>
+              <p className="text-[10px] text-white leading-tight line-clamp-3">
+                {activeProject.narrative}
+              </p>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full opacity-20">
+              <p className="text-[12px] text-blue-400 animate-pulse">SELECT_DISTRICT...</p>
+            </div>
+          )}
+        </div>
+      </foreignObject>
+      
+      {/* Glass Overlay Effect */}
+      <rect x="200" y="370" width="300" height="210" fill="url(#billboard-glare)" pointerEvents="none" />
+    </motion.g>
 
+    {/* Gradient definitions */}
+    <defs>
+      <linearGradient id="billboard-glare" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="white" stopOpacity="0.1" />
+        <stop offset="50%" stopColor="white" stopOpacity="0" />
+        <stop offset="100%" stopColor="white" stopOpacity="0.05" />
+      </linearGradient>
+    </defs>
     </svg>
+    </>
   );
 }

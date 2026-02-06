@@ -22,7 +22,7 @@ export const Projects: Project[] = [
     title: "Dealish",
     district: "building",
     tagline: "saving money",
-    narrative: "I noticed a massive gap between restaurants with expiring surplus and students looking for affordable eats. Dealish isn't just a map; it's a real-time marketplace. I built it to handle high-frequency location updates and secure merchant-to-user transactions, ensuring the deal you see is the deal you get.",
+    narrative: "Real-time marketplace connecting restaurants with surplus food to students.",
     highlights: [
       "Architected a map-first UX that handles live location-based filtering with zero lag.",
       "Engineered a secure Supabase backend with RBAC to protect both merchant and user data.",
@@ -37,7 +37,7 @@ export const Projects: Project[] = [
     title: "Kùzu DB",
     district: "systems",
     tagline: "youngest intern at Kùzu",
-    narrative: "Databases are often black boxes. During my time at Kùzu, I realized that if a developer can't see the query plan, they can't optimize it. I dove into the C++ core to build a visualization layer for the query planner, turning abstract metadata into a roadmap for performance.",
+    narrative: "Built query planner visualization layer in C++ to make database optimization accessible.",
     highlights: [
       "Built the printing engine for 40+ operators, cutting query debugging time for the core team.",
       "Refined the 'Explorer' UI using Chroma.js to make complex graph schemas visually intuitive.",
@@ -51,7 +51,7 @@ export const Projects: Project[] = [
     title: "MapFLOW",
     district: "production",
     tagline: "making pharma more accessible",
-    narrative: "Medical research moves fast, but implementation is slow. I took complex pharmaceutical research and built the data infrastructure that powers consultations for thousands of pharmacists. I even built an AI-powered bridge to expand our impact into French-speaking markets.",
+    narrative: "Data infrastructure powering pharmaceutical consultations for thousands of pharmacists.",
     highlights: [
       "Transformed static research into dynamic JSON engines, saving pharmacists 15 minutes per patient.",
       "Directly contributed to a 10x revenue increase by streamlining the consultation workflow.",
@@ -65,7 +65,7 @@ export const Projects: Project[] = [
     title: "NeoDev League",
     district: "building",
     tagline: "revolutionizing competitive programming",
-    narrative: "Most hackathons feel like career fairs. I wanted something different—a league where engineering excellence is the only currency. I founded NeoDev to create high-stakes, competitive environments where the best builders actually get to test their limits.",
+    narrative: "Founded competitive programming league where engineering excellence is the currency.",
     highlights: [
       "Founded and scaled a multi-event series from zero to a recognized community staple.",
       "Led full-cycle event ops: from securing technical sponsorships to architecting the competition platform.",
@@ -80,7 +80,7 @@ export const Projects: Project[] = [
     title: "SE '30 Representative",
     district: "building", // Place this near the 'City Center' as it's foundational
     tagline: "Liaison for the next generation of Software Engineers.",
-    narrative: "Being elected by my peers in the Software Engineering '30 cohort means more than just attending meetings. It's about translating student friction into faculty action, ensuring our academic path keeps pace with the speed of the industry.",
+    narrative: "Elected liaison translating student needs into faculty action for SE '30 cohort.",
     highlights: [
       "Elected as the primary academic liaison for the SE 2030 cohort.",
       "Advocating for curriculum improvements and student resource allocation.",
@@ -88,5 +88,32 @@ export const Projects: Project[] = [
     ],
     stack: ["Strategy", "Advocacy", "Communication"],
     status: "ongoing",
+  },
+  {
+    id: "CC",
+    title: "Course Connect",
+    district: "production",
+    tagline: "connecting students with courses",
+    highlights: [
+      "Created a platform for students to find courses at their own pace",
+      "Created a platform for students to find courses at their own pace",
+    ],
+    stack: ["React Native", "Expo", "Supabase", "Maps"],
+    narrative: "Python scraper collecting 1,000+ courses into a structured validation dataset.",
+    status: "shipped",
+    links: { demo: "https://cc.hamzaammar.ca" }
+  },
+  {
+    id: "horizon",
+    title: "Horizon",
+    district: "production",
+    tagline: "MCP server for your school",
+    highlights: [
+      "Created an MCP server which connects to brightspace, piazza and course notes",
+      "Built a mobile app which allows students to view their course notes and assignments",
+    ],
+    stack: ["Python", "MCP", "React Native", "Expo", "Supabase", "Vector Search"],
+    narrative: "MCP server connecting Brightspace, Piazza, and course notes with mobile access.",
+
   }
 ];

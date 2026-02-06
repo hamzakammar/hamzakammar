@@ -88,3 +88,25 @@ body {
 .citySvg .bldg-hover { opacity: 0.7; }
 .citySvg .connector { stroke: var(--bldg-stroke); stroke-width: 2; opacity: .6; }
 .citySvg .pulse { fill: var(--accent); }
+
+/* Billboard Ticker Animation */
+.ticker-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.ticker-content {
+  animation: ticker-scroll 25s linear infinite;
+  display: inline-flex;
+  will-change: transform;
+}
+
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
