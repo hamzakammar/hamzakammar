@@ -1,10 +1,24 @@
 'use client';
 import { useState, useEffect } from 'react';
 import CitySvg from './components/CitySvg';
+import { safeLocalStorage } from './lib/localStorage';
 
 export default function Home() {
   const [showCity, setShowCity] = useState(false);
   const [isDay, setIsDay] = useState(false);
+  
+  // Load saved theme from localStorage (client-side only)
+  useEffect(() => {
+    const saved = safeLocalStorage.getItem('isDay');
+    if (saved !== null) {
+      setIsDay(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save theme to localStorage whenever it changes
+  useEffect(() => {
+    safeLocalStorage.setItem('isDay', JSON.stringify(isDay));
+  }, [isDay]);
   
 
 
