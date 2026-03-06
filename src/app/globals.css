@@ -1,18 +1,29 @@
 @import "tailwindcss";
 
-html, body {
-  margin: 0;
-  padding: 0;
-}
+/* ══════════════════════════════════════
+   PORTFOLIO CITY — Blueprint Aesthetic
+   ══════════════════════════════════════ */
+
+html, body { margin: 0; padding: 0; }
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #f5f5f5;
-  --primary: #d4af37;
-  --primary-dark: #b8941f;
-  --accent: #ffd700;
-  --gold: #d4af37;
-  --gold-light: #ffd700;
+  --background: #F5F7FA;
+  --foreground: #1F2937;
+  --accent: #1D4ED8;
+  --muted: #6B7280;
+  --panel-bg: #FFFFFF;
+  --panel-border: #1F2937;
+  --panel-divider: #E5E7EB;
+}
+
+[data-theme="dark"] {
+  --background: #0F172A;
+  --foreground: #F1F5F9;
+  --accent: #60A5FA;
+  --muted: #94A3B8;
+  --panel-bg: #1E293B;
+  --panel-border: #475569;
+  --panel-divider: #334155;
 }
 
 @theme inline {
@@ -22,91 +33,429 @@ html, body {
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #f5f5f5;
-  }
-}
-
 body {
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d2d2d 100%);
+  background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), sans-serif;
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 12px;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #E5E7EB; }
+::-webkit-scrollbar-thumb { background: #9CA3AF; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+[data-theme="dark"] ::-webkit-scrollbar-track { background: #1E293B; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #475569; }
 
-::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #4a4a4a;
-  border-radius: 6px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #5a5a5a;
-}
-
-
-/* ---- City SVG tokens + classes ---- */
+/* ── SVG Tokens ── */
 .citySvg {
-  --bg: #0b0d10;
-  --grid: #1d232b;
-  --road: #e6e8eb;
-  --bldg-fill: #11161c;
-  --bldg-stroke: #e6e8eb;
-  --text: #e6e8eb;
-  --muted: #9aa4af;
-  --accent: #ff4d4d;
+  --bg: #F5F7FA;
+  --grid: #CBD5E1;
+  --road: #1F2937;
+  --text: #1F2937;
+  --muted: #6B7280;
+  --accent: #1D4ED8;
+}
+[data-theme="dark"] .citySvg {
+  --bg: #0F172A;
+  --grid: #1E293B;
+  --road: #F1F5F9;
+  --text: #F1F5F9;
+  --muted: #94A3B8;
+  --accent: #60A5FA;
 }
 
-.citySvg.day {
-  --bg: #f6f7f9;
-  --grid: #d9dee6;
-  --road: #1f2328;
-  --bldg-fill: #ffffff;
-  --bldg-stroke: #1f2328;
-  --text: #111418;
-  --muted: #505965;
-  --accent: #0b5fff;
+/* Typography */
+.citySvg .label {
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 16px; font-weight: 700; fill: var(--text); letter-spacing: 0.12em;
+}
+.citySvg .sub {
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 10px; font-weight: 400; fill: var(--muted); letter-spacing: 0.06em;
+}
+.citySvg .node {
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 11px; font-weight: 600; fill: var(--text);
+}
+.citySvg .road-label {
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 9px; font-weight: 500; fill: var(--muted); letter-spacing: 0.15em;
 }
 
-.citySvg .label { font: 600 20px system-ui; fill: var(--text); }
-.citySvg .sub   { font: 500 14px system-ui; fill: var(--muted); }
-.citySvg .node  { font: 600 16px system-ui; fill: var(--text); }
+/* Structural */
+.citySvg .gridLine { stroke: var(--grid); stroke-width: 0.5; opacity: 0.4; }
 
-.citySvg .gridLine { stroke: var(--grid); stroke-width: 1; }
-.citySvg .road { stroke: var(--road); stroke-width: 7; stroke-linecap: round; }
-.citySvg .district { fill: var(--bldg-fill); stroke: var(--bldg-stroke); stroke-width: 3; rx: 18; }
-.citySvg .bldg { fill: var(--bldg-fill); stroke: var(--bldg-stroke); stroke-width: 3; rx: 12; transition: opacity 0.2s ease; }
-.citySvg .bldg-hover { opacity: 0.7; }
-.citySvg .connector { stroke: var(--bldg-stroke); stroke-width: 2; opacity: .6; }
-.citySvg .pulse { fill: var(--accent); }
+/* ── Ground surface ── */
+.citySvg .ground-surface { fill: url(#floor-gradient); }
+[data-theme="dark"] .citySvg .ground-surface { fill: #1A1F2E; }
 
-/* Billboard Ticker Animation */
-.ticker-container {
-  width: 100%;
+/* Road surfaces */
+.citySvg .road-surface { fill: #D5D9E0; }
+[data-theme="dark"] .citySvg .road-surface { fill: #1E293B; }
+
+/* Ground plane — continuous city surface */
+.citySvg .ground-plane { fill: #ECEEF2; }
+[data-theme="dark"] .citySvg .ground-plane { fill: #151B2B; }
+
+/* Internal streets within districts */
+.citySvg .street { fill: #D5D9E0; }
+[data-theme="dark"] .citySvg .street { fill: #1E293B; }
+
+/* Minor connector streets between buildings */
+.citySvg .street-minor { fill: #DEE1E6; stroke: #CDD1D8; stroke-width: 0.3; }
+[data-theme="dark"] .citySvg .street-minor { fill: #1A2332; stroke: #334155; }
+
+/* Sidewalks */
+.citySvg .sidewalk { fill: #E5E8EC; }
+[data-theme="dark"] .citySvg .sidewalk { fill: #1A2332; }
+
+/* ── Buildings — Unified 3D Style ── */
+
+/* Front face */
+.citySvg .bldg-face {
+  fill: #E2E8EE;
+  stroke: #8896A4;
+  stroke-width: 1;
+  transition: stroke 0.2s ease, stroke-width 0.2s ease, fill 0.3s ease;
+}
+[data-theme="dark"] .citySvg .bldg-face {
+  fill: #2A3444;
+  stroke: #5A6A7A;
+}
+
+/* District-specific front face tints — very subtle, only on project buildings */
+.citySvg .bldg-face-systems { fill: #E0E5EC; }
+.citySvg .bldg-face-production { fill: #E4E3E0; }
+.citySvg .bldg-face-building { fill: #E1E6E4; }
+[data-theme="dark"] .citySvg .bldg-face-systems { fill: #283442; }
+[data-theme="dark"] .citySvg .bldg-face-production { fill: #2E3038; }
+[data-theme="dark"] .citySvg .bldg-face-building { fill: #283240; }
+
+/* Active & hover states */
+.citySvg .bldg-active { stroke: var(--accent); stroke-width: 2; }
+.citySvg .bldg-hover { stroke: var(--accent); stroke-width: 1.5; }
+
+/* 3D top face */
+.citySvg .bldg-top { fill: #F0F3F6; stroke: #C8D0D8; stroke-width: 0.3; }
+[data-theme="dark"] .citySvg .bldg-top { fill: #3A4A5A; stroke: #4A5A6A; }
+
+/* 3D right face */
+.citySvg .bldg-right { fill: #B8C2CC; stroke: #A0AAB4; stroke-width: 0.3; }
+[data-theme="dark"] .citySvg .bldg-right { fill: #1A2430; stroke: #2A3440; }
+
+/* District-specific right face tints — very subtle */
+.citySvg .bldg-right-systems { fill: #B0B8C4; }
+.citySvg .bldg-right-production { fill: #B6B4B0; }
+.citySvg .bldg-right-building { fill: #B2BAB6; }
+[data-theme="dark"] .citySvg .bldg-right-systems { fill: #1C2838; }
+[data-theme="dark"] .citySvg .bldg-right-production { fill: #202630; }
+[data-theme="dark"] .citySvg .bldg-right-building { fill: #1C2430; }
+
+/* Windows — district details */
+.citySvg .bldg-win { fill: #9AA6B2; opacity: 0.55; }
+[data-theme="dark"] .citySvg .bldg-win { fill: #F0D870; opacity: 0.6; }
+
+/* Loading dock doors */
+.citySvg .bldg-door { fill: #6B7A8A; opacity: 0.7; }
+[data-theme="dark"] .citySvg .bldg-door { fill: #F0D870; opacity: 0.4; }
+
+/* Filler floor lines */
+.citySvg .bldg-floor-line { stroke: #C8D0D8; stroke-width: 0.5; }
+[data-theme="dark"] .citySvg .bldg-floor-line { stroke: #3A4A5A; }
+
+/* ── Billboard panel ── */
+.citySvg .bb-panel { fill: #FFFFFF; stroke: #1F2937; stroke-width: 2; }
+[data-theme="dark"] .citySvg .bb-panel { fill: #1E293B; stroke: #475569; }
+
+.citySvg .bb-inner-border { fill: none; stroke: #E5E7EB; stroke-width: 0.75; }
+[data-theme="dark"] .citySvg .bb-inner-border { stroke: #334155; }
+
+.citySvg .bb-light { fill: #1D4ED8; opacity: 0.45; }
+[data-theme="dark"] .citySvg .bb-light { fill: #60A5FA; opacity: 0.7; }
+
+
+/* ── Vehicles ── */
+.citySvg .vehicle { opacity: 0.25; }
+[data-theme="dark"] .citySvg .vehicle { opacity: 0.35; }
+
+/* ── Pedestrians ── */
+.citySvg .pedestrian { opacity: 0.2; }
+[data-theme="dark"] .citySvg .pedestrian { opacity: 0.35; }
+
+/* ── District entry signs ── */
+.citySvg .district-sign-bg { fill: #F8F9FA; stroke: #B0B8C4; stroke-width: 0.5; }
+[data-theme="dark"] .citySvg .district-sign-bg { fill: #1E293B; stroke: #475569; }
+.citySvg .district-sign-text {
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 6px; font-weight: 600; fill: var(--muted); letter-spacing: 0.1em;
+}
+
+/* ── Animations ── */
+
+/* Pulse — data pulses on roads */
+@keyframes pulse-beat {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+.citySvg .pulse { fill: var(--accent); animation: pulse-beat 2.5s ease-in-out infinite; }
+
+/* Water shimmer — fountain in central plaza */
+@keyframes water-shimmer {
+  0%, 100% { opacity: 0.25; }
+  33% { opacity: 0.55; }
+  66% { opacity: 0.35; }
+}
+.citySvg .water {
+  fill: #93C5FD;
+  animation: water-shimmer 3s ease-in-out infinite;
+}
+[data-theme="dark"] .citySvg .water { fill: #60A5FA; opacity: 0.6; }
+
+/* ── Lamp post glow — dark mode only ── */
+.citySvg .lamp-glow { opacity: 0; transition: opacity 0.3s ease; }
+[data-theme="dark"] .citySvg .lamp-glow { opacity: 0.5; }
+
+/* ── Sky layer ── */
+.citySvg .sky-layer { fill: url(#sky-gradient); }
+[data-theme="dark"] .citySvg .sky-layer { fill: url(#sky-gradient-dark); }
+
+/* ── Stars — hidden in light mode ── */
+.citySvg .sky-stars { opacity: 0; transition: opacity 0.3s ease; }
+[data-theme="dark"] .citySvg .sky-stars { opacity: 1; }
+.citySvg .sky-star { fill: #E2E8F0; opacity: 0.7; }
+
+/* ── City Name Header ── */
+.citySvg .city-name {
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 24px; font-weight: 800; fill: var(--text); letter-spacing: 0.2em;
+}
+[data-theme="dark"] .citySvg .city-name {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.35));
+}
+.citySvg .city-subtitle {
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 9px; font-weight: 500; fill: var(--muted); letter-spacing: 0.25em;
+}
+
+/* ── Project Building Accent Stripe ── */
+.citySvg .bldg-accent { opacity: 0.85; }
+.citySvg .bldg-accent-systems { fill: #3B82F6; }
+.citySvg .bldg-accent-production { fill: #F59E0B; }
+.citySvg .bldg-accent-building { fill: #10B981; }
+[data-theme="dark"] .citySvg .bldg-accent { opacity: 0.9; }
+[data-theme="dark"] .citySvg .bldg-accent-systems { fill: #60A5FA; }
+[data-theme="dark"] .citySvg .bldg-accent-production { fill: #FBBF24; }
+[data-theme="dark"] .citySvg .bldg-accent-building { fill: #34D399; }
+
+/* ── Project Icons ── */
+.citySvg .icon-bg { fill: rgba(255, 255, 255, 0.88); }
+[data-theme="dark"] .citySvg .icon-bg { fill: rgba(15, 23, 42, 0.82); }
+.citySvg .logo-bg { fill: #FFFFFF; rx: 3; }
+[data-theme="dark"] .citySvg .logo-bg { fill: #F8FAFC; }
+.citySvg .project-icon-systems { fill: none; stroke: #3B82F6; stroke-width: 1.3; }
+.citySvg .project-icon-production { fill: none; stroke: #F59E0B; stroke-width: 1.3; }
+.citySvg .project-icon-building { fill: none; stroke: #10B981; stroke-width: 1.3; }
+[data-theme="dark"] .citySvg .project-icon-systems { stroke: #60A5FA; }
+[data-theme="dark"] .citySvg .project-icon-production { stroke: #FBBF24; }
+[data-theme="dark"] .citySvg .project-icon-building { stroke: #34D399; }
+
+/* ── Label Backgrounds ── */
+.citySvg .label-bg { fill: var(--bg); opacity: 0.88; }
+[data-theme="dark"] .citySvg .label-bg { fill: #0F172A; opacity: 0.9; }
+
+/* ══════════════════════════════════════
+   COMMAND PALETTE (cmdk)
+   ══════════════════════════════════════ */
+
+.cmdk-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 20vh;
+  background: rgba(31, 41, 55, 0.4);
+  backdrop-filter: blur(4px);
+}
+[data-theme="dark"] .cmdk-overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.cmdk-root {
+  width: 480px;
+  max-width: 90vw;
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  box-shadow: 8px 8px 0 rgba(31, 41, 55, 0.08);
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
   overflow: hidden;
-  position: relative;
+}
+[data-theme="dark"] .cmdk-root {
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
 }
 
-.ticker-content {
-  animation: ticker-scroll 25s linear infinite;
-  display: inline-flex;
-  will-change: transform;
+.cmdk-root [cmdk-input] {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  border: none;
+  border-bottom: 1px solid var(--panel-divider);
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
 }
 
-@keyframes ticker-scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+.cmdk-root [cmdk-input]::placeholder {
+  color: var(--muted);
+}
+
+.cmdk-root [cmdk-list] {
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.cmdk-root [cmdk-empty] {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.cmdk-root [cmdk-group-heading] {
+  padding: 8px 16px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.cmdk-root [cmdk-item] {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.cmdk-root [cmdk-item][data-selected="true"] {
+  background: #EFF6FF;
+}
+[data-theme="dark"] .cmdk-root [cmdk-item][data-selected="true"] {
+  background: #1E3A5F;
+}
+
+.cmdk-root [cmdk-item]:hover {
+  background: #F5F7FA;
+}
+[data-theme="dark"] .cmdk-root [cmdk-item]:hover {
+  background: #334155;
+}
+
+.cmdk-item-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.cmdk-item-tagline {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ══════════════════════════════════════
+   BOTTOM CONTROLS (⌘K badge + theme toggle)
+   ══════════════════════════════════════ */
+
+.cmdk-hint {
+  position: static;
+  z-index: 40;
+  padding: 6px 12px;
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-divider);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.cmdk-hint:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-toggle {
+  padding: 6px 10px;
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-divider);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+  line-height: 1;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ══════════════════════════════════════
+   PROJECT PANEL
+   ══════════════════════════════════════ */
+
+.project-panel {
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  box-shadow: 4px 4px 0 rgba(31, 41, 55, 0.15);
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+}
+[data-theme="dark"] .project-panel {
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.panel-header { border-bottom: 1px solid var(--panel-divider); }
+.panel-district { color: var(--accent); }
+.panel-status { color: var(--muted); }
+.panel-title { color: var(--foreground); }
+.panel-close { color: var(--foreground); border: 1px solid var(--panel-divider); }
+.panel-tagline { color: var(--muted); }
+.panel-narrative { color: var(--foreground); opacity: 0.85; }
+.panel-section-heading { color: var(--accent); }
+.panel-highlight { color: var(--foreground); opacity: 0.85; border-left: 2px solid var(--accent); }
+.panel-tag { color: var(--foreground); border: 1px solid var(--panel-divider); }
+.panel-link { color: var(--accent); }
+.panel-footer {
+  border-top: 1px solid var(--panel-divider);
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+/* ── Billboard content (foreignObject) ── */
+.billboard-content { color: var(--foreground); }
+
+/* Billboard project details — scrollable content inside foreignObject */
+.billboard-project {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted) transparent;
+}
+.billboard-project::-webkit-scrollbar { width: 4px; }
+.billboard-project::-webkit-scrollbar-track { background: transparent; }
+.billboard-project::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; opacity: 0.5; }
+
+/* PDF iframe inside billboard */
+.billboard-content iframe {
+  background: white;
+}
+[data-theme="dark"] .billboard-content iframe {
+  filter: invert(0.88) hue-rotate(180deg);
 }

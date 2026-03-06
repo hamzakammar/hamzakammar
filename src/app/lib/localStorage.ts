@@ -6,7 +6,7 @@ export const safeLocalStorage = {
     }
     try {
       return window.localStorage.getItem(key);
-    } catch (e) {
+    } catch {
       return null;
     }
   },
@@ -16,7 +16,7 @@ export const safeLocalStorage = {
     }
     try {
       window.localStorage.setItem(key, value);
-    } catch (e) {
+    } catch {
       // Silently fail
     }
   },
@@ -26,7 +26,7 @@ export const safeLocalStorage = {
     }
     try {
       window.localStorage.removeItem(key);
-    } catch (e) {
+    } catch {
       // Silently fail
     }
   },
