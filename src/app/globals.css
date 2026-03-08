@@ -94,15 +94,14 @@ body {
 .citySvg .road-surface { fill: #D5D9E0; }
 [data-theme="dark"] .citySvg .road-surface { fill: #1E293B; }
 
-/* Ground plane — continuous city surface */
+/* Ground plane */
 .citySvg .ground-plane { fill: #ECEEF2; }
 [data-theme="dark"] .citySvg .ground-plane { fill: #151B2B; }
 
-/* Internal streets within districts */
+/* Streets */
 .citySvg .street { fill: #D5D9E0; }
 [data-theme="dark"] .citySvg .street { fill: #1E293B; }
 
-/* Minor connector streets between buildings */
 .citySvg .street-minor { fill: #DEE1E6; stroke: #CDD1D8; stroke-width: 0.3; }
 [data-theme="dark"] .citySvg .street-minor { fill: #1A2332; stroke: #334155; }
 
@@ -110,7 +109,7 @@ body {
 .citySvg .sidewalk { fill: #E5E8EC; }
 [data-theme="dark"] .citySvg .sidewalk { fill: #1A2332; }
 
-/* ── Buildings — Unified 3D Style ── */
+/* ── Buildings — Unified Style ── */
 
 /* Front face */
 .citySvg .bldg-face {
@@ -124,14 +123,6 @@ body {
   stroke: #5A6A7A;
 }
 
-/* District-specific front face tints — very subtle, only on project buildings */
-.citySvg .bldg-face-systems { fill: #E0E5EC; }
-.citySvg .bldg-face-production { fill: #E4E3E0; }
-.citySvg .bldg-face-building { fill: #E1E6E4; }
-[data-theme="dark"] .citySvg .bldg-face-systems { fill: #283442; }
-[data-theme="dark"] .citySvg .bldg-face-production { fill: #2E3038; }
-[data-theme="dark"] .citySvg .bldg-face-building { fill: #283240; }
-
 /* Active & hover states */
 .citySvg .bldg-active { stroke: var(--accent); stroke-width: 2; }
 .citySvg .bldg-hover { stroke: var(--accent); stroke-width: 1.5; }
@@ -144,15 +135,7 @@ body {
 .citySvg .bldg-right { fill: #B8C2CC; stroke: #A0AAB4; stroke-width: 0.3; }
 [data-theme="dark"] .citySvg .bldg-right { fill: #1A2430; stroke: #2A3440; }
 
-/* District-specific right face tints — very subtle */
-.citySvg .bldg-right-systems { fill: #B0B8C4; }
-.citySvg .bldg-right-production { fill: #B6B4B0; }
-.citySvg .bldg-right-building { fill: #B2BAB6; }
-[data-theme="dark"] .citySvg .bldg-right-systems { fill: #1C2838; }
-[data-theme="dark"] .citySvg .bldg-right-production { fill: #202630; }
-[data-theme="dark"] .citySvg .bldg-right-building { fill: #1C2430; }
-
-/* Windows — district details */
+/* Windows */
 .citySvg .bldg-win { fill: #9AA6B2; opacity: 0.55; }
 [data-theme="dark"] .citySvg .bldg-win { fill: #F0D870; opacity: 0.6; }
 
@@ -164,6 +147,32 @@ body {
 .citySvg .bldg-floor-line { stroke: #C8D0D8; stroke-width: 0.5; }
 [data-theme="dark"] .citySvg .bldg-floor-line { stroke: #3A4A5A; }
 
+/* ── Building Accent Stripe — Unified ── */
+.citySvg .bldg-accent { fill: var(--accent); opacity: 0.85; }
+[data-theme="dark"] .citySvg .bldg-accent { opacity: 0.9; }
+
+/* ── Project Icons — Unified ── */
+.citySvg .icon-bg { fill: rgba(255, 255, 255, 0.88); }
+[data-theme="dark"] .citySvg .icon-bg { fill: rgba(15, 23, 42, 0.82); }
+.citySvg .logo-bg { fill: #FFFFFF; rx: 3; }
+[data-theme="dark"] .citySvg .logo-bg { fill: #F8FAFC; }
+.citySvg .project-icon { fill: none; stroke: var(--accent); stroke-width: 1.3; }
+
+/* ── Label Backgrounds ── */
+.citySvg .label-bg { fill: var(--bg); opacity: 0.88; }
+[data-theme="dark"] .citySvg .label-bg { fill: #0F172A; opacity: 0.9; }
+
+/* ── Role Labels on Buildings ── */
+.citySvg .role-label {
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 7px;
+  font-weight: 500;
+  fill: var(--accent);
+  letter-spacing: 0.06em;
+}
+
+
+
 /* ── Billboard panel ── */
 .citySvg .bb-panel { fill: #FFFFFF; stroke: #1F2937; stroke-width: 2; }
 [data-theme="dark"] .citySvg .bb-panel { fill: #1E293B; stroke: #475569; }
@@ -174,7 +183,6 @@ body {
 .citySvg .bb-light { fill: #1D4ED8; opacity: 0.45; }
 [data-theme="dark"] .citySvg .bb-light { fill: #60A5FA; opacity: 0.7; }
 
-
 /* ── Vehicles ── */
 .citySvg .vehicle { opacity: 0.25; }
 [data-theme="dark"] .citySvg .vehicle { opacity: 0.35; }
@@ -183,13 +191,7 @@ body {
 .citySvg .pedestrian { opacity: 0.2; }
 [data-theme="dark"] .citySvg .pedestrian { opacity: 0.35; }
 
-/* ── District entry signs ── */
-.citySvg .district-sign-bg { fill: #F8F9FA; stroke: #B0B8C4; stroke-width: 0.5; }
-[data-theme="dark"] .citySvg .district-sign-bg { fill: #1E293B; stroke: #475569; }
-.citySvg .district-sign-text {
-  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
-  font-size: 6px; font-weight: 600; fill: var(--muted); letter-spacing: 0.1em;
-}
+/* (district entry signs removed — unified city) */
 
 /* ── Animations ── */
 
@@ -225,7 +227,7 @@ body {
 [data-theme="dark"] .citySvg .sky-stars { opacity: 1; }
 .citySvg .sky-star { fill: #E2E8F0; opacity: 0.7; }
 
-/* ── City Name Header ── */
+/* ── City Name Header (unused but kept for reference) ── */
 .citySvg .city-name {
   font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
   font-size: 24px; font-weight: 800; fill: var(--text); letter-spacing: 0.2em;
@@ -239,31 +241,14 @@ body {
   font-size: 9px; font-weight: 500; fill: var(--muted); letter-spacing: 0.25em;
 }
 
-/* ── Project Building Accent Stripe ── */
-.citySvg .bldg-accent { opacity: 0.85; }
-.citySvg .bldg-accent-systems { fill: #3B82F6; }
-.citySvg .bldg-accent-production { fill: #F59E0B; }
-.citySvg .bldg-accent-building { fill: #10B981; }
-[data-theme="dark"] .citySvg .bldg-accent { opacity: 0.9; }
-[data-theme="dark"] .citySvg .bldg-accent-systems { fill: #60A5FA; }
-[data-theme="dark"] .citySvg .bldg-accent-production { fill: #FBBF24; }
-[data-theme="dark"] .citySvg .bldg-accent-building { fill: #34D399; }
-
-/* ── Project Icons ── */
-.citySvg .icon-bg { fill: rgba(255, 255, 255, 0.88); }
-[data-theme="dark"] .citySvg .icon-bg { fill: rgba(15, 23, 42, 0.82); }
-.citySvg .logo-bg { fill: #FFFFFF; rx: 3; }
-[data-theme="dark"] .citySvg .logo-bg { fill: #F8FAFC; }
-.citySvg .project-icon-systems { fill: none; stroke: #3B82F6; stroke-width: 1.3; }
-.citySvg .project-icon-production { fill: none; stroke: #F59E0B; stroke-width: 1.3; }
-.citySvg .project-icon-building { fill: none; stroke: #10B981; stroke-width: 1.3; }
-[data-theme="dark"] .citySvg .project-icon-systems { stroke: #60A5FA; }
-[data-theme="dark"] .citySvg .project-icon-production { stroke: #FBBF24; }
-[data-theme="dark"] .citySvg .project-icon-building { stroke: #34D399; }
-
-/* ── Label Backgrounds ── */
-.citySvg .label-bg { fill: var(--bg); opacity: 0.88; }
-[data-theme="dark"] .citySvg .label-bg { fill: #0F172A; opacity: 0.9; }
+/* ── Billboard CTA pulse ── */
+@keyframes cta-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+.billboard-cta {
+  animation: cta-pulse 3s ease-in-out infinite;
+}
 
 /* ══════════════════════════════════════
    COMMAND PALETTE (cmdk)
@@ -452,10 +437,243 @@ body {
 .billboard-project::-webkit-scrollbar-track { background: transparent; }
 .billboard-project::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; opacity: 0.5; }
 
-/* PDF iframe inside billboard */
+/* PDF iframe inside billboard — no filter, stays crisp */
 .billboard-content iframe {
   background: white;
 }
 [data-theme="dark"] .billboard-content iframe {
-  filter: invert(0.88) hue-rotate(180deg);
+  filter: none;
+  border: 1px solid var(--panel-border);
+}
+
+/* ══════════════════════════════════════
+   CONTACT BAR
+   ══════════════════════════════════════ */
+
+.contact-bar {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 30;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.contact-bar a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--muted);
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-divider);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.contact-bar a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.contact-bar a svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ══════════════════════════════════════
+   MOBILE RESPONSIVENESS
+   ══════════════════════════════════════ */
+
+.city-hero {
+  height: 280px;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.mobile-header {
+  padding: 24px 20px 16px;
+  text-align: center;
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+}
+
+.mobile-header h1 {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: var(--foreground);
+  margin: 0 0 4px;
+}
+
+.mobile-header .subtitle {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin: 0 0 4px;
+}
+
+.mobile-header .school {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.mobile-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.mobile-highlight-item {
+  font-size: 12px;
+  color: var(--foreground);
+  line-height: 1.5;
+  padding-left: 8px;
+  border-left: 2px solid var(--accent);
+}
+
+.mobile-contact {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 20px;
+}
+
+.mobile-contact a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--muted);
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-divider);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.mobile-contact a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.mobile-contact a svg {
+  width: 18px;
+  height: 18px;
+}
+
+.mobile-projects {
+  padding: 16px 20px 40px;
+}
+
+.mobile-projects h2 {
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 12px;
+}
+
+.mobile-card {
+  background: var(--panel-bg);
+  border: 1.5px solid var(--panel-divider);
+  padding: 16px;
+  margin-bottom: 12px;
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.mobile-card:hover,
+.mobile-card.expanded {
+  border-color: var(--accent);
+}
+
+.mobile-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.mobile-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0 0 4px;
+}
+
+.mobile-card .card-tagline {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.mobile-card .card-status {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.mobile-card .card-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.mobile-card .card-stack span {
+  font-size: 10px;
+  padding: 2px 8px;
+  border: 1px solid var(--panel-divider);
+  color: var(--foreground);
+}
+
+.mobile-card-expanded {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--panel-divider);
+}
+
+.mobile-card-expanded p {
+  font-size: 12px;
+  color: var(--foreground);
+  opacity: 0.85;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+
+.mobile-card-expanded .highlights {
+  margin-bottom: 12px;
+}
+
+.mobile-card-expanded .highlights li {
+  font-size: 11px;
+  color: var(--foreground);
+  opacity: 0.85;
+  line-height: 1.5;
+  padding-left: 8px;
+  margin-bottom: 6px;
+  border-left: 2px solid var(--accent);
+}
+
+.mobile-card-expanded .card-links {
+  display: flex;
+  gap: 12px;
+}
+
+.mobile-card-expanded .card-links a {
+  font-size: 11px;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }

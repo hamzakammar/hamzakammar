@@ -88,25 +88,11 @@ export default function CitySvg({
   );
 
   /* ═══════ WINDOW / ACCENT HELPERS ═══════ */
-  const systemsWindows = (x: number, y: number, w: number, h: number) => {
+  const projectWindows = (x: number, y: number, w: number, h: number) => {
     const els: React.ReactElement[] = [];
     for (let wy = y + 10; wy + 2 < y + h - 10; wy += 7)
       for (let wx = x + 6; wx + 8 < x + w - 4; wx += 11)
         els.push(<rect key={`sw${wx}_${wy}`} className="bldg-win" x={wx} y={wy} width={8} height={2} rx={0.3} />);
-    return <g style={{ pointerEvents: "none" }}>{els}</g>;
-  };
-  const productionWindows = (x: number, y: number, w: number, h: number) => {
-    const els: React.ReactElement[] = [];
-    for (let wy = y + 12; wy + 6 < y + h - 14; wy += 20)
-      for (let wx = x + 8; wx + 6 < x + w - 6; wx += 20)
-        els.push(<rect key={`pw${wx}_${wy}`} className="bldg-win" x={wx} y={wy} width={6} height={6} rx={0.5} />);
-    return <g style={{ pointerEvents: "none" }}>{els}</g>;
-  };
-  const modernWindows = (x: number, y: number, w: number, h: number) => {
-    const els: React.ReactElement[] = [];
-    for (let wy = y + 10; wy + 8 < y + h - 10; wy += 12)
-      for (let wx = x + 6; wx + 3 < x + w - 4; wx += 7)
-        els.push(<rect key={`mw${wx}_${wy}`} className="bldg-win" x={wx} y={wy} width={3} height={8} rx={0.3} />);
     return <g style={{ pointerEvents: "none" }}>{els}</g>;
   };
   const floorLines = (x: number, y: number, w: number, h: number) => {
@@ -129,15 +115,6 @@ export default function CitySvg({
       <circle cx={x + w / 2} cy={y - D - 15} r="1" fill="#60A5FA" opacity="0.7" />
     </g>
   );
-  const dockDoor = (x: number, y: number, w: number, h: number) => (
-    <g style={{ pointerEvents: "none" }}>
-      <rect className="bldg-door" x={x + w / 2 - 8} y={y + h - 12} width={16} height={12} rx={0.5} />
-      {[3, 6, 9].map(dy => (
-        <line key={`dd${dy}`} x1={x + w / 2 - 6} y1={y + h - 12 + dy} x2={x + w / 2 + 6} y2={y + h - 12 + dy}
-          stroke="#5A6A7A" strokeWidth="0.3" opacity="0.5" />
-      ))}
-    </g>
-  );
   const rooftopGarden = (x: number, y: number, w: number) => (
     <g style={{ pointerEvents: "none" }}>
       <rect x={x + 2} y={y - D + 1} width={w - 4} height={3} rx={0.5} fill="#8BA88E" opacity={0.55} />
@@ -149,8 +126,8 @@ export default function CitySvg({
   );
 
   /* ═══════ PROJECT ICONS ═══════ */
-  const projectIcon = (id: string, name: string, cx: number, cy: number, district: "systems" | "production" | "building", logo?: string) => {
-    const cls = `project-icon-${district}`;
+  const projectIcon = (id: string, name: string, cx: number, cy: number, logo?: string, role?: string) => {
+    const cls = "project-icon";
     const shapes: Record<string, React.ReactNode> = {
       kuzu: (<>{/* Database cylinder */}
         <ellipse cx={cx} cy={cy - 3} rx={4.5} ry={2} className={cls} />
@@ -180,10 +157,6 @@ export default function CitySvg({
         <line x1={cx} y1={cy - 5} x2={cx} y2={cy + 5} className={cls} />
         <line x1={cx - 4} y1={cy - 1} x2={cx + 4} y2={cy - 1} className={cls} />
       </>),
-      flourishing: (<>{/* House */}
-        <polygon points={`${cx},${cy - 5} ${cx - 6},${cy} ${cx + 6},${cy}`} className={cls} />
-        <rect x={cx - 3} y={cy} width={6} height={5} className={cls} />
-      </>),
       dealish: (<>{/* Target/discovery */}
         <circle cx={cx} cy={cy} r={5} className={cls} />
         <line x1={cx} y1={cy - 6} x2={cx} y2={cy + 6} className={cls} />
@@ -193,15 +166,15 @@ export default function CitySvg({
         <polyline points={`${cx - 2},${cy - 5} ${cx - 6},${cy} ${cx - 2},${cy + 5}`} className={cls} fill="none" />
         <polyline points={`${cx + 2},${cy - 5} ${cx + 6},${cy} ${cx + 2},${cy + 5}`} className={cls} fill="none" />
       </>),
-      mentai: (<>{/* Heart */}
-        <path d={`M${cx},${cy + 4} C${cx - 7},${cy - 1} ${cx - 4},${cy - 6} ${cx},${cy - 1} C${cx + 4},${cy - 6} ${cx + 7},${cy - 1} ${cx},${cy + 4}Z`} className={cls} />
-      </>),
-      classRep: (<>{/* Star */}
-        <polygon points={`${cx},${cy - 5} ${cx + 2},${cy - 1.5} ${cx + 5.5},${cy - 1} ${cx + 3},${cy + 1.5} ${cx + 4},${cy + 5} ${cx},${cy + 3} ${cx - 4},${cy + 5} ${cx - 3},${cy + 1.5} ${cx - 5.5},${cy - 1} ${cx - 2},${cy - 1.5}`} className={cls} />
+      uw: (<>{/* Graduation cap */}
+        <polygon points={`${cx},${cy - 5} ${cx - 7},${cy - 1} ${cx},${cy + 1} ${cx + 7},${cy - 1}`} className={cls} />
+        <line x1={cx} y1={cy + 1} x2={cx} y2={cy + 5} className={cls} />
+        <line x1={cx - 4} y1={cy + 3} x2={cx + 4} y2={cy + 3} className={cls} />
       </>),
     };
     const nameY = cy + 18;
     const tw = name.length * 5.5;
+    const roleY = nameY + 10;
     return (
       <g key={`sign-${id}`} style={{ pointerEvents: "none" }}>
         {logo ? (
@@ -217,9 +190,13 @@ export default function CitySvg({
           </>
         )}
         <rect className="label-bg" x={cx - tw / 2 - 3} y={nameY - 8}
-          width={tw + 6} height={11} rx={2} />
+          width={tw + 6} height={role ? 20 : 11} rx={2} />
         <text className="node" x={cx} y={nameY}
           textAnchor="middle" style={{ fontSize: "9px" }}>{name}</text>
+        {role && (
+          <text className="role-label" x={cx} y={roleY}
+            textAnchor="middle">{role}</text>
+        )}
       </g>
     );
   };
@@ -227,7 +204,6 @@ export default function CitySvg({
   /* ═══════ BUILDING RENDERER ═══════ */
   const bldg = (
     id: string | null, x: number, y: number, w: number, h: number,
-    district: "systems" | "production" | "building",
   ) => {
     const isActive = id !== null && id === activeProjectId;
     const isHover = id !== null && id === hoverId;
@@ -241,24 +217,21 @@ export default function CitySvg({
         onMouseLeave={id ? () => setHoverId(null) : undefined}>
         <polygon className="bldg-top"
           points={`${x},${y} ${x + D},${y - D} ${x + w + D},${y - D} ${x + w},${y}`} />
-        <polygon className={`bldg-right${!isFiller ? ` bldg-right-${district}` : ""}`}
+        <polygon className="bldg-right"
           points={`${x + w},${y} ${x + w + D},${y - D} ${x + w + D},${y + h - D} ${x + w},${y + h}`} />
         <rect x={x} y={y} width={w} height={h} rx={1}
-          className={`bldg-face${!isFiller ? ` bldg-face-${district}` : ""}${isActive ? " bldg-active" : ""}${isHover ? " bldg-hover" : ""}`}
+          className={`bldg-face${isActive ? " bldg-active" : ""}${isHover ? " bldg-hover" : ""}`}
           filter="url(#shadow)" />
         {!isFiller && (
-          <rect className={`bldg-accent bldg-accent-${district}`}
+          <rect className="bldg-accent"
             x={x + 1} y={y + 1} width={w - 2} height={3} rx={0.5}
             style={{ pointerEvents: "none" }} />
         )}
-        {!isFiller && district === "systems" && systemsWindows(x, y, w, h)}
-        {!isFiller && district === "production" && productionWindows(x, y, w, h)}
-        {!isFiller && district === "building" && modernWindows(x, y, w, h)}
+        {!isFiller && projectWindows(x, y, w, h)}
         {isFiller && (x + y) % 3 === 0 && h > 50 && fillerWindows(x, y, w, h)}
         {isFiller && ((x + y) % 3 !== 0 || h <= 50) && floorLines(x, y, w, h)}
-        {!isFiller && district === "systems" && h > 120 && antennaAccent(x, y, w)}
-        {!isFiller && district === "production" && dockDoor(x, y, w, h)}
-        {!isFiller && district === "building" && rooftopGarden(x, y, w)}
+        {!isFiller && h > 120 && antennaAccent(x, y, w)}
+        {!isFiller && rooftopGarden(x, y, w)}
         {isFiller && h > 150 && (x % 5 === 0) && antennaAccent(x, y, w)}
         {isFiller && (x * 3 + y) % 7 === 0 && (
           <rect x={x + w / 2 - 3} y={y - D + 1} width={6} height={4} rx={0.5}
@@ -272,8 +245,8 @@ export default function CitySvg({
     );
   };
 
-  const F = (data: [number, number, number, number][], district: "systems" | "production" | "building") =>
-    data.map(([x, y, w, h]) => bldg(null, x, y, w, h, district));
+  const F = (data: [number, number, number, number][]) =>
+    data.map(([x, y, w, h]) => bldg(null, x, y, w, h));
 
   const bldgStepped = (
     x: number, y: number, baseW: number, totalH: number,
@@ -311,8 +284,6 @@ export default function CitySvg({
   };
 
   /* ═══════ BILLBOARD ═══════ */
-  const SL: Record<string, string> = { shipped: "Shipped", ongoing: "In Progress", experimental: "Experimental" };
-  const DA: Record<string, string> = { systems: "#3B82F6", production: "#F59E0B", building: "#10B981" };
   const mono = "var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace";
 
   const billboardContent = activeProject ? (
@@ -320,73 +291,94 @@ export default function CitySvg({
       fontFamily: mono, padding: "0", height: "100%", overflowY: "auto", position: "relative",
     }}>
       {/* Accent bar */}
-      <div style={{ height: "3px", background: DA[activeProject.district] || "var(--accent)" }} />
+      <div style={{ height: "3px", background: "var(--accent)" }} />
       <div style={{ padding: "10px 14px 12px" }}>
         <button onClick={(e) => { e.stopPropagation(); onClose?.(); }}
           style={{ position: "absolute", top: 8, right: 10, background: "none", border: "none",
-            cursor: "pointer", fontSize: "11px", color: "var(--muted)", lineHeight: 1, padding: "2px 4px" }}
-          aria-label="Close">✕</button>
-        <div style={{ fontSize: "6px", textTransform: "uppercase", letterSpacing: "0.15em",
-          color: "var(--muted)", marginBottom: "2px", fontWeight: 500 }}>
-          {SL[activeProject.status!] || activeProject.status}
+            cursor: "pointer", fontSize: "12px", color: "var(--muted)", lineHeight: 1, padding: "2px 4px" }}
+          aria-label="Close">&#x2715;</button>
+
+        {/* Title — big, bold, the hero */}
+        <div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "0.04em",
+          color: "var(--foreground)", marginBottom: activeProject.role ? "2px" : "6px" }}>{activeProject.title}</div>
+        {activeProject.role && (
+          <div style={{ fontSize: "8px", fontWeight: 600, letterSpacing: "0.1em",
+            color: "var(--accent)", textTransform: "uppercase" as const, marginBottom: "6px" }}>{activeProject.role}</div>
+        )}
+
+        {/* Narrative — the story, not bullet points */}
+        <div style={{ fontSize: "9px", color: "var(--foreground)", lineHeight: 1.7,
+          opacity: 0.85, marginBottom: "10px" }}>
+          {activeProject.narrative}
         </div>
-        <div style={{ fontSize: "15px", fontWeight: 700, letterSpacing: "0.04em",
-          color: "var(--foreground)", marginBottom: "2px" }}>{activeProject.title}</div>
-        <div style={{ fontSize: "7.5px", color: DA[activeProject.district] || "var(--accent)",
-          lineHeight: 1.5, marginBottom: "8px", fontWeight: 500 }}>{activeProject.tagline}</div>
-        <div style={{ width: "100%", height: "1px", background: "var(--panel-divider)", marginBottom: "8px", opacity: 0.4 }} />
-        {activeProject.highlights.slice(0, 2).map((h, i) => (
-          <div key={i} style={{ fontSize: "6.5px", color: "var(--foreground)", lineHeight: 1.6,
-            paddingLeft: "7px", marginBottom: "3px",
-            borderLeft: `2px solid ${DA[activeProject.district] || "var(--accent)"}` }}>{h}</div>
-        ))}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "3px", marginTop: "8px", marginBottom: "8px" }}>
-          {activeProject.stack.map((tech) => (
-            <span key={tech} style={{ fontSize: "6px", padding: "1px 5px",
-              border: "1px solid var(--panel-border)", color: "var(--foreground)", borderRadius: "2px" }}>{tech}</span>
-          ))}
+
+        {/* Stack — inline subtle text, not noisy pills */}
+        <div style={{ fontSize: "8px", color: "var(--muted)", marginBottom: "10px",
+          letterSpacing: "0.03em" }}>
+          {activeProject.stack.join(" \u00B7 ")}
         </div>
+
+        {/* Video embed if present */}
         {activeProject.videoUrl && (
           <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%", marginBottom: "8px" }}>
             <iframe src={activeProject.videoUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "1px solid var(--panel-border)" }}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
           </div>
         )}
+
+        {/* Links — prominent, accent-colored */}
         {activeProject.links && Object.keys(activeProject.links).length > 0 && (
           <div style={{ display: "flex", gap: "6px" }}>
             {activeProject.links.demo && (
               <a href={activeProject.links.demo} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: "6.5px", color: DA[activeProject.district], textDecoration: "none",
-                  padding: "2px 8px", border: `1px solid ${DA[activeProject.district]}`, borderRadius: "2px", fontWeight: 600 }}>Live Demo →</a>
+                style={{ fontSize: "8.5px", color: "var(--accent)", textDecoration: "none",
+                  padding: "3px 10px", border: "1px solid var(--accent)", borderRadius: "2px", fontWeight: 600 }}>Live Demo &#x2192;</a>
             )}
             {activeProject.links.github && (
               <a href={activeProject.links.github} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: "6.5px", color: DA[activeProject.district], textDecoration: "none",
-                  padding: "2px 8px", border: `1px solid ${DA[activeProject.district]}`, borderRadius: "2px", fontWeight: 600 }}>Source →</a>
+                style={{ fontSize: "8.5px", color: "var(--accent)", textDecoration: "none",
+                  padding: "3px 10px", border: "1px solid var(--accent)", borderRadius: "2px", fontWeight: 600 }}>Source &#x2192;</a>
             )}
           </div>
         )}
       </div>
     </div>
   ) : showResume ? (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div style={{ width: "100%", height: "100%", position: "relative" }}>
       <iframe src="/resume.pdf" style={{ width: "100%", height: "100%", border: "none", background: "white" }} title="Resume Preview" />
+      <a href="/resume.pdf" target="_blank" rel="noopener noreferrer"
+        style={{ position: "absolute", bottom: "4px", right: "6px", fontSize: "6.5px",
+          color: "var(--accent)", textDecoration: "none", fontFamily: mono,
+          background: "var(--panel-bg)", padding: "2px 6px", borderRadius: "2px",
+          border: "1px solid var(--panel-border)", fontWeight: 600 }}>
+        Open Full Resume &#x2197;
+      </a>
     </div>
   ) : (
     <div className="billboard-content" style={{
       fontFamily: mono, padding: "16px 18px", height: "100%",
       display: "flex", flexDirection: "column" as const, justifyContent: "center", alignItems: "center", textAlign: "center" as const,
     }}>
-      <div style={{ fontSize: "18px", fontWeight: 800, letterSpacing: "0.15em",
+      <div style={{ fontSize: "22px", fontWeight: 900, letterSpacing: "0.15em",
         color: "var(--foreground)", marginBottom: "4px" }}>HAMZA AMMAR</div>
-      <div style={{ fontSize: "8px", fontWeight: 500, letterSpacing: "0.25em",
-        color: "var(--accent)", textTransform: "uppercase" as const, marginBottom: "12px" }}>Software Engineer</div>
-      <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "12px" }} />
-      <div style={{ fontSize: "7px", color: "var(--muted)", lineHeight: 1.7, maxWidth: "300px", marginBottom: "14px" }}>
-        Building systems that matter — from database internals to production platforms. University of Waterloo, Software Engineering 2030.
+      <div style={{ fontSize: "8px", fontWeight: 500, letterSpacing: "0.28em",
+        color: "var(--accent)", textTransform: "uppercase" as const, marginBottom: "4px" }}>Software Engineer</div>
+      <div style={{ fontSize: "7.5px", fontWeight: 400, letterSpacing: "0.08em",
+        color: "var(--muted)", marginBottom: "10px" }}>University of Waterloo &middot; Software Engineering</div>
+      <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "10px" }} />
+      <div style={{ width: "100%", maxWidth: "320px", textAlign: "left" as const, marginBottom: "12px" }}>
+        {[
+          "Youngest intern at Kùzu DB \u2014 query planner internals",
+          "Shipped data infra to 3,500+ pharmacists",
+          "Co-Founded Dealish \u2014 food discovery app",
+        ].map((line, i) => (
+          <div key={i} style={{ fontSize: "7px", color: "var(--foreground)", lineHeight: 1.5,
+            paddingLeft: "6px", marginBottom: "2px",
+            borderLeft: "2px solid var(--accent)" }}>{line}</div>
+        ))}
       </div>
-      <div style={{ fontSize: "6.5px", color: "var(--muted)", letterSpacing: "0.12em",
-        textTransform: "uppercase" as const, opacity: 0.5 }}>
+      <div className="billboard-cta" style={{ fontSize: "7px", color: "var(--accent)", letterSpacing: "0.12em",
+        textTransform: "uppercase" as const }}>
         Click a building or press &#x2318;K to explore
       </div>
     </div>
@@ -464,7 +456,7 @@ export default function CitySvg({
           <line key={`gh${yy}`} className="gridLine" x1={0} y1={yy} x2={1200} y2={yy} />)}
       </g>
 
-      {/* ═══════ ROADS — two arteries through one city ═══════ */}
+      {/* ═══════ ROADS ═══════ */}
       <g id="roads">
         <rect className="sidewalk" x="556" y="0" width="4" height="700" rx={0.5} />
         <rect className="sidewalk" x="578" y="0" width="4" height="700" rx={0.5} />
@@ -496,15 +488,15 @@ export default function CitySvg({
         <text className="road-label" x="581" y="56" opacity="0.6">HACKATHON ST</text>
         <text className="road-label" x="40" y="367" opacity="0.6">INFRASTRUCTURE AVE</text>
 
-        {/* Cross-streets connecting the grid */}
+        {/* Cross-streets */}
         {[140,300,440].map(x => <rect key={`xs${x}`} className="street" x={x} y="358" width="6" height="34" rx={1} opacity="0.6" />)}
         {[700,880,1060].map(x => <rect key={`xb${x}`} className="street" x={x} y="358" width="6" height="34" rx={1} opacity="0.6" />)}
 
-        {/* Lamp posts along roads */}
+        {/* Lamp posts */}
         {lampPosts([[556,120],[556,250],[556,460],[556,590],[582,160],[582,320],[582,500],[582,650]])}
         {lampPosts([[120,366],[280,366],[440,366],[700,366],[880,366],[1060,366]])}
 
-        {/* Trees lining the roads */}
+        {/* Trees */}
         {trees([80,200,360,520,660,820,1000,1150], 366)}
 
         {/* Data pulses */}
@@ -524,7 +516,7 @@ export default function CitySvg({
         {vehicle(900,372,"h","#6B7280")}
         {vehicle(1100,374,"h","#7A8493")}
 
-        {/* Pedestrians near intersection */}
+        {/* Pedestrians */}
         {pedestrian(548,370)}
         {pedestrian(590,388)}
         {pedestrian(555,394)}
@@ -540,23 +532,20 @@ export default function CitySvg({
         {busStop(545,520)}
       </g>
 
-      {/* ═══════════════════════════════════════════
-          TOP-LEFT — Systems buildings (x:5-545, y:40-365)
-          drawn back→front for depth layering
-          ═══════════════════════════════════════════ */}
+      {/* ═══════ TOP-LEFT (x:5-545, y:40-365) ═══════ */}
       <g id="tl">
-        {/* BACK ROW — tallest skyline */}
-        {bldg(null, 5, 65, 35, 208, "systems")}
-        {bldg("kuzu", 48, 48, 72, 230, "systems")}
+        {/* BACK ROW */}
+        {bldg(null, 5, 65, 35, 208)}
+        {bldg("kuzu", 48, 48, 72, 230)}
         {bldgStepped(130, 70, 32, 198, 0.6)}
-        {bldg("chess", 168, 55, 60, 222, "systems")}
-        {bldg(null, 238, 74, 26, 190, "systems")}
-        {bldg("horizon", 274, 60, 52, 218, "systems")}
-        {bldg(null, 336, 78, 26, 182, "systems")}
-        {bldg("unimap", 372, 62, 46, 212, "systems")}
-        {bldg(null, 428, 68, 28, 200, "systems")}
+        {bldg("chess", 168, 55, 60, 222)}
+        {bldg(null, 238, 74, 26, 190)}
+        {bldg("horizon", 274, 60, 52, 218)}
+        {bldg(null, 336, 78, 26, 182)}
+        {bldg("unimap", 372, 62, 46, 212)}
+        {bldg(null, 428, 68, 28, 200)}
         {bldgStepped(466, 58, 34, 210, 0.55)}
-        {bldg(null, 506, 72, 28, 194, "systems")}
+        {bldg(null, 506, 72, 28, 194)}
 
         {/* MID ROW */}
         {F([
@@ -564,40 +553,37 @@ export default function CitySvg({
           [142,170,22,108],[174,150,26,135],[208,165,24,118],[242,155,22,128],
           [276,172,24,105],[310,155,26,128],[346,168,22,112],[380,152,24,132],
           [414,170,22,108],[448,155,24,128],[482,168,22,112],[516,155,26,125],
-        ], "systems")}
+        ])}
 
-        {/* FRONT ROW — tight to road */}
+        {/* FRONT ROW */}
         {F([
           [5,292,22,60],[35,286,20,68],[63,296,22,55],[93,284,24,72],
           [125,294,20,60],[153,288,22,65],[183,298,20,55],[211,284,24,72],
           [243,292,20,62],[273,300,22,52],[303,286,24,70],[335,296,20,58],
           [365,288,22,65],[395,298,20,55],[425,284,24,72],[457,294,20,60],
           [487,288,22,66],[517,296,20,56],
-        ], "systems")}
+        ])}
 
-        {/* Street life */}
         {greenArea(240,285,16,8)}
         {pedestrian(120,290)}
         {pedestrian(380,292)}
       </g>
 
-      {/* ═══════════════════════════════════════════
-          TOP-RIGHT — Building district (x:585-1185, y:40-365)
-          ═══════════════════════════════════════════ */}
+      {/* ═══════ TOP-RIGHT (x:585-1185, y:40-365) ═══════ */}
       <g id="tr">
         {/* BACK ROW */}
-        {bldg(null, 585, 68, 30, 202, "building")}
-        {bldg("dealish", 624, 48, 78, 230, "building")}
+        {bldg(null, 585, 68, 30, 202)}
+        {bldg("dealish", 624, 48, 78, 230)}
         {bldgStepped(712, 72, 32, 195, 0.6)}
-        {bldg("neodev", 750, 52, 65, 225, "building")}
-        {bldg(null, 825, 75, 26, 188, "building")}
-        {bldg("mentai", 861, 58, 52, 218, "building")}
-        {bldg(null, 923, 78, 26, 185, "building")}
-        {bldg("classRep", 959, 55, 48, 222, "building")}
-        {bldg(null, 1017, 70, 28, 198, "building")}
+        {bldg("neodev", 750, 52, 65, 225)}
+        {bldg(null, 825, 75, 26, 188)}
+        {bldg(null, 861, 68, 52, 208)}
+        {bldg(null, 923, 78, 26, 185)}
+        {bldg("uw", 959, 55, 48, 222)}
+        {bldg(null, 1017, 70, 28, 198)}
         {bldgStepped(1055, 62, 36, 210, 0.55)}
-        {bldg(null, 1097, 75, 28, 192, "building")}
-        {bldg(null, 1135, 68, 30, 200, "building")}
+        {bldg(null, 1097, 75, 28, 192)}
+        {bldg(null, 1135, 68, 30, 200)}
 
         {/* MID ROW */}
         {F([
@@ -606,7 +592,7 @@ export default function CitySvg({
           [856,172,24,105],[890,155,26,128],[924,168,22,112],[958,150,24,132],
           [992,168,22,108],[1026,155,24,128],[1060,170,22,110],[1094,152,26,128],
           [1128,168,22,108],[1162,155,24,122],
-        ], "building")}
+        ])}
 
         {/* FRONT ROW */}
         {F([
@@ -616,31 +602,28 @@ export default function CitySvg({
           [922,288,22,65],[950,298,20,55],[978,284,24,72],[1006,294,20,60],
           [1034,288,22,66],[1062,296,20,56],[1090,284,24,70],[1118,294,20,58],
           [1146,288,22,65],
-        ], "building")}
+        ])}
 
-        {/* Street life */}
         {greenArea(860,285,16,8)}
         {pedestrian(740,290)}
         {pedestrian(1060,292)}
       </g>
 
-      {/* ═══════════════════════════════════════════
-          BOTTOM-LEFT — Production (x:5-545, y:395-695)
-          ═══════════════════════════════════════════ */}
+      {/* ═══════ BOTTOM-LEFT (x:5-545, y:395-695) ═══════ */}
       <g id="bl">
-        {/* BACK ROW — taller to match top skyline */}
-        {bldg(null, 5, 395, 30, 185, "production")}
-        {bldg("mapflow", 44, 393, 65, 192, "production")}
-        {bldg(null, 118, 398, 26, 180, "production")}
-        {bldg("CC", 154, 393, 56, 190, "production")}
+        {/* BACK ROW */}
+        {bldg(null, 5, 395, 30, 185)}
+        {bldg("mapflow", 44, 393, 65, 192)}
+        {bldg(null, 118, 398, 26, 180)}
+        {bldg("CC", 154, 393, 56, 190)}
         {bldgStepped(220, 400, 28, 175, 0.6)}
-        {bldg("flourishing", 254, 395, 48, 188, "production")}
-        {bldg(null, 312, 398, 26, 180, "production")}
-        {bldg(null, 348, 393, 28, 190, "production")}
-        {bldg(null, 386, 400, 24, 175, "production")}
-        {bldg(null, 420, 395, 26, 185, "production")}
+        {bldg(null, 254, 400, 48, 183)}
+        {bldg(null, 312, 398, 26, 180)}
+        {bldg(null, 348, 393, 28, 190)}
+        {bldg(null, 386, 400, 24, 175)}
+        {bldg(null, 420, 395, 26, 185)}
         {bldgStepped(456, 393, 32, 190, 0.55)}
-        {bldg(null, 494, 398, 26, 180, "production")}
+        {bldg(null, 494, 398, 26, 180)}
 
         {/* MID ROW */}
         {F([
@@ -648,7 +631,7 @@ export default function CitySvg({
           [140,480,22,82],[172,468,24,94],[206,480,26,80],[240,472,22,90],
           [274,484,24,76],[308,470,26,90],[342,480,22,82],[376,468,24,92],
           [410,482,22,78],[444,470,26,90],[478,480,24,80],[512,472,22,88],
-        ], "production")}
+        ])}
 
         {/* FRONT ROW */}
         {F([
@@ -657,7 +640,7 @@ export default function CitySvg({
           [249,554,22,56],[281,560,20,48],[311,546,24,64],[343,556,20,54],
           [375,548,22,60],[407,558,20,50],[439,544,24,66],[471,554,20,56],
           [503,548,22,60],
-        ], "production")}
+        ])}
 
         {/* BOTTOM EDGE ROW */}
         {F([
@@ -666,40 +649,37 @@ export default function CitySvg({
           [252,632,22,46],[284,626,20,52],[316,634,22,42],[348,624,24,55],
           [380,636,20,40],[412,628,22,50],[444,634,20,44],[476,624,24,55],
           [508,632,22,46],
-        ], "production")}
+        ])}
 
-        {/* Street life */}
         {pedestrian(200,548)}
         {pedestrian(420,550)}
       </g>
 
-      {/* ═══════════════════════════════════════════
-          BOTTOM-RIGHT — Billboard + dense fill (x:585-1190, y:395-695)
-          ═══════════════════════════════════════════ */}
+      {/* ═══════ BOTTOM-RIGHT — Billboard area (x:585-1190, y:395-695) ═══════ */}
       <g id="br">
-        {/* Left strip — narrow column beside billboard */}
+        {/* Left strip */}
         {F([
           [585,393,24,115],[585,520,22,95],[585,628,24,55],
           [614,393,22,100],[614,508,24,88],[614,612,22,65],
-        ], "building")}
+        ])}
 
-        {/* Right of billboard — taller rows packed */}
+        {/* Right of billboard */}
         {bldgStepped(1060, 393, 32, 120, 0.55)}
-        {bldg(null, 1098, 390, 26, 128, "building")}
+        {bldg(null, 1098, 390, 26, 128)}
         {bldgStepped(1136, 396, 32, 115, 0.6)}
-        {bldg(null, 1172, 393, 24, 122, "building")}
+        {bldg(null, 1172, 393, 24, 122)}
         {F([
           [1060,528,26,90],[1098,522,28,95],[1136,532,26,85],[1172,525,24,92],
           [1060,632,28,50],[1098,628,26,55],[1136,635,28,48],[1172,630,24,52],
-        ], "building")}
+        ])}
 
-        {/* Below billboard — short row */}
+        {/* Below billboard */}
         {F([
           [638,652,22,38],[668,648,24,42],[700,654,22,36],[730,648,24,42],
           [762,652,22,38],[794,648,24,42],[826,654,22,36],[858,648,24,42],
           [890,652,22,38],[922,648,24,42],[954,654,22,36],[986,648,24,40],
           [1018,652,22,38],
-        ], "building")}
+        ])}
 
         {/* ── BILLBOARD ── */}
         <g id="billboard">
@@ -716,31 +696,25 @@ export default function CitySvg({
         </g>
       </g>
 
-      {/* ═══════ ROAD-EDGE BRIDGES — stitch quadrants together ═══════ */}
+      {/* ═══════ ROAD-EDGE BRIDGES ═══════ */}
       <g id="bridges" style={{ pointerEvents: "none" }}>
-        {/* Along vertical road — left shoulder (x~538-554) */}
-        {F([[538,50,16,80],[538,160,14,65],[540,248,16,55],[538,395,14,70],[540,485,16,55],[538,575,14,65],[540,655,16,35]], "systems")}
-        {/* Along vertical road — right shoulder (x~583-600) — already have some, add more */}
-        {F([[583,130,14,60],[583,220,16,55],[583,310,14,50]], "building")}
-        {/* Along horizontal road — top shoulder (y~348-365) */}
-        {F([[60,342,16,22],[150,340,14,26],[280,342,16,22],[400,340,14,26],[640,342,16,22],[780,340,14,26],[920,342,16,22],[1100,340,14,26]], "systems")}
-        {/* Along horizontal road — bottom shoulder (y~392-410) */}
-        {F([[100,392,14,24],[220,394,16,20],[360,392,14,24],[480,394,16,20],[660,392,14,24],[800,394,16,20],[940,392,14,24],[1080,394,16,20]], "production")}
+        {F([[538,50,16,80],[538,160,14,65],[540,248,16,55],[538,395,14,70],[540,485,16,55],[538,575,14,65],[540,655,16,35]])}
+        {F([[583,130,14,60],[583,220,16,55],[583,310,14,50]])}
+        {F([[60,342,16,22],[150,340,14,26],[280,342,16,22],[400,340,14,26],[640,342,16,22],[780,340,14,26],[920,342,16,22],[1100,340,14,26]])}
+        {F([[100,392,14,24],[220,394,16,20],[360,392,14,24],[480,394,16,20],[660,392,14,24],[800,394,16,20],[940,392,14,24],[1080,394,16,20]])}
       </g>
 
-      {/* ═══════ BUILDING SIGNS — corporate office style ═══════ */}
+      {/* ═══════ BUILDING SIGNS ═══════ */}
       <g id="building-signs" style={{ pointerEvents: "none" }}>
-        {projectIcon("kuzu", "Kuzu DB", 84, 87, "systems", "/kuzu.png")}
-        {projectIcon("chess", "Chess Engine", 198, 93, "systems")}
-        {projectIcon("horizon", "Horizon", 300, 97, "systems")}
-        {projectIcon("unimap", "UniMap", 395, 98, "systems")}
-        {projectIcon("mapflow", "MapFLOW", 76, 426, "production", "/mapflow.png")}
-        {projectIcon("CC", "CourseConnect", 182, 425, "production")}
-        {projectIcon("flourishing", "Flourishing", 278, 427, "production")}
-        {projectIcon("dealish", "Dealish", 663, 87, "building", "/dealish.png")}
-        {projectIcon("neodev", "NeoDev", 782, 90, "building", "/neodev.png")}
-        {projectIcon("mentai", "MentAI", 887, 95, "building")}
-        {projectIcon("classRep", "SE Rep", 983, 93, "building")}
+        {projectIcon("kuzu", "Kuzu DB", 84, 87, "/kuzu.png", "Software Intern")}
+        {projectIcon("chess", "Chess Engine", 198, 93)}
+        {projectIcon("horizon", "Horizon", 300, 97)}
+        {projectIcon("unimap", "UniMap", 395, 98)}
+        {projectIcon("mapflow", "MapFLOW", 76, 426, "/mapflow.png", "Data Manager")}
+        {projectIcon("CC", "CourseConnect", 182, 425)}
+        {projectIcon("dealish", "Dealish", 663, 87, "/dealish.png", "Co-Founder")}
+        {projectIcon("neodev", "NeoDev", 782, 90, "/neodev.png", "Founder | Head")}
+        {projectIcon("uw", "UW", 983, 93, undefined, "SE Rep")}
       </g>
 
     </svg>

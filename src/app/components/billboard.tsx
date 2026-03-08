@@ -25,7 +25,7 @@ export default function Billboard({ project, onClose }: { project: Project | nul
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-2 h-2 bg-blue-500 animate-pulse" />
-                <h2 className="text-blue-400 text-[10px] uppercase tracking-[0.2em]">{project.district} / {project.status}</h2>
+                <h2 className="text-blue-400 text-[10px] uppercase tracking-[0.2em]">{project.status}</h2>
               </div>
               
               <h1 className="text-3xl font-bold text-white mb-4 tracking-tighter uppercase">

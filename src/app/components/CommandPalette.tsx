@@ -1,7 +1,7 @@
 "use client";
 
 import { Command } from "cmdk";
-import { Projects, type Project, type District } from "../data/projects";
+import { Projects } from "../data/projects";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -10,20 +10,8 @@ interface CommandPaletteProps {
   onAction?: (action: string) => void;
 }
 
-const districtNames: Record<District, string> = {
-  systems: "Systems District",
-  production: "Production District",
-  building: "Building District",
-};
-
 export default function CommandPalette({ open, onOpenChange, onSelect, onAction }: CommandPaletteProps) {
   if (!open) return null;
-
-  const grouped = {
-    systems: Projects.filter((p) => p.district === "systems"),
-    production: Projects.filter((p) => p.district === "production"),
-    building: Projects.filter((p) => p.district === "building"),
-  };
 
   return (
     <div className="cmdk-overlay" onClick={() => onOpenChange(false)}>
@@ -38,28 +26,21 @@ export default function CommandPalette({ open, onOpenChange, onSelect, onAction 
             <Command.Empty className="cmdk-empty">
               No projects found.
             </Command.Empty>
-            {(
-              Object.entries(grouped) as [District, Project[]][]
-            ).map(([district, projects]) => (
-              <Command.Group
-                key={district}
-                heading={districtNames[district]}
-              >
-                {projects.map((p) => (
-                  <Command.Item
-                    key={p.id}
-                    value={`${p.title} ${p.tagline} ${p.stack.join(" ")}`}
-                    onSelect={() => {
-                      onSelect(p.id);
-                      onOpenChange(false);
-                    }}
-                  >
-                    <span className="cmdk-item-title">{p.title}</span>
-                    <span className="cmdk-item-tagline">{p.tagline}</span>
-                  </Command.Item>
-                ))}
-              </Command.Group>
-            ))}
+            <Command.Group heading="Projects">
+              {Projects.map((p) => (
+                <Command.Item
+                  key={p.id}
+                  value={`${p.title} ${p.tagline} ${p.stack.join(" ")}`}
+                  onSelect={() => {
+                    onSelect(p.id);
+                    onOpenChange(false);
+                  }}
+                >
+                  <span className="cmdk-item-title">{p.title}</span>
+                  <span className="cmdk-item-tagline">{p.tagline}</span>
+                </Command.Item>
+              ))}
+            </Command.Group>
             <Command.Group heading="Quick Links">
               <Command.Item value="LinkedIn connect profile" onSelect={() => { window.open("https://linkedin.com/in/hamzakammar", "_blank"); onOpenChange(false); }}>
                 <span className="cmdk-item-title">LinkedIn</span>

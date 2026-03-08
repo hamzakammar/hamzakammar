@@ -1,9 +1,7 @@
-export type District = "systems" | "building" | "production";
-
 export interface Project {
   id: string;              // must match SVG building data-project
   title: string;
-  district: District;
+  role?: string;           // your role/title at this project (e.g. "Software Intern")
   tagline: string;
   highlights: string[];
   stack: string[];
@@ -18,14 +16,13 @@ export interface Project {
 }
 
 export const Projects: Project[] = [
-  // ═══ SYSTEMS DISTRICT ═══
   {
     id: "kuzu",
     title: "Kùzu DB",
-    district: "systems",
+    role: "Software Intern",
     tagline: "Database internals at the query planner level.",
     narrative:
-      "Built operator printing for KuzuDB's query planner in C++, improving plan visualization and cutting debugging time across the core team.",
+      "Joined as the youngest intern on KuzuDB's core team. Built operator printing for the query planner in C++, improving plan visualization and cutting debugging time.",
     highlights: [
       "Built the printing engine for 40+ operators, cutting query debugging time for the core team.",
       "Refined the Explorer UI using Chroma.js to make complex graph schemas visually intuitive.",
@@ -37,7 +34,6 @@ export const Projects: Project[] = [
   {
     id: "chess",
     title: "Chess Engine",
-    district: "systems",
     tagline: "Deep learning meets classical strategy.",
     narrative:
       "Developed a deep CNN-based chess engine trained end-to-end on millions of grandmaster games with a residual convolutional architecture.",
@@ -52,7 +48,6 @@ export const Projects: Project[] = [
   {
     id: "horizon",
     title: "Horizon MCP",
-    district: "systems",
     tagline: "Unified academic intelligence layer.",
     narrative:
       "Built an MCP academic assistant unifying course content, notes, and discussions into a searchable system with semantic retrieval.",
@@ -67,7 +62,6 @@ export const Projects: Project[] = [
   {
     id: "unimap",
     title: "UniMap",
-    district: "systems",
     tagline: "Graph algorithms applied to physical space.",
     narrative:
       "Built a Python + NetworkX navigation tool applying Dijkstra's algorithm to map campus routes, with a React frontend for path visualization.",
@@ -79,11 +73,10 @@ export const Projects: Project[] = [
     status: "shipped",
   },
 
-  // ═══ PRODUCTION DISTRICT ═══
   {
     id: "mapflow",
     title: "MapFLOW",
-    district: "production",
+    role: "Data Manager",
     tagline: "Data infrastructure trusted by 3,500+ pharmacists.",
     narrative:
       "Structured medical research into JSON datasets powering MapFLOW's app, reducing consultation time by ~15 minutes and driving 10x pharmacy revenue.",
@@ -98,7 +91,6 @@ export const Projects: Project[] = [
   {
     id: "CC",
     title: "CourseConnect",
-    district: "production",
     tagline: "Structured course data for degree validation.",
     narrative:
       "Built a Python + Playwright scraper to collect and normalize 1,000+ courses into a structured dataset, enabling SE students to validate degree plans.",
@@ -112,25 +104,9 @@ export const Projects: Project[] = [
     links: { demo: "https://cc.hamzaammar.ca" }
   },
   {
-    id: "flourishing",
-    title: "Flourishing Realty",
-    district: "production",
-    tagline: "Rental platform deployed to real tenants.",
-    narrative:
-      "Deployed a Next.js + Node.js rental platform on AWS EC2, enabling 20+ tenants to browse and request furnished rental homes.",
-    highlights: [
-      "Deployed a full-stack rental platform on AWS EC2 serving 20+ active tenants.",
-      "Designed a responsive interface with filtering, viewing, and request workflows."
-    ],
-    stack: ["Next.js", "Node.js", "AWS EC2", "S3"],
-    status: "shipped",
-  },
-
-  // ═══ BUILDING DISTRICT ═══
-  {
     id: "dealish",
     title: "Dealish",
-    district: "building",
+    role: "Co-Founder",
     tagline: "Real-time food discovery, founded from scratch.",
     narrative:
       "Building a React Native location-based app for real-time food and drink discovery with a secure Supabase backend and map-driven UX.",
@@ -146,7 +122,7 @@ export const Projects: Project[] = [
   {
     id: "neodev",
     title: "NeoDev League",
-    district: "building",
+    role: "Founder | Head",
     tagline: "Competitive programming, reinvented.",
     narrative:
       "Founded a competitive programming league where engineering excellence is the currency.",
@@ -160,23 +136,9 @@ export const Projects: Project[] = [
     links: { demo: "https://neoleague.dev" }
   },
   {
-    id: "mentai",
-    title: "MentAI",
-    district: "building",
-    tagline: "AI-powered mental health support.",
-    narrative:
-      "Created a CoHere-powered web app for mental health support, assisting users in crisis scenarios. Placed Top 5 at MetHacks.",
-    highlights: [
-      "Built an AI-powered mental health support tool using CoHere's NLP capabilities.",
-      "Placed Top 5 at MetHacks, pitching to judges including CoHere representatives."
-    ],
-    stack: ["CoHere API", "JavaScript", "NLP"],
-    status: "shipped",
-  },
-  {
-    id: "classRep",
-    title: "SE '30 Representative",
-    district: "building",
+    id: "uw",
+    title: "University of Waterloo",
+    role: "SE Rep",
     tagline: "Elected liaison for Software Engineering 2030.",
     narrative:
       "Elected academic representative translating student needs into faculty action for the SE 2030 cohort at University of Waterloo.",
