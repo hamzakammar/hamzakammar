@@ -26,21 +26,6 @@ export default function CommandPalette({ open, onOpenChange, onSelect, onAction 
             <Command.Empty className="cmdk-empty">
               No projects found.
             </Command.Empty>
-            <Command.Group heading="Projects">
-              {Projects.map((p) => (
-                <Command.Item
-                  key={p.id}
-                  value={`${p.title} ${p.tagline} ${p.stack.join(" ")}`}
-                  onSelect={() => {
-                    onSelect(p.id);
-                    onOpenChange(false);
-                  }}
-                >
-                  <span className="cmdk-item-title">{p.title}</span>
-                  <span className="cmdk-item-tagline">{p.tagline}</span>
-                </Command.Item>
-              ))}
-            </Command.Group>
             <Command.Group heading="Quick Links">
               <Command.Item value="LinkedIn connect profile" onSelect={() => { window.open("https://linkedin.com/in/hamzakammar", "_blank"); onOpenChange(false); }}>
                 <span className="cmdk-item-title">LinkedIn</span>
@@ -64,6 +49,21 @@ export default function CommandPalette({ open, onOpenChange, onSelect, onAction 
                 <span className="cmdk-item-title">View Resume</span>
                 <span className="cmdk-item-tagline">Open resume preview on billboard</span>
               </Command.Item>
+            </Command.Group>
+            <Command.Group heading="Projects">
+              {Projects.map((p) => (
+                <Command.Item
+                  key={p.id}
+                  value={`${p.title} ${p.tagline} ${p.stack.join(" ")}`}
+                  onSelect={() => {
+                    onSelect(p.id);
+                    onOpenChange(false);
+                  }}
+                >
+                  <span className="cmdk-item-title">{p.title}</span>
+                  <span className="cmdk-item-tagline">{p.tagline}</span>
+                </Command.Item>
+              ))}
             </Command.Group>
           </Command.List>
         </Command>
