@@ -665,9 +665,9 @@ export default function CitySvg({
         {trees([60, 150, 240, 340, 430, 490], 393)}
         {trees([640, 730, 820, 910, 1010, 1100], 393)}
 
-        {/* Street trees — along vertical road (each at distinct y, same x band) */}
-        {trees([553], 90)}{trees([553], 175)}{trees([553], 270)}{trees([553], 460)}{trees([553], 545)}
-        {trees([584], 130)}{trees([584], 220)}{trees([584], 310)}{trees([584], 500)}{trees([584], 600)}
+        {/* Street trees — along vertical road (only at intersection corners, not inside building zones) */}
+        {trees([553, 584], 345)}
+        {trees([553, 584], 395)}
 
         {/* Vehicles */}
         {vehicle(550,100,"v","#6B7280")}
@@ -744,8 +744,8 @@ export default function CitySvg({
           [365,288,22,65],[395,298,20,55],[425,284,24,72],
           [457,294,20,60],[487,288,22,66],[517,296,20,56],
         ])}
-        {/* Street-level park — replaces gap at front row, sits on ground */}
-        {park(63, 340, 52, 14)}
+        {/* Street-level park — in the front row gap, at sidewalk level y~354 */}
+        {park(63, 354, 52, 10)}
 
         {pedestrian(120,290)}
         {pedestrian(380,292)}
