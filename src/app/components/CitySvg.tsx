@@ -172,9 +172,9 @@ export default function CitySvg({
         <line x1={cx - 4} y1={cy + 3} x2={cx + 4} y2={cy + 3} className={cls} />
       </>),
     };
-    const nameY = cy + 18;
-    const tw = name.length * 5.5;
-    const roleY = nameY + 10;
+    const nameY = cy + 20;
+    const tw = name.length * 6.2;  // More accurate char width estimate
+    const roleY = nameY + 11;
     return (
       <g key={`sign-${id}`} style={{ pointerEvents: "none" }}>
         {logo ? (
@@ -189,13 +189,13 @@ export default function CitySvg({
             {shapes[id]}
           </>
         )}
-        <rect className="label-bg" x={cx - tw / 2 - 3} y={nameY - 8}
-          width={tw + 6} height={role ? 20 : 11} rx={2} />
+        <rect className="label-bg" x={cx - tw / 2 - 4} y={nameY - 9}
+          width={tw + 8} height={role ? 22 : 13} rx={2} />
         <text className="node" x={cx} y={nameY}
-          textAnchor="middle" style={{ fontSize: "9px" }}>{name}</text>
+          textAnchor="middle" style={{ fontSize: "10px", fontWeight: 700 }}>{name}</text>
         {role && (
           <text className="role-label" x={cx} y={roleY}
-            textAnchor="middle">{role}</text>
+            textAnchor="middle" style={{ fontSize: "7.5px" }}>{role}</text>
         )}
       </g>
     );
@@ -375,24 +375,26 @@ export default function CitySvg({
       <div style={{ fontSize: "22px", fontWeight: 900, letterSpacing: "0.15em",
         color: "var(--foreground)", marginBottom: "4px" }}>HAMZA AMMAR</div>
       <div style={{ fontSize: "8px", fontWeight: 500, letterSpacing: "0.28em",
-        color: "var(--accent)", textTransform: "uppercase" as const, marginBottom: "4px" }}>Software Engineer</div>
-      <div style={{ fontSize: "7.5px", fontWeight: 400, letterSpacing: "0.08em",
-        color: "var(--muted)", marginBottom: "10px" }}>University of Waterloo &middot; Software Engineering</div>
-      <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "10px" }} />
-      <div style={{ width: "100%", maxWidth: "320px", textAlign: "left" as const, marginBottom: "12px" }}>
+        color: "var(--accent)", textTransform: "uppercase" as const, marginBottom: "4px" }}>Software Engineer · UWaterloo</div>
+      <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "12px" }} />
+      <div style={{ width: "100%", maxWidth: "340px", textAlign: "left" as const, marginBottom: "14px" }}>
         {[
-          "Youngest intern at Kùzu DB \u2014 query planner internals",
-          "Shipped data infra to 3,500+ pharmacists",
-          "Co-Founded Dealish \u2014 food discovery app",
-        ].map((line, i) => (
-          <div key={i} style={{ fontSize: "7px", color: "var(--foreground)", lineHeight: 1.5,
-            paddingLeft: "6px", marginBottom: "2px",
-            borderLeft: "2px solid var(--accent)" }}>{line}</div>
+          { emoji: "⚡", text: "Wrote query planner internals at KùzuDB — youngest on the team" },
+          { emoji: "💊", text: "One JSON file → 3,500 pharmacists save 15 min per patient" },
+          { emoji: "🗺️", text: "Co-building an app that replaces aimless Yelp scrolling" },
+          { emoji: "🎓", text: "Elected rep for 100+ engineers at Waterloo" },
+        ].map((item, i) => (
+          <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start",
+            fontSize: "7.5px", color: "var(--foreground)", lineHeight: 1.6,
+            marginBottom: "5px" }}>
+            <span style={{ flexShrink: 0, fontSize: "9px" }}>{item.emoji}</span>
+            <span>{item.text}</span>
+          </div>
         ))}
       </div>
       <div className="billboard-cta" style={{ fontSize: "7px", color: "var(--accent)", letterSpacing: "0.12em",
         textTransform: "uppercase" as const }}>
-        Click a building or press &#x2318;K to explore
+        Click a building · press &#x2318;K to explore
       </div>
     </div>
   );
