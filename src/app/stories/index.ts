@@ -1,8 +1,23 @@
 import { kuzuStory } from './kuzu';
+import { chessStory } from './chess';
+import { horizonStory } from './horizon';
+import { unimapStory } from './unimap';
+import { mapflowStory } from './mapflow';
+import { ccStory } from './CC';
+import { dealishStory } from './dealish';
+import { neodevStory } from './neodev';
+import { uwStory } from './uw';
 
 export const stories: Record<string, string> = {
   kuzu: kuzuStory,
-  // Add more stories here as they're created
+  chess: chessStory,
+  horizon: horizonStory,
+  unimap: unimapStory,
+  mapflow: mapflowStory,
+  CC: ccStory,
+  dealish: dealishStory,
+  neodev: neodevStory,
+  uw: uwStory,
 };
 
 export function getStoryById(id: string): string | undefined {

@@ -49,6 +49,7 @@ export const Projects: Project[] = [
     ],
     stack: ["Python", "PyTorch", "Deep Learning", "CUDA"],
     status: "shipped",
+    story: getStoryById("chess"),
   },
   {
     id: "horizon",
@@ -63,6 +64,7 @@ export const Projects: Project[] = [
     ],
     stack: ["Python", "MCP", "Vector Search", "React Native", "Supabase"],
     status: "ongoing",
+    story: getStoryById("horizon"),
   },
   {
     id: "unimap",
@@ -76,8 +78,8 @@ export const Projects: Project[] = [
     ],
     stack: ["Python", "NetworkX", "React", "Algorithms"],
     status: "shipped",
+    story: getStoryById("unimap"),
   },
-
   {
     id: "mapflow",
     title: "MapFLOW",
@@ -92,6 +94,7 @@ export const Projects: Project[] = [
     ],
     stack: ["Python", "OpenAI API", "Data Engineering", "JSON"],
     status: "shipped",
+    story: getStoryById("mapflow"),
   },
   {
     id: "CC",
@@ -106,7 +109,8 @@ export const Projects: Project[] = [
     ],
     stack: ["Python", "Playwright", "React Native", "Supabase"],
     status: "shipped",
-    links: { demo: "https://cc.hamzaammar.ca" }
+    links: { demo: "https://cc.hamzaammar.ca" },
+    story: getStoryById("CC"),
   },
   {
     id: "dealish",
@@ -122,12 +126,13 @@ export const Projects: Project[] = [
     ],
     stack: ["React Native", "Expo", "Supabase", "PostGIS"],
     status: "ongoing",
-    links: { demo: "https://dealish.io" }
+    links: { demo: "https://dealish.io" },
+    story: getStoryById("dealish"),
   },
   {
     id: "neodev",
     title: "NeoDev League",
-    role: "Founder | Head",
+    role: "Founder",
     tagline: "Competitive programming, reinvented.",
     narrative:
       "Founded a competitive programming league where engineering excellence is the currency.",
@@ -138,7 +143,8 @@ export const Projects: Project[] = [
     ],
     stack: ["Leadership", "Community Architecture", "Product Strategy"],
     status: "ongoing",
-    links: { demo: "https://neoleague.dev" }
+    links: { demo: "https://neoleague.dev" },
+    story: getStoryById("neodev"),
   },
   {
     id: "uw",
@@ -154,5 +160,6 @@ export const Projects: Project[] = [
     ],
     stack: ["Strategy", "Advocacy", "Communication"],
     status: "ongoing",
+    story: getStoryById("uw"),
   },
 ];
