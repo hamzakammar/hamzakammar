@@ -724,14 +724,14 @@ export default function CitySvg({
 
       {/* ═══════ BUILDING SIGNS ═══════ */}
       <g id="building-signs" style={{ pointerEvents: "none" }}>
-        {projectIcon("kuzu", "Kuzu DB", 84, 87, "/kuzu.png", "Software Intern")}
-        {projectIcon("chess", "Chess Engine", 198, 93)}
+        {projectIcon("kuzu", "Kuzu", 84, 87, "/kuzu.png", "Software Intern")}
+        {projectIcon("chess", "Chess", 198, 93)}
         {projectIcon("horizon", "Horizon", 300, 97)}
         {projectIcon("unimap", "UniMap", 395, 98)}
         {projectIcon("mapflow", "MapFLOW", 76, 426, "/mapflow.png", "Data Manager")}
-        {projectIcon("CC", "CourseConnect", 182, 425)}
+        {projectIcon("CC", "CC", 182, 425)}
         {projectIcon("dealish", "Dealish", 663, 87, "/dealish.png", "Co-Founder")}
-        {projectIcon("neodev", "NeoDev", 782, 90, "/neodev.png", "Founder | Head")}
+        {projectIcon("neodev", "NeoDev", 782, 90, "/neodev.png", "Founder")}
         {projectIcon("uw", "UW", 983, 93, undefined, "SE Rep")}
       </g>
 
