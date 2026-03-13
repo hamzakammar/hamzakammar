@@ -220,12 +220,25 @@ export default function CitySvg({
         <polygon className="bldg-right"
           points={`${x + w},${y} ${x + w + D},${y - D} ${x + w + D},${y + h - D} ${x + w},${y + h}`} />
         <rect x={x} y={y} width={w} height={h} rx={1}
-          className={`bldg-face${isActive ? " bldg-active" : ""}${isHover ? " bldg-hover" : ""}`}
+          className={`bldg-face${isActive ? " bldg-active" : ""}${isHover ? " bldg-hover" : ""}${!isFiller ? " bldg-face-project" : ""}`}
           filter="url(#shadow)" />
         {!isFiller && (
           <rect className="bldg-accent"
             x={x + 1} y={y + 1} width={w - 2} height={3} rx={0.5}
-            style={{ pointerEvents: "none" }} />
+            style={{
+              pointerEvents: "none",
+              fill: id ? ({
+                kuzu: '#6366F1',
+                chess: '#8B5CF6',
+                horizon: '#06B6D4',
+                unimap: '#10B981',
+                mapflow: '#F59E0B',
+                CC: '#EF4444',
+                dealish: '#F97316',
+                neodev: '#EC4899',
+                uw: '#14B8A6',
+              } as Record<string, string>)[id] || 'var(--accent)' : 'var(--accent)'
+            }} />
         )}
         {!isFiller && projectWindows(x, y, w, h)}
         {isFiller && (x + y) % 3 === 0 && h > 50 && fillerWindows(x, y, w, h)}
@@ -424,8 +437,9 @@ export default function CitySvg({
           <stop offset="100%" stopColor="#F5F7FA" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="sky-gradient-dark" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#060A14" stopOpacity="0.6" />
-          <stop offset="50%" stopColor="#0C1220" stopOpacity="0.3" />
+          <stop offset="0%" stopColor="#030712" stopOpacity="1" />
+          <stop offset="30%" stopColor="#060D1F" stopOpacity="0.9" />
+          <stop offset="60%" stopColor="#0A1628" stopOpacity="0.6" />
           <stop offset="100%" stopColor="#0F172A" stopOpacity="0" />
         </linearGradient>
       </defs>

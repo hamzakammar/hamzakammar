@@ -84,48 +84,92 @@ body {
 }
 
 /* Structural */
-.citySvg .gridLine { stroke: var(--grid); stroke-width: 0.5; opacity: 0.4; }
+.citySvg .gridLine { stroke: var(--grid); stroke-width: 0.4; opacity: 0.3; }
 
 /* ── Ground surface ── */
 .citySvg .ground-surface { fill: url(#floor-gradient); }
 [data-theme="dark"] .citySvg .ground-surface { fill: #1A1F2E; }
 
 /* Road surfaces */
-.citySvg .road-surface { fill: #D5D9E0; }
-[data-theme="dark"] .citySvg .road-surface { fill: #1E293B; }
+.citySvg .road-surface {
+  fill: #C8CDD4;
+  stroke: #B8BEC6;
+  stroke-width: 0.5;
+}
+[data-theme="dark"] .citySvg .road-surface {
+  fill: #1A2232;
+  stroke: #252F40;
+}
 
 /* Ground plane */
-.citySvg .ground-plane { fill: #ECEEF2; }
-[data-theme="dark"] .citySvg .ground-plane { fill: #151B2B; }
+.citySvg .ground-plane { fill: #ECEEF4; }
+[data-theme="dark"] .citySvg .ground-plane { fill: #0D1320; }
 
 /* Streets */
-.citySvg .street { fill: #D5D9E0; }
-[data-theme="dark"] .citySvg .street { fill: #1E293B; }
+.citySvg .street { fill: #C8CDD4; }
+[data-theme="dark"] .citySvg .street { fill: #1A2232; }
 
 .citySvg .street-minor { fill: #DEE1E6; stroke: #CDD1D8; stroke-width: 0.3; }
 [data-theme="dark"] .citySvg .street-minor { fill: #1A2332; stroke: #334155; }
 
 /* Sidewalks */
-.citySvg .sidewalk { fill: #E5E8EC; }
-[data-theme="dark"] .citySvg .sidewalk { fill: #1A2332; }
+.citySvg .sidewalk {
+  fill: #D8DCE4;
+  stroke: #C8CDD5;
+  stroke-width: 0.3;
+}
+[data-theme="dark"] .citySvg .sidewalk {
+  fill: #1E2840;
+  stroke: #2A3450;
+}
 
 /* ── Buildings — Unified Style ── */
 
-/* Front face */
+/* Front face — filler buildings (subtle, warm-off-white / blue-slate) */
 .citySvg .bldg-face {
-  fill: #E2E8EE;
-  stroke: #8896A4;
+  fill: #E8EAED;
+  stroke: #9AA4AE;
   stroke-width: 1;
   transition: stroke 0.2s ease, stroke-width 0.2s ease, fill 0.3s ease;
 }
 [data-theme="dark"] .citySvg .bldg-face {
-  fill: #2A3444;
-  stroke: #5A6A7A;
+  fill: #252F3F;
+  stroke: #4A5668;
 }
 
-/* Active & hover states */
-.citySvg .bldg-active { stroke: var(--accent); stroke-width: 2; }
-.citySvg .bldg-hover { stroke: var(--accent); stroke-width: 1.5; }
+/* Project buildings — visually distinct, slightly richer tone */
+.citySvg .bldg-face-project {
+  fill: #E8EDF5;
+  stroke: #6B7A8F;
+  stroke-width: 1.2;
+}
+[data-theme="dark"] .citySvg .bldg-face-project {
+  fill: #1E2D42;
+  stroke: #4A6080;
+  stroke-width: 1.2;
+}
+
+/* Active & hover states — much more obvious */
+.citySvg .bldg-active {
+  fill: #EEF2FF !important;
+  stroke: var(--accent) !important;
+  stroke-width: 2.5 !important;
+}
+[data-theme="dark"] .citySvg .bldg-active {
+  fill: #1E3A5F !important;
+  stroke: var(--accent) !important;
+  stroke-width: 2.5 !important;
+}
+.citySvg .bldg-hover {
+  fill: #F0F4FF !important;
+  stroke: var(--accent) !important;
+  stroke-width: 1.8 !important;
+}
+[data-theme="dark"] .citySvg .bldg-hover {
+  fill: #172D45 !important;
+  stroke: var(--accent) !important;
+  stroke-width: 1.8 !important;
+}
 
 /* 3D top face */
 .citySvg .bldg-top { fill: #F0F3F6; stroke: #C8D0D8; stroke-width: 0.3; }
@@ -137,7 +181,27 @@ body {
 
 /* Windows */
 .citySvg .bldg-win { fill: #9AA6B2; opacity: 0.55; }
-[data-theme="dark"] .citySvg .bldg-win { fill: #F0D870; opacity: 0.6; }
+
+/* Dark mode: windows look like lit offices */
+[data-theme="dark"] .citySvg .bldg-win {
+  fill: #F0D870;
+  opacity: 0.65;
+}
+[data-theme="dark"] .citySvg .bldg-win:nth-child(3n) {
+  opacity: 0.15;
+}
+[data-theme="dark"] .citySvg .bldg-win:nth-child(5n) {
+  opacity: 0.45;
+}
+
+@keyframes window-on {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.9; }
+}
+@keyframes window-off {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.3; }
+}
 
 /* Loading dock doors */
 .citySvg .bldg-door { fill: #6B7A8A; opacity: 0.7; }
@@ -173,15 +237,39 @@ body {
 
 
 
-/* ── Billboard panel ── */
-.citySvg .bb-panel { fill: #FFFFFF; stroke: #1F2937; stroke-width: 2; }
-[data-theme="dark"] .citySvg .bb-panel { fill: #1E293B; stroke: #475569; }
+/* ── Billboard panel — more dramatic ── */
+.citySvg .bb-panel {
+  fill: #FAFBFC;
+  stroke: #334155;
+  stroke-width: 2;
+}
+[data-theme="dark"] .citySvg .bb-panel {
+  fill: #0F172A;
+  stroke: #3B82F6;
+  stroke-width: 2;
+}
 
-.citySvg .bb-inner-border { fill: none; stroke: #E5E7EB; stroke-width: 0.75; }
-[data-theme="dark"] .citySvg .bb-inner-border { stroke: #334155; }
+/* Billboard inner border — accent colored in dark */
+.citySvg .bb-inner-border { fill: none; stroke: #E2E8F0; stroke-width: 0.75; }
+[data-theme="dark"] .citySvg .bb-inner-border { stroke: #1D3A5F; stroke-width: 1; }
 
-.citySvg .bb-light { fill: #1D4ED8; opacity: 0.45; }
-[data-theme="dark"] .citySvg .bb-light { fill: #60A5FA; opacity: 0.7; }
+/* Billboard lights — more visible */
+.citySvg .bb-light {
+  fill: #1D4ED8;
+  opacity: 0.6;
+  filter: drop-shadow(0 0 3px rgba(29, 78, 216, 0.5));
+}
+[data-theme="dark"] .citySvg .bb-light {
+  fill: #60A5FA;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 4px rgba(96, 165, 250, 0.8));
+  animation: bb-light-pulse 2s ease-in-out infinite;
+}
+
+@keyframes bb-light-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
 
 /* ── Vehicles ── */
 .citySvg .vehicle { opacity: 0.25; }
@@ -248,6 +336,22 @@ body {
 }
 .billboard-cta {
   animation: cta-pulse 3s ease-in-out infinite;
+}
+
+/* ── Building hover lift effect ── */
+.citySvg g[data-project] {
+  transition: filter 0.2s ease;
+}
+.citySvg g[data-project]:hover {
+  filter: drop-shadow(0 -2px 8px rgba(29, 78, 216, 0.25));
+}
+[data-theme="dark"] .citySvg g[data-project]:hover {
+  filter: drop-shadow(0 -2px 12px rgba(96, 165, 250, 0.35));
+}
+
+/* ── Stars — glowing variant in dark mode ── */
+[data-theme="dark"] .citySvg .sky-star:nth-child(3n) {
+  filter: drop-shadow(0 0 2px rgba(226, 232, 240, 0.8));
 }
 
 /* ══════════════════════════════════════

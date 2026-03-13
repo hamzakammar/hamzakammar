@@ -48,13 +48,22 @@ export default function ProjectPanel({ project, onClose }: ProjectPanelProps) {
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className="project-panel pointer-events-auto w-[420px] max-h-[85vh] overflow-y-auto"
             >
+              {/* Colored accent bar at top */}
+              <div style={{ height: '3px', background: 'var(--accent)', marginBottom: 0 }} />
+
               {/* Header */}
               <div className="panel-header px-6 pt-5 pb-4">
                 <div className="flex items-start justify-between">
                   <div>
+                    {/* Role — displayed prominently */}
+                    {project.role && (
+                      <div className="panel-district text-[10px] uppercase tracking-[0.2em] mb-1">
+                        {project.role}
+                      </div>
+                    )}
                     {/* Status */}
                     {project.status && (
-                      <div className="panel-district text-[10px] uppercase tracking-[0.2em] mb-1">
+                      <div className="panel-status text-[9px] uppercase tracking-[0.15em] mb-1 opacity-60">
                         {statusLabels[project.status] || project.status}
                       </div>
                     )}
