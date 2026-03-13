@@ -173,8 +173,8 @@ export default function CitySvg({
       </>),
     };
     const nameY = cy + 20;
-    const nameTw = name.length * 6.2;
-    const roleTw = role ? role.length * 5.4 : 0;
+    const nameTw = name.length * 6.4;
+    const roleTw = role ? role.length * 6.0 : 0;
     const tw = Math.max(nameTw, roleTw);
     const roleY = nameY + 11;
     return (
@@ -191,8 +191,8 @@ export default function CitySvg({
             {shapes[id]}
           </>
         )}
-        <rect className="label-bg" x={cx - tw / 2 - 4} y={nameY - 9}
-          width={tw + 8} height={role ? 22 : 13} rx={2} />
+        <rect className="label-bg" x={cx - tw / 2 - 6} y={nameY - 9}
+          width={tw + 12} height={role ? 22 : 13} rx={2} />
         <text className="node" x={cx} y={nameY}
           textAnchor="middle" style={{ fontSize: "10px", fontWeight: 700 }}>{name}</text>
         {role && (
