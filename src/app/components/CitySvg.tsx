@@ -78,10 +78,19 @@ export default function CitySvg({
     </g>
   );
   const bench = (x: number, y: number) => (
-    <g style={{ pointerEvents: "none" }} opacity={0.35}>
+    <g style={{ pointerEvents: "none" }} opacity={0.45}>
       <rect x={x} y={y} width={10} height={3} rx={0.5} fill="#8B7355" />
       <line x1={x + 1} y1={y + 3} x2={x + 1} y2={y + 5} stroke="#8B7355" strokeWidth="0.8" />
       <line x1={x + 9} y1={y + 3} x2={x + 9} y2={y + 5} stroke="#8B7355" strokeWidth="0.8" />
+      {/* Back rest */}
+      <rect x={x} y={y - 3} width={10} height={2} rx={0.5} fill="#7A6448" opacity={0.7} />
+    </g>
+  );
+  const bush = (x: number, y: number) => (
+    <g style={{ pointerEvents: "none" }} opacity={0.55}>
+      <circle cx={x} cy={y} r={4} fill="#6B9A6E" stroke="#5A8A5E" strokeWidth="0.4" />
+      <circle cx={x + 5} cy={y + 1} r={3} fill="#7AAD7D" stroke="#5A8A5E" strokeWidth="0.3" />
+      <circle cx={x - 4} cy={y + 1} r={3} fill="#639668" stroke="#5A8A5E" strokeWidth="0.3" />
     </g>
   );
   const busStop = (x: number, y: number) => (
@@ -645,30 +654,27 @@ export default function CitySvg({
         {[700,880,1060].map(x => <rect key={`xb${x}`} className="street" x={x} y="358" width="6" height="34" rx={1} opacity="0.6" />)}
 
         {/* Lamp posts */}
+        {/* Lamp posts — vertical road */}
         {lampPosts([[556,120],[556,250],[556,460],[556,590],[582,160],[582,320],[582,500],[582,650]])}
+        {/* Lamp posts — horizontal road */}
         {lampPosts([[120,366],[280,366],[440,366],[700,366],[880,366],[1060,366]])}
 
-        {/* Trees — along roads */}
-        {trees([80,200,360,520,660,820,1000,1150], 366)}
-        {/* Trees — along vertical road */}
-        {trees([555,555,555,555], 80)}
-        {trees([583,583,583], 200)}
-        {/* Trees — scattered in quadrants */}
-        {trees([30,160,300,450], 160)}
-        {trees([620,780,940,1100], 160)}
-        {trees([30,180,350,500], 475)}
-        {trees([640,800,950,1100], 530)}
+        {/* Street trees — along horizontal road, both sides */}
+        {trees([60, 150, 240, 340, 430, 490], 362)}
+        {trees([640, 730, 820, 910, 1010, 1100], 362)}
+        {trees([60, 150, 240, 340, 430, 490], 393)}
+        {trees([640, 730, 820, 910, 1010, 1100], 393)}
 
-        {/* Data pulses */}
-        {[100,200,300,460,560,650].map((cy,i) =>
-          <circle key={`p${i}`} className="pulse" cx="569" cy={cy} r="2.5" style={{animationDelay:`${i*0.4}s`}} />)}
+        {/* Street trees — along vertical road (each at distinct y, same x band) */}
+        {trees([553], 90)}{trees([553], 175)}{trees([553], 270)}{trees([553], 460)}{trees([553], 545)}
+        {trees([584], 130)}{trees([584], 220)}{trees([584], 310)}{trees([584], 500)}{trees([584], 600)}
 
         {/* Vehicles */}
-        {vehicle(550,120,"v","#6B7280")}
-        {vehicle(574,240,"v","#7A8493")}
-        {vehicle(550,440,"v","#5A6775")}
-        {vehicle(574,560,"v","#8B95A2")}
-        {vehicle(574,650,"v","#6B7280")}
+        {vehicle(550,100,"v","#6B7280")}
+        {vehicle(574,230,"v","#7A8493")}
+        {vehicle(550,430,"v","#5A6775")}
+        {vehicle(574,550,"v","#8B95A2")}
+        {vehicle(574,640,"v","#6B7280")}
         {vehicle(130,372,"h","#6B7280")}
         {vehicle(310,374,"h","#7A8493")}
         {vehicle(460,372,"h","#5A6775")}
@@ -676,20 +682,35 @@ export default function CitySvg({
         {vehicle(900,372,"h","#6B7280")}
         {vehicle(1100,374,"h","#7A8493")}
 
-        {/* Pedestrians */}
-        {pedestrian(548,370)}
-        {pedestrian(590,388)}
-        {pedestrian(555,394)}
-        {pedestrian(585,362)}
-        {pedestrian(140,379)}
-        {pedestrian(440,378)}
-        {pedestrian(720,380)}
-        {pedestrian(1000,378)}
+        {/* Pedestrians — on sidewalks, not roads */}
+        {pedestrian(548,362)}
+        {pedestrian(590,394)}
+        {pedestrian(555,400)}
+        {pedestrian(585,358)}
+        {pedestrian(140,392)}
+        {pedestrian(440,391)}
+        {pedestrian(720,392)}
+        {pedestrian(1000,391)}
 
-        {bench(540,400)}
-        {bench(590,355)}
-        {busStop(545,180)}
-        {busStop(545,520)}
+        {/* Benches — in front of parks, off the road */}
+        {bench(210, 356)}
+        {bench(820, 356)}
+        {bench(210, 396)}
+        {bench(820, 396)}
+
+        {/* Bushes — near roundabout and sidewalk edges */}
+        {bush(536, 358)}
+        {bush(598, 358)}
+        {bush(536, 398)}
+        {bush(598, 398)}
+        {bush(536, 378)}
+        {bush(600, 378)}
+
+        {/* Bus stops — on sidewalk edges */}
+        {busStop(538, 180)}
+        {busStop(538, 510)}
+        {busStop(596, 300)}
+        {busStop(596, 590)}
       </g>
 
       {/* ═══════ TOP-LEFT (x:5-545, y:40-365) ═══════ */}
@@ -731,6 +752,8 @@ export default function CitySvg({
 
         {pedestrian(120,290)}
         {pedestrian(380,292)}
+        {pedestrian(240,310)}
+        {pedestrian(470,298)}
       </g>
 
       {/* ═══════ TOP-RIGHT (x:585-1185, y:40-365) ═══════ */}
@@ -775,6 +798,8 @@ export default function CitySvg({
 
         {pedestrian(740,290)}
         {pedestrian(1060,292)}
+        {pedestrian(870,308)}
+        {pedestrian(940,295)}
       </g>
 
       {/* ═══════ BOTTOM-LEFT (x:5-545, y:395-695) ═══════ */}
@@ -828,6 +853,8 @@ export default function CitySvg({
 
         {pedestrian(200,548)}
         {pedestrian(420,550)}
+        {pedestrian(310,562)}
+        {pedestrian(130,555)}
       </g>
 
       {/* ═══════ BOTTOM-RIGHT — Billboard area (x:585-1190, y:395-695) ═══════ */}
