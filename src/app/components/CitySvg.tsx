@@ -554,8 +554,8 @@ export default function CitySvg({
       <g id="tl">
         {/* BACK ROW */}
         {bldg(null, 5, 65, 35, 208)}
-        {bldg("kuzu", 48, 48, 72, 230)}
-        {bldgStepped(130, 70, 32, 198, 0.6)}
+        {bldg("kuzu", 44, 48, 82, 230)}
+        {bldgStepped(136, 70, 32, 198, 0.6)}
         {bldg("chess", 168, 55, 60, 222)}
         {bldg(null, 238, 74, 26, 190)}
         {bldg("horizon", 274, 60, 52, 218)}
@@ -631,8 +631,8 @@ export default function CitySvg({
       <g id="bl">
         {/* BACK ROW */}
         {bldg(null, 5, 395, 30, 185)}
-        {bldg("mapflow", 44, 393, 65, 192)}
-        {bldg(null, 118, 398, 26, 180)}
+        {bldg("mapflow", 40, 393, 76, 192)}
+        {bldg(null, 125, 398, 26, 180)}
         {bldg("CC", 154, 393, 56, 190)}
         {bldgStepped(220, 400, 28, 175, 0.6)}
         {bldg(null, 254, 400, 48, 183)}
@@ -724,11 +724,11 @@ export default function CitySvg({
 
       {/* ═══════ BUILDING SIGNS ═══════ */}
       <g id="building-signs" style={{ pointerEvents: "none" }}>
-        {projectIcon("kuzu", "Kuzu", 84, 87, "/kuzu.png", "Software Intern")}
+        {projectIcon("kuzu", "Kuzu", 85, 87, "/kuzu.png", "Software Intern")}
         {projectIcon("chess", "Chess", 198, 93)}
         {projectIcon("horizon", "Horizon", 300, 97)}
         {projectIcon("unimap", "UniMap", 395, 98)}
-        {projectIcon("mapflow", "MapFLOW", 76, 426, "/mapflow.png", "Data Manager")}
+        {projectIcon("mapflow", "MapFLOW", 78, 426, "/mapflow.png", "Data Manager")}
         {projectIcon("CC", "CC", 182, 425)}
         {projectIcon("dealish", "Dealish", 663, 87, "/dealish.png", "Co-Founder")}
         {projectIcon("neodev", "NeoDev", 782, 90, "/neodev.png", "Founder")}
