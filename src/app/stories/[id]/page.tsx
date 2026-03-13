@@ -16,14 +16,14 @@ export default function StoryPage({ params }: StoryPageProps) {
 
   if (!story) {
     return (
-      <div className="min-h-screen p-8 max-w-4xl mx-auto">
+      <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] p-8 max-w-4xl mx-auto">
         <div className="mb-8">
-          <Link href="/" className="text-blue-400 hover:text-blue-300 text-sm">
+          <Link href="/" className="text-[var(--accent)] hover:opacity-80 text-sm">
             ← Back to City
           </Link>
         </div>
         <h1 className="text-2xl font-bold mb-4">Story Not Found</h1>
-        <p>The story you&apos;re looking for doesn&apos;t exist.</p>
+        <p className="text-[var(--muted)]">The story you&apos;re looking for doesn&apos;t exist.</p>
       </div>
     );
   }
@@ -35,7 +35,7 @@ export default function StoryPage({ params }: StoryPageProps) {
         <div className="mb-8">
           <Link 
             href="/" 
-            className="inline-flex items-center text-blue-400 hover:text-blue-300 text-sm mb-6 transition-colors"
+            className="inline-flex items-center text-[var(--accent)] hover:opacity-80 text-sm mb-6 transition-colors"
           >
             ← Back to City
           </Link>
@@ -46,7 +46,7 @@ export default function StoryPage({ params }: StoryPageProps) {
                 {project.title}
               </h1>
               {project.role && (
-                <div className="text-sm text-blue-400 uppercase tracking-wider mb-4">
+                <div className="text-sm text-[var(--accent)] uppercase tracking-wider mb-4">
                   {project.role}
                 </div>
               )}
@@ -110,7 +110,7 @@ export default function StoryPage({ params }: StoryPageProps) {
         <div className="mt-16 pt-8 border-t border-[var(--panel-border)]">
           <Link 
             href="/" 
-            className="inline-flex items-center text-blue-400 hover:text-blue-300 text-sm transition-colors"
+            className="inline-flex items-center text-[var(--accent)] hover:opacity-80 text-sm transition-colors"
           >
             ← Back to City
           </Link>

@@ -524,15 +524,15 @@ export default function CitySvg({
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "12px" }} />
       <div style={{ width: "100%", maxWidth: "340px", textAlign: "left" as const, marginBottom: "14px" }}>
         {[
-          { emoji: "⚡", text: "Wrote query planner internals at KùzuDB — youngest on the team" },
-          { emoji: "💊", text: "One JSON file → 3,500 pharmacists save 15 min per patient" },
-          { emoji: "🗺️", text: "Co-building an app that replaces aimless Yelp scrolling" },
-          { emoji: "🎓", text: "Elected rep for 100+ engineers at Waterloo" },
+          { bullet: "→", text: "Wrote query planner internals at KùzuDB — youngest on the team" },
+          { bullet: "→", text: "One JSON file → 3,500 pharmacists save 15 min per patient" },
+          { bullet: "→", text: "Co-building an app that replaces aimless Yelp scrolling" },
+          { bullet: "→", text: "Elected rep for 100+ engineers at Waterloo" },
         ].map((item, i) => (
           <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start",
             fontSize: "7.5px", color: "var(--foreground)", lineHeight: 1.6,
             marginBottom: "5px" }}>
-            <span style={{ flexShrink: 0, fontSize: "9px" }}>{item.emoji}</span>
+            <span style={{ flexShrink: 0, color: "var(--accent)", fontWeight: 700 }}>{item.bullet}</span>
             <span>{item.text}</span>
           </div>
         ))}
