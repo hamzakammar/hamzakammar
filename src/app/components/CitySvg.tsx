@@ -173,7 +173,9 @@ export default function CitySvg({
       </>),
     };
     const nameY = cy + 20;
-    const tw = name.length * 6.2;  // More accurate char width estimate
+    const nameTw = name.length * 6.2;
+    const roleTw = role ? role.length * 5.4 : 0;
+    const tw = Math.max(nameTw, roleTw);
     const roleY = nameY + 11;
     return (
       <g key={`sign-${id}`} style={{ pointerEvents: "none" }}>
