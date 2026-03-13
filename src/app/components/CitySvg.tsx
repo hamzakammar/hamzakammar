@@ -122,27 +122,6 @@ export default function CitySvg({
     );
   };
 
-  /* ═══════ PEAKED ROOF BUILDING ═══════ */
-  const bldgPeaked = (x: number, y: number, w: number, h: number) => {
-    const mat = matClasses[(x * 7 + y * 13) % 4];
-    const faceC = mat ? `bldg-face ${mat}` : "bldg-face";
-    const rightC = mat ? `${mat}-right` : "bldg-right";
-    const peakH = 8;
-    const op = 0.6 + ((x * 7 + y * 13) % 25) / 100;
-    return (
-      <g key={`peaked-${x}-${y}`} style={{ pointerEvents: "none" }} opacity={op}>
-        {/* Building body */}
-        <polygon className={rightC}
-          points={`${x + w},${y} ${x + w + D},${y - D} ${x + w + D},${y + h - D} ${x + w},${y + h}`} />
-        <rect x={x} y={y} width={w} height={h} rx={1} className={faceC} filter="url(#shadow)" />
-        {/* Peaked roof */}
-        <polygon fill="#C8A882" stroke="#A88862" strokeWidth="0.5"
-          points={`${x - 1},${y} ${x + w / 2},${y - peakH} ${x + w + 1},${y}`} />
-        {floorLines(x, y, w, h)}
-      </g>
-    );
-  };
-
   /* ═══════ WINDOW / ACCENT HELPERS ═══════ */
   const projectWindows = (x: number, y: number, w: number, h: number) => {
     const els: React.ReactElement[] = [];

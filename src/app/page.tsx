@@ -132,9 +132,10 @@ export default function Home() {
           <p className="school">University of Waterloo &middot; Software Engineering</p>
           <div className="mobile-highlights">
             {[
-              "Youngest intern at Kùzu DB \u2014 query planner internals",
-              "Shipped data infra to 3,500+ pharmacists",
-              "Co-Founded Dealish \u2014 food discovery app",
+              "Wrote query planner internals at KùzuDB — youngest on the team",
+              "One JSON file → 3,500 pharmacists save 15 min per patient",
+              "Co-building an app that replaces aimless Yelp scrolling",
+              "Elected rep for 100+ engineers at Waterloo",
             ].map((line, i) => (
               <div key={i} className="mobile-highlight-item">{line}</div>
             ))}

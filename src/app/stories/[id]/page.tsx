@@ -1,16 +1,23 @@
-'use client';
-
-import { use } from 'react';
 import Link from 'next/link';
 import { getStoryById } from '../index';
 import { Projects } from '@/app/data/projects';
+import type { Metadata } from 'next';
 
 interface StoryPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default function StoryPage({ params }: StoryPageProps) {
-  const { id } = use(params);
+export async function generateMetadata({ params }: StoryPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const project = Projects.find(p => p.id === id);
+  return {
+    title: project ? `${project.title} — Hamza Ammar` : 'Story — Hamza Ammar',
+    description: project?.tagline,
+  };
+}
+
+export default async function StoryPage({ params }: StoryPageProps) {
+  const { id } = await params;
   const story = getStoryById(id);
   const project = Projects.find(p => p.id === id);
 
