@@ -211,6 +211,32 @@ body {
 .citySvg .bldg-floor-line { stroke: #C8D0D8; stroke-width: 0.5; }
 [data-theme="dark"] .citySvg .bldg-floor-line { stroke: #3A4A5A; }
 
+/* ── Building Material Palettes — city variety ── */
+.citySvg .mat-warm { fill: #EDE5D8; stroke: #B8A896; }
+.citySvg .mat-warm-top { fill: #F5EFE6; stroke: #D4C8B8; }
+.citySvg .mat-warm-right { fill: #C8BEAE; stroke: #B0A698; }
+[data-theme="dark"] .citySvg .mat-warm { fill: #3A3228; stroke: #5A4E42; }
+[data-theme="dark"] .citySvg .mat-warm-top { fill: #4A4238; stroke: #5A5248; }
+[data-theme="dark"] .citySvg .mat-warm-right { fill: #2A2420; stroke: #3A3430; }
+
+.citySvg .mat-brick { fill: #E0CFC0; stroke: #A89888; }
+.citySvg .mat-brick-top { fill: #EEE0D2; stroke: #C8B8A8; }
+.citySvg .mat-brick-right { fill: #BCA898; stroke: #A89888; }
+[data-theme="dark"] .citySvg .mat-brick { fill: #362E28; stroke: #524840; }
+[data-theme="dark"] .citySvg .mat-brick-top { fill: #463E38; stroke: #564E48; }
+[data-theme="dark"] .citySvg .mat-brick-right { fill: #262018; stroke: #362E28; }
+
+.citySvg .mat-glass { fill: #D8E4EE; stroke: #8AA4B8; }
+.citySvg .mat-glass-top { fill: #E8F0F8; stroke: #B8CCE0; }
+.citySvg .mat-glass-right { fill: #A8BCC8; stroke: #90A8B8; }
+[data-theme="dark"] .citySvg .mat-glass { fill: #1E2E3E; stroke: #3A5068; }
+[data-theme="dark"] .citySvg .mat-glass-top { fill: #2E3E4E; stroke: #3E5060; }
+[data-theme="dark"] .citySvg .mat-glass-right { fill: #142028; stroke: #1E2E3E; }
+
+/* ── Park styling ── */
+[data-theme="dark"] .citySvg rect[fill="#C8DCBE"] { fill: #1A2E1A; }
+[data-theme="dark"] .citySvg rect[fill="#D4E8CC"] { fill: #1E321E; }
+
 /* ── Building Accent Stripe — Unified ── */
 .citySvg .bldg-accent { fill: var(--accent); opacity: 0.85; }
 [data-theme="dark"] .citySvg .bldg-accent { opacity: 0.9; }

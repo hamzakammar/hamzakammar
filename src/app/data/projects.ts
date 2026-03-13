@@ -13,7 +13,11 @@ export interface Project {
   };
   videoUrl?: string;   // YouTube/Loom embed URL for demo video
   status?: "shipped" | "ongoing" | "experimental";
+  story?: string;
+  storyPreview?: string;
 }
+
+import { getStoryById } from '../stories';
 
 export const Projects: Project[] = [
   {
@@ -30,6 +34,7 @@ export const Projects: Project[] = [
     ],
     stack: ["C++", "Database Internals", "Query Optimization", "Chroma.js"],
     status: "shipped",
+    story: getStoryById("kuzu"),
   },
   {
     id: "chess",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Project } from "../data/projects";
 
 interface CitySvgProps {
@@ -16,7 +16,17 @@ export default function CitySvg({
   onClose,
   showResume,
 }: CitySvgProps) {
-  const [hoverId, setHoverId] = useState<string | null>(null);
+  const [billboardScrolled, setBillboardScrolled] = useState(false);
+  const billboardScrollRef = useRef<HTMLDivElement>(null);
+
+  // Reset scroll state when project changes
+  useEffect(() => {
+    setBillboardScrolled(false);
+    if (billboardScrollRef.current) {
+      billboardScrollRef.current.scrollTop = 0;
+    }
+  }, [activeProject?.id]);
+    const [hoverId, setHoverId] = useState<string | null>(null);
   const activeProjectId = activeProject?.id ?? null;
   const D = 8;
 
@@ -42,12 +52,6 @@ export default function CitySvg({
           </g>
         </g>
       ))}
-    </g>
-  );
-  const greenArea = (x: number, y: number, w: number, h: number) => (
-    <g style={{ pointerEvents: "none" }}>
-      <rect x={x} y={y} width={w} height={h} rx={2} fill="#D4E2D1" stroke="#B5CCB0" strokeWidth="0.4" opacity="0.5" />
-      {w > 20 && <circle cx={x + w / 3} cy={y + h / 2} r="3" fill="#8BA88E" opacity="0.6" />}
     </g>
   );
   const vehicle = (x: number, y: number, facing: "h" | "v", color?: string) => {
@@ -86,6 +90,49 @@ export default function CitySvg({
       <rect x={x - 5} y={y - 14} width={10} height={7} rx={1} fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="0.4" />
     </g>
   );
+
+  /* ═══════ PARKS & GREENERY ═══════ */
+  const park = (x: number, y: number, w: number, h: number) => {
+    const treeCount = Math.max(2, Math.floor(w / 12));
+    return (
+      <g key={`park-${x}-${y}`} style={{ pointerEvents: "none" }}>
+        <rect x={x} y={y} width={w} height={h} rx={3} fill="#C8DCBE" stroke="#A8C4A0" strokeWidth="0.5" opacity="0.6" />
+        <rect x={x + 2} y={y + 2} width={w - 4} height={h - 4} rx={2} fill="#D4E8CC" opacity="0.4" />
+        {Array.from({ length: treeCount }, (_, i) => {
+          const tx = x + 6 + i * ((w - 12) / Math.max(1, treeCount - 1));
+          const ty = y + h / 2 + ((i * 7) % 5 - 2);
+          return (
+            <g key={`pt${i}`}>
+              <line x1={tx} y1={ty + 2} x2={tx} y2={ty - 4} stroke="#5A6B5E" strokeWidth="1" />
+              <circle cx={tx} cy={ty - 6} r={4 + (i % 2)} fill="#7FA07B" stroke="#6B8E67" strokeWidth="0.3" opacity={0.7} />
+            </g>
+          );
+        })}
+        {w > 30 && <rect x={x + w / 2 - 5} y={y + h - 5} width={10} height={3} rx={0.5} fill="#8B7355" opacity="0.3" />}
+      </g>
+    );
+  };
+
+  /* ═══════ PEAKED ROOF BUILDING ═══════ */
+  const bldgPeaked = (x: number, y: number, w: number, h: number) => {
+    const mat = matClasses[(x * 7 + y * 13) % 4];
+    const faceC = mat ? `bldg-face ${mat}` : "bldg-face";
+    const rightC = mat ? `${mat}-right` : "bldg-right";
+    const peakH = 8;
+    const op = 0.6 + ((x * 7 + y * 13) % 25) / 100;
+    return (
+      <g key={`peaked-${x}-${y}`} style={{ pointerEvents: "none" }} opacity={op}>
+        {/* Building body */}
+        <polygon className={rightC}
+          points={`${x + w},${y} ${x + w + D},${y - D} ${x + w + D},${y + h - D} ${x + w},${y + h}`} />
+        <rect x={x} y={y} width={w} height={h} rx={1} className={faceC} filter="url(#shadow)" />
+        {/* Peaked roof */}
+        <polygon fill="#C8A882" stroke="#A88862" strokeWidth="0.5"
+          points={`${x - 1},${y} ${x + w / 2},${y - peakH} ${x + w + 1},${y}`} />
+        {floorLines(x, y, w, h)}
+      </g>
+    );
+  };
 
   /* ═══════ WINDOW / ACCENT HELPERS ═══════ */
   const projectWindows = (x: number, y: number, w: number, h: number) => {
@@ -204,22 +251,26 @@ export default function CitySvg({
   };
 
   /* ═══════ BUILDING RENDERER ═══════ */
+  const matClasses = ["", "mat-warm", "mat-brick", "mat-glass"];
   const bldg = (
     id: string | null, x: number, y: number, w: number, h: number,
   ) => {
     const isActive = id !== null && id === activeProjectId;
     const isHover = id !== null && id === hoverId;
     const isFiller = id === null;
+    const mat = isFiller ? matClasses[(x * 7 + y * 13) % 4] : "";
+    const topCls = mat ? `${mat}-top` : "bldg-top";
+    const rightCls = mat ? `${mat}-right` : "bldg-right";
     return (
       <g key={id || `f-${x}-${y}`} data-project={id || undefined}
         style={{ cursor: id ? "pointer" : "default" }}
-        opacity={isFiller ? 0.55 + ((x * 7 + y * 13) % 30) / 100 : 1}
+        opacity={isFiller ? 0.6 + ((x * 7 + y * 13) % 25) / 100 : 1}
         onClick={id ? () => onBuildingClick?.(id) : undefined}
         onMouseEnter={id ? () => setHoverId(id) : undefined}
         onMouseLeave={id ? () => setHoverId(null) : undefined}>
-        <polygon className="bldg-top"
+        <polygon className={topCls}
           points={`${x},${y} ${x + D},${y - D} ${x + w + D},${y - D} ${x + w},${y}`} />
-        <polygon className="bldg-right"
+        <polygon className={rightCls}
           points={`${x + w},${y} ${x + w + D},${y - D} ${x + w + D},${y + h - D} ${x + w},${y + h}`} />
         <rect x={x} y={y} width={w} height={h} rx={1}
           className={`bldg-face${isActive ? " bldg-active" : ""}${isHover ? " bldg-hover" : ""}${!isFiller ? " bldg-face-project" : ""}`}
@@ -256,6 +307,13 @@ export default function CitySvg({
           <rect x={x + w / 2 + 2} y={y - D + 2} width={5} height={3} rx={0.3}
             fill="#6B7280" opacity={0.4} style={{ pointerEvents: "none" }} />
         )}
+        {/* Awning on some short front-row fillers */}
+        {isFiller && h < 75 && (x * 3 + y * 7) % 5 === 0 && (
+          <g style={{ pointerEvents: "none" }}>
+            <rect x={x - 1} y={y + h - 8} width={w + 2} height={4} rx={0.5}
+              fill={["#C2584D","#4E8B6A","#C49D52","#5A7EB5"][(x + y) % 4]} opacity={0.65} />
+          </g>
+        )}
       </g>
     );
   };
@@ -272,22 +330,26 @@ export default function CitySvg({
     const baseH = totalH - towerH;
     const towerX = x + Math.round((baseW - towerW) / 2);
     const towerY = y - towerH;
-    const op = 0.55 + ((x * 7 + y * 13) % 30) / 100;
+    const op = 0.6 + ((x * 7 + y * 13) % 25) / 100;
+    const mat = matClasses[(x * 7 + y * 13) % 4];
+    const topC = mat ? `${mat}-top` : "bldg-top";
+    const rightC = mat ? `${mat}-right` : "bldg-right";
+    const faceC = mat ? `bldg-face ${mat}` : "bldg-face";
     return (
       <g key={`stepped-${x}-${y}`} style={{ cursor: "default", pointerEvents: "none" }} opacity={op}>
-        <polygon className="bldg-top"
+        <polygon className={topC}
           points={`${x},${y} ${x + D},${y - D} ${x + baseW + D},${y - D} ${x + baseW},${y}`} />
-        <polygon className="bldg-right"
+        <polygon className={rightC}
           points={`${x + baseW},${y} ${x + baseW + D},${y - D} ${x + baseW + D},${y + baseH - D} ${x + baseW},${y + baseH}`} />
         <rect x={x} y={y} width={baseW} height={baseH} rx={1}
-          className="bldg-face" filter="url(#shadow)" />
+          className={faceC} filter="url(#shadow)" />
         {floorLines(x, y, baseW, baseH)}
-        <polygon className="bldg-top"
+        <polygon className={topC}
           points={`${towerX},${towerY} ${towerX + D},${towerY - D} ${towerX + towerW + D},${towerY - D} ${towerX + towerW},${towerY}`} />
-        <polygon className="bldg-right"
+        <polygon className={rightC}
           points={`${towerX + towerW},${towerY} ${towerX + towerW + D},${towerY - D} ${towerX + towerW + D},${y - D} ${towerX + towerW},${y}`} />
         <rect x={towerX} y={towerY} width={towerW} height={towerH} rx={1}
-          className="bldg-face" filter="url(#shadow)" />
+          className={faceC} filter="url(#shadow)" />
         {fillerWindows(towerX, towerY, towerW, towerH)}
         <g opacity={0.5}>
           <line x1={towerX + towerW / 2} y1={towerY - D} x2={towerX + towerW / 2} y2={towerY - D - 10}
@@ -302,9 +364,22 @@ export default function CitySvg({
   const mono = "var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace";
 
   const billboardContent = activeProject ? (
-    <div className="billboard-content billboard-project" style={{
-      fontFamily: mono, padding: "0", height: "100%", overflowY: "auto", position: "relative",
-    }}>
+    <div 
+      ref={billboardScrollRef}
+      className="billboard-content billboard-project" 
+      style={{
+        fontFamily: mono, padding: "0", height: "100%", overflowY: "auto", position: "relative",
+      }}
+      onScroll={(e) => {
+        const target = e.currentTarget;
+        // Show story preview when scrolled down a bit (lower threshold)
+        if (target.scrollTop > 20) {
+          setBillboardScrolled(true);
+        } else {
+          setBillboardScrolled(false);
+        }
+      }}
+    >
       {/* Accent bar */}
       <div style={{ height: "3px", background: "var(--accent)" }} />
       <div style={{ padding: "10px 14px 12px" }}>
@@ -343,7 +418,7 @@ export default function CitySvg({
 
         {/* Links — prominent, accent-colored */}
         {activeProject.links && Object.keys(activeProject.links).length > 0 && (
-          <div style={{ display: "flex", gap: "6px" }}>
+          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "10px" }}>
             {activeProject.links.demo && (
               <a href={activeProject.links.demo} target="_blank" rel="noopener noreferrer"
                 style={{ fontSize: "8.5px", color: "var(--accent)", textDecoration: "none",
@@ -355,6 +430,65 @@ export default function CitySvg({
                   padding: "3px 10px", border: "1px solid var(--accent)", borderRadius: "2px", fontWeight: 600 }}>Source &#x2192;</a>
             )}
           </div>
+        )}
+
+        {/* Read Full Story Link — always visible, positioned before story */}
+        {activeProject.story && (
+          <div style={{ 
+            paddingTop: "10px",
+            marginTop: "10px",
+            borderTop: "1px solid var(--panel-border)",
+            marginBottom: billboardScrolled ? "10px" : "0",
+            paddingBottom: billboardScrolled ? "0" : "0"
+          }}>
+            <a 
+              href={`/stories/${activeProject.id}`}
+              style={{ 
+                fontSize: "8.5px", 
+                color: "var(--accent)", 
+                textDecoration: "none",
+                display: "inline-block",
+                fontWeight: 600,
+                letterSpacing: "0.05em"
+              }}
+            >
+              Read Full Story &#x2192;
+            </a>
+          </div>
+        )}
+
+        {/* Story Preview — always rendered but hidden until scrolled */}
+        {activeProject.story && (
+          <div style={{ 
+            fontSize: "7px", 
+            color: "var(--foreground)", 
+            lineHeight: 1.6,
+            opacity: billboardScrolled ? 0.75 : 0,
+            marginBottom: billboardScrolled ? "10px" : "0",
+            maxHeight: billboardScrolled ? "none" : "0",
+            overflowY: billboardScrolled ? "visible" : "hidden",
+            paddingRight: billboardScrolled ? "4px" : "0",
+            borderTop: billboardScrolled ? "1px solid var(--panel-border)" : "none",
+            paddingTop: billboardScrolled ? "8px" : "0",
+            marginTop: billboardScrolled ? "8px" : "0",
+            transition: "opacity 0.3s ease-in, margin 0.3s ease-in, padding 0.3s ease-in",
+            pointerEvents: billboardScrolled ? "auto" : "none",
+            height: billboardScrolled ? "auto" : "0",
+            overflow: billboardScrolled ? "visible" : "hidden",
+            visibility: billboardScrolled ? "visible" : "hidden"
+          }}>
+            <div style={{ 
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word"
+            }}>
+              {activeProject.story}
+            </div>
+          </div>
+        )}
+        
+        {/* Spacer to ensure scrollable content */}
+        {activeProject.story && (
+          <div style={{ height: "100px", minHeight: "100px" }} />
         )}
       </div>
     </div>
@@ -514,8 +648,16 @@ export default function CitySvg({
         {lampPosts([[556,120],[556,250],[556,460],[556,590],[582,160],[582,320],[582,500],[582,650]])}
         {lampPosts([[120,366],[280,366],[440,366],[700,366],[880,366],[1060,366]])}
 
-        {/* Trees */}
+        {/* Trees — along roads */}
         {trees([80,200,360,520,660,820,1000,1150], 366)}
+        {/* Trees — along vertical road */}
+        {trees([555,555,555,555], 80)}
+        {trees([583,583,583], 200)}
+        {/* Trees — scattered in quadrants */}
+        {trees([30,160,300,450], 160)}
+        {trees([620,780,940,1100], 160)}
+        {trees([30,180,350,500], 475)}
+        {trees([640,800,950,1100], 530)}
 
         {/* Data pulses */}
         {[100,200,300,460,560,650].map((cy,i) =>
@@ -568,21 +710,25 @@ export default function CitySvg({
         {/* MID ROW */}
         {F([
           [8,162,24,120],[40,152,26,132],[74,168,22,112],[108,155,24,128],
-          [142,170,22,108],[174,150,26,135],[208,165,24,118],[242,155,22,128],
+          [142,170,22,108],[174,150,26,135],
           [276,172,24,105],[310,155,26,128],[346,168,22,112],[380,152,24,132],
           [414,170,22,108],[448,155,24,128],[482,168,22,112],[516,155,26,125],
         ])}
+        {park(208, 168, 60, 22)}
+        {bldgPeaked(74, 168, 22, 112)}
 
         {/* FRONT ROW */}
         {F([
-          [5,292,22,60],[35,286,20,68],[63,296,22,55],[93,284,24,72],
+          [5,292,22,60],[35,286,20,68],
           [125,294,20,60],[153,288,22,65],[183,298,20,55],[211,284,24,72],
-          [243,292,20,62],[273,300,22,52],[303,286,24,70],[335,296,20,58],
-          [365,288,22,65],[395,298,20,55],[425,284,24,72],[457,294,20,60],
+          [273,300,22,52],[303,286,24,70],[335,296,20,58],
+          [365,288,22,65],[395,298,20,55],[425,284,24,72],
           [487,288,22,66],[517,296,20,56],
         ])}
+        {park(63, 300, 52, 18)}
+        {bldgPeaked(243, 292, 20, 62)}
+        {bldgPeaked(457, 294, 20, 60)}
 
-        {greenArea(240,285,16,8)}
         {pedestrian(120,290)}
         {pedestrian(380,292)}
       </g>
@@ -606,23 +752,27 @@ export default function CitySvg({
         {/* MID ROW */}
         {F([
           [588,162,24,118],[620,152,26,130],[654,170,22,108],[688,155,24,128],
-          [722,168,22,112],[754,150,26,135],[788,165,24,118],[822,155,22,128],
+          [722,168,22,112],[754,150,26,135],
           [856,172,24,105],[890,155,26,128],[924,168,22,112],[958,150,24,132],
-          [992,168,22,108],[1026,155,24,128],[1060,170,22,110],[1094,152,26,128],
+          [992,168,22,108],[1026,155,24,128],
           [1128,168,22,108],[1162,155,24,122],
         ])}
+        {park(788, 168, 55, 22)}
+        {park(1060, 170, 55, 20)}
+        {bldgPeaked(654, 170, 22, 108)}
 
         {/* FRONT ROW */}
         {F([
           [586,292,22,60],[614,286,20,68],[642,296,22,55],[670,284,24,72],
           [698,294,20,60],[726,288,22,65],[754,298,20,55],[782,284,24,70],
-          [810,292,20,62],[838,300,22,52],[866,286,24,70],[894,296,20,58],
+          [866,286,24,70],[894,296,20,58],
           [922,288,22,65],[950,298,20,55],[978,284,24,72],[1006,294,20,60],
-          [1034,288,22,66],[1062,296,20,56],[1090,284,24,70],[1118,294,20,58],
+          [1034,288,22,66],[1062,296,20,56],[1090,284,24,70],
           [1146,288,22,65],
         ])}
+        {park(810, 296, 48, 16)}
+        {bldgPeaked(1118, 294, 20, 58)}
 
-        {greenArea(860,285,16,8)}
         {pedestrian(740,290)}
         {pedestrian(1060,292)}
       </g>
@@ -646,28 +796,35 @@ export default function CitySvg({
         {/* MID ROW */}
         {F([
           [8,478,24,82],[40,470,22,92],[72,482,24,78],[106,472,26,88],
-          [140,480,22,82],[172,468,24,94],[206,480,26,80],[240,472,22,90],
+          [140,480,22,82],[172,468,24,94],
           [274,484,24,76],[308,470,26,90],[342,480,22,82],[376,468,24,92],
           [410,482,22,78],[444,470,26,90],[478,480,24,80],[512,472,22,88],
         ])}
+        {park(206, 480, 58, 20)}
+        {bldgPeaked(106, 472, 26, 88)}
 
         {/* FRONT ROW */}
         {F([
-          [5,552,22,58],[35,545,20,65],[65,555,22,52],[95,542,24,68],
+          [5,552,22,58],[35,545,20,65],
           [127,554,20,56],[157,548,22,62],[187,558,20,50],[217,544,24,66],
-          [249,554,22,56],[281,560,20,48],[311,546,24,64],[343,556,20,54],
+          [249,554,22,56],[281,560,20,48],[311,546,24,64],
           [375,548,22,60],[407,558,20,50],[439,544,24,66],[471,554,20,56],
           [503,548,22,60],
         ])}
+        {park(65, 558, 52, 16)}
+        {bldgPeaked(343, 556, 20, 54)}
 
         {/* BOTTOM EDGE ROW */}
         {F([
-          [8,632,22,46],[38,626,20,52],[68,634,22,42],[98,624,24,55],
-          [130,636,20,40],[160,628,22,50],[190,634,20,44],[220,624,24,55],
+          [8,632,22,46],[38,626,20,52],[68,634,22,42],
+          [160,628,22,50],[190,634,20,44],[220,624,24,55],
           [252,632,22,46],[284,626,20,52],[316,634,22,42],[348,624,24,55],
-          [380,636,20,40],[412,628,22,50],[444,634,20,44],[476,624,24,55],
-          [508,632,22,46],
+          [380,636,20,40],
+          [476,624,24,55],[508,632,22,46],
         ])}
+        {park(98, 636, 50, 16)}
+        {park(412, 636, 52, 16)}
+        {bldgPeaked(444, 634, 20, 44)}
 
         {pedestrian(200,548)}
         {pedestrian(420,550)}
@@ -694,10 +851,13 @@ export default function CitySvg({
         {/* Below billboard */}
         {F([
           [638,652,22,38],[668,648,24,42],[700,654,22,36],[730,648,24,42],
-          [762,652,22,38],[794,648,24,42],[826,654,22,36],[858,648,24,42],
-          [890,652,22,38],[922,648,24,42],[954,654,22,36],[986,648,24,40],
+          [762,652,22,38],
+          [858,648,24,42],
+          [922,648,24,42],[954,654,22,36],[986,648,24,40],
           [1018,652,22,38],
         ])}
+        {park(794, 652, 52, 18)}
+        {bldgPeaked(890, 652, 22, 38)}
 
         {/* ── BILLBOARD ── */}
         <g id="billboard">
