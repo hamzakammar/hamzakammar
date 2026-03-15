@@ -913,7 +913,7 @@ export default function CitySvg({
       <g id="building-signs" style={{ pointerEvents: "none" }}>
         {projectIcon("kuzu", "Kuzu", 85, 87, "/kuzu.png", "Software Intern")}
         {projectIcon("chess", "Chess", 198, 93)}
-        {projectIcon("horizon", "Horizon", 300, 97)}
+        {projectIcon("horizon", "Horizon MCP", 300, 97)}
         {projectIcon("unimap", "UniMap", 395, 98)}
         {projectIcon("mapflow", "MapFLOW", 78, 426, "/mapflow.png", "Data Manager")}
         {projectIcon("CC", "CC", 182, 425)}
