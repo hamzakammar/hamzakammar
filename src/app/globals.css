@@ -6,6 +6,15 @@
 
 html, body { margin: 0; padding: 0; }
 
+/* Safari viewport fix: avoid 100vh including address bar */
+html {
+  height: -webkit-fill-available;
+}
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
 :root {
   --background: #F5F7FA;
   --foreground: #1F2937;
@@ -278,6 +287,46 @@ body {
 /* Billboard inner border — accent colored in dark */
 .citySvg .bb-inner-border { fill: none; stroke: #E2E8F0; stroke-width: 0.75; }
 [data-theme="dark"] .citySvg .bb-inner-border { stroke: #1D3A5F; stroke-width: 1; }
+
+/* Billboard foreignObject: content must fill the panel exactly.
+   Do NOT use position:absolute here — Safari uses the wrong containing block
+   and the content ends up in the top-left. */
+.billboard-foreign {
+  overflow: hidden;
+}
+.billboard-foreign-inner {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: block;
+}
+.billboard-foreign-inner .billboard-content,
+.billboard-foreign-inner .billboard-project {
+  box-sizing: border-box;
+}
+
+/* Safari: overflow and scroll only; no positioning changes */
+@supports (-webkit-hyphens: none) or (-webkit-touch-callout: none) {
+  .billboard-foreign-inner .billboard-content,
+  .billboard-foreign-inner .billboard-project {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Safari billboard overlay (replaces foreignObject) */
+.billboard-overlay {
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  border-radius: 3px;
+  box-shadow: 3px 3px 4px rgba(31, 41, 55, 0.14);
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+}
+[data-theme="dark"] .billboard-overlay {
+  box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.3);
+}
 
 /* Billboard lights — more visible */
 .citySvg .bb-light {
@@ -580,10 +629,42 @@ body {
    CONTACT BAR
    ══════════════════════════════════════ */
 
+/* Safari-friendly full viewport */
+.viewport-fill {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  height: -webkit-fill-available;
+  min-height: 100vh;
+}
+
+.bottom-safe { bottom: max(20px, env(safe-area-inset-bottom)); }
+.right-safe { right: max(20px, env(safe-area-inset-right)); }
+
+/* SVG container: same behavior in all browsers — fill viewport, viewBox scales with meet */
+.city-svg-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+.city-svg-wrapper .citySvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  vertical-align: top;
+}
+
 .contact-bar {
   position: fixed;
   top: 20px;
+  top: max(20px, env(safe-area-inset-top));
   right: 20px;
+  right: max(20px, env(safe-area-inset-right));
   z-index: 30;
   display: flex;
   gap: 10px;

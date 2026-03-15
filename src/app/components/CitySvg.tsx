@@ -18,6 +18,9 @@ export default function CitySvg({
 }: CitySvgProps) {
   const [billboardScrolled, setBillboardScrolled] = useState(false);
   const billboardScrollRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [billboardPx, setBillboardPx] = useState({ w: 404, h: 199 });
+  const [overlayRect, setOverlayRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
 
   // Reset scroll state when project changes
   useEffect(() => {
@@ -26,6 +29,38 @@ export default function CitySvg({
       billboardScrollRef.current.scrollTop = 0;
     }
   }, [activeProject?.id]);
+
+  // Billboard pixel size + Safari overlay rect from SVG (viewBox 1200x700, meet)
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const update = () => {
+      const rect = svg.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+      if (!w || !h) return;
+      const scale = Math.min(w / 1200, h / 700);
+      const offX = (w - 1200 * scale) / 2;
+      const offY = (h - 700 * scale) / 2;
+      setBillboardPx({ w: Math.round(404 * scale), h: Math.round(199 * scale) });
+      setOverlayRect({
+        left: rect.left + offX + (630 + 8) * scale,
+        top: rect.top + offY + (425 + 8) * scale,
+        width: (420 - 16) * scale,
+        height: (215 - 16) * scale,
+      });
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(svg);
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
     const [hoverId, setHoverId] = useState<string | null>(null);
   const activeProjectId = activeProject?.id ?? null;
   const D = 8;
@@ -357,8 +392,10 @@ export default function CitySvg({
       className="billboard-content billboard-project" 
       style={{
         fontFamily: mono, padding: "0",
-        width: "404px", height: "199px",
+        width: "100%", height: "100%",
+        minHeight: 0,
         overflowY: "auto", overflowX: "hidden", position: "relative",
+        boxSizing: "border-box",
       }}
       onScroll={(e) => {
         const target = e.currentTarget;
@@ -496,8 +533,9 @@ export default function CitySvg({
   ) : (
     <div className="billboard-content" style={{
       fontFamily: mono, padding: "12px 18px",
-      width: "404px", height: "199px",
+      width: "100%", height: "100%",
       overflow: "hidden",
+      boxSizing: "border-box",
       display: "flex", flexDirection: "column" as const, justifyContent: "center", alignItems: "center", textAlign: "center" as const,
     }}>
       <div style={{ fontSize: "22px", fontWeight: 900, letterSpacing: "0.15em",
@@ -570,7 +608,8 @@ export default function CitySvg({
 
   /* ═══════ RENDER ═══════ */
   return (
-    <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet"
+    <>
+    <svg ref={svgRef} viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid meet"
       aria-label="Portfolio City" className="citySvg w-full h-full"
       onClick={(e) => {
         const t = e.target as SVGElement;
@@ -899,8 +938,8 @@ export default function CitySvg({
           <rect className="bb-panel" x={BB.x} y={BB.y} width={BB.w} height={BB.h} rx={3} filter="url(#bb-shadow)" />
           <rect className="bb-inner-border" x={BB.x+4} y={BB.y+4} width={BB.w-8} height={BB.h-8} rx={2} />
           {[-50,0,50].map(dx => <circle key={dx} cx={BB.x+BB.w/2+dx} cy={BB.y-4} r="3" className="bb-light" />)}
-          <foreignObject x={BB.x+8} y={BB.y+8} width={BB.w-16} height={BB.h-16}>
-            {billboardContent}
+          <foreignObject x={BB.x+8} y={BB.y+8} width={BB.w-16} height={BB.h-16} className="billboard-foreign" aria-hidden="true">
+            {/* Content rendered via overlay below for consistent cross-browser positioning */}
           </foreignObject>
         </g>
       </g>
@@ -927,5 +966,38 @@ export default function CitySvg({
       </g>
 
     </svg>
+    {overlayRect && (() => {
+      const designW = 404;
+      const designH = 199;
+      const scale = Math.min(overlayRect.width / designW, overlayRect.height / designH);
+      return (
+        <div
+          className="billboard-overlay"
+          style={{
+            position: "fixed",
+            left: overlayRect.left,
+            top: overlayRect.top,
+            width: overlayRect.width,
+            height: overlayRect.height,
+            overflow: "hidden",
+            boxSizing: "border-box",
+            zIndex: 10,
+            pointerEvents: "auto",
+          }}
+        >
+          <div
+            style={{
+              width: designW,
+              height: designH,
+              transform: `scale(${scale})`,
+              transformOrigin: "top left",
+            }}
+          >
+            {billboardContent}
+          </div>
+        </div>
+      );
+    })()}
+    </>
   );
 }

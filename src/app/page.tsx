@@ -210,7 +210,7 @@ export default function Home() {
         </div>
 
         {/* Dark mode toggle */}
-        <div className="fixed bottom-5 right-5 z-40">
+        <div className="fixed z-40 bottom-safe right-safe">
           <button className="theme-toggle" onClick={toggleDark}
             aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>
             {dark ? "\u2600" : "\u263E"}
@@ -222,8 +222,9 @@ export default function Home() {
 
   /* ═══════ DESKTOP LAYOUT ═══════ */
   return (
-    <div className="h-screen w-screen overflow-hidden flex items-center justify-center">
-      <CitySvg
+    <div className="viewport-fill overflow-hidden flex items-center justify-center">
+      <div className="city-svg-wrapper">
+        <CitySvg
         onBuildingClick={(id) => {
           setShowResume(false);
           setActiveProjectId((prev) => (prev === id ? null : id));
@@ -232,6 +233,7 @@ export default function Home() {
         onClose={() => { setActiveProjectId(null); setShowResume(false); }}
         showResume={showResume}
       />
+      </div>
       <CommandPalette
         open={cmdkOpen}
         onOpenChange={setCmdkOpen}
@@ -255,7 +257,7 @@ export default function Home() {
       </nav>
 
       {/* Bottom-right controls */}
-      <div className="fixed bottom-5 right-5 z-40 flex items-center gap-2">
+      <div className="fixed z-40 flex items-center gap-2 bottom-safe right-safe">
         <button className="theme-toggle" onClick={toggleDark}
           aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>
           {dark ? "\u2600" : "\u263E"}
