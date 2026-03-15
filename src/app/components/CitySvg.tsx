@@ -356,7 +356,9 @@ export default function CitySvg({
       ref={billboardScrollRef}
       className="billboard-content billboard-project" 
       style={{
-        fontFamily: mono, padding: "0", height: "100%", overflowY: "auto", position: "relative",
+        fontFamily: mono, padding: "0",
+        width: "404px", height: "199px",
+        overflowY: "auto", overflowX: "hidden", position: "relative",
       }}
       onScroll={(e) => {
         const target = e.currentTarget;
@@ -493,7 +495,9 @@ export default function CitySvg({
     </div>
   ) : (
     <div className="billboard-content" style={{
-      fontFamily: mono, padding: "16px 18px", height: "100%",
+      fontFamily: mono, padding: "12px 18px",
+      width: "404px", height: "199px",
+      overflow: "hidden",
       display: "flex", flexDirection: "column" as const, justifyContent: "center", alignItems: "center", textAlign: "center" as const,
     }}>
       <div style={{ fontSize: "22px", fontWeight: 900, letterSpacing: "0.15em",
@@ -501,7 +505,7 @@ export default function CitySvg({
       <div style={{ fontSize: "8px", fontWeight: 500, letterSpacing: "0.28em",
         color: "var(--accent)", textTransform: "uppercase" as const, marginBottom: "4px" }}>Software Engineer · UWaterloo</div>
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "12px" }} />
-      <div style={{ width: "100%", maxWidth: "340px", textAlign: "left" as const, marginBottom: "14px" }}>
+      <div style={{ width: "100%", maxWidth: "340px", textAlign: "left" as const, marginBottom: "8px" }}>
         {[
           { bullet: "→", text: "Wrote query planner internals at KùzuDB — youngest on the team" },
           { bullet: "→", text: "One JSON file → 3,500 pharmacists save 15 min per patient" },
@@ -517,10 +521,10 @@ export default function CitySvg({
         ))}
       </div>
       <div className="billboard-cta" style={{ fontSize: "7px", color: "var(--accent)", letterSpacing: "0.12em",
-        textTransform: "uppercase" as const, marginBottom: "10px" }}>
+        textTransform: "uppercase" as const, marginBottom: "6px" }}>
         Click a building · press &#x2318;K to explore
       </div>
-      <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "8px" }} />
+      <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "6px" }} />
       <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "center" }}>
         {[
           {
