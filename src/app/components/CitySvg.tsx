@@ -517,8 +517,34 @@ export default function CitySvg({
         ))}
       </div>
       <div className="billboard-cta" style={{ fontSize: "7px", color: "var(--accent)", letterSpacing: "0.12em",
-        textTransform: "uppercase" as const }}>
+        textTransform: "uppercase" as const, marginBottom: "10px" }}>
         Click a building · press &#x2318;K to explore
+      </div>
+      <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "8px" }} />
+      <div style={{ display: "flex", gap: "8px", alignItems: "center", justifyContent: "center", flexWrap: "wrap" as const }}>
+        {[
+          { label: "se30webring", href: "https://www.se30webring.com" },
+          { label: "se-webring", href: "https://se-webring.xyz" },
+          { label: "uwaterloo.network", href: "https://www.uwaterloo.network" },
+        ].map((ring) => (
+          <a
+            key={ring.href}
+            href={ring.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              fontSize: "6px", color: "var(--accent)", letterSpacing: "0.08em",
+              textDecoration: "none", border: "1px solid var(--accent)",
+              padding: "2px 5px", borderRadius: "3px", opacity: 0.75,
+              transition: "opacity 0.15s",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.75")}
+          >
+            {ring.label}
+          </a>
+        ))}
       </div>
     </div>
   );

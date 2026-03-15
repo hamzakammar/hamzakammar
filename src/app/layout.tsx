@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://hamzaammar.ca"),
   title: "Hamza Ammar",
   description: "Resume, projects and experience — Hamza Ammar",
   icons: {
