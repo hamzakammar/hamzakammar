@@ -521,28 +521,40 @@ export default function CitySvg({
         Click a building · press &#x2318;K to explore
       </div>
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "8px" }} />
-      <div style={{ display: "flex", gap: "8px", alignItems: "center", justifyContent: "center", flexWrap: "wrap" as const }}>
+      <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "center" }}>
         {[
-          { label: "se30webring", href: "https://www.se30webring.com" },
-          { label: "se-webring", href: "https://se-webring.xyz" },
-          { label: "uwaterloo.network", href: "https://www.uwaterloo.network" },
+          {
+            label: "se30webring",
+            href: "https://www.se30webring.com",
+            logo: "https://www.se30webring.com/assets/icon-yellow.svg",
+          },
+          {
+            label: "se-webring",
+            href: "https://se-webring.xyz",
+            logo: "https://raw.githubusercontent.com/simcard0000/se-webring/main/assets/logo/logo_w.svg",
+          },
+          {
+            label: "uwaterloo.network",
+            href: "https://www.uwaterloo.network",
+            logo: "https://www.uwaterloo.network/favicon.svg",
+          },
         ].map((ring) => (
           <a
             key={ring.href}
             href={ring.href}
             target="_blank"
             rel="noopener noreferrer"
+            title={ring.label}
             onClick={(e) => e.stopPropagation()}
             style={{
-              fontSize: "6px", color: "var(--accent)", letterSpacing: "0.08em",
-              textDecoration: "none", border: "1px solid var(--accent)",
-              padding: "2px 5px", borderRadius: "3px", opacity: 0.75,
-              transition: "opacity 0.15s",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              opacity: 0.7, transition: "opacity 0.15s", textDecoration: "none",
             }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.75")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
           >
-            {ring.label}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ring.logo} alt={ring.label} style={{ width: "18px", height: "18px", objectFit: "contain" }} />
           </a>
         ))}
       </div>
