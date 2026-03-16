@@ -206,93 +206,89 @@ export default function CitySvg({
     </g>
   );
 
-  /* ═══════ PROJECT LABELS (logo mounted on building facade) ═══════ */
+  /* ═══════ PROJECT LABELS (integrated building band) ═══════ */
   const projectLabel = (
     id: string, name: string,
     bx: number, by: number, bw: number, bh: number,
     logo?: string,
   ) => {
-    const iconSize = 28;
-    // Center icon on the facade, ~25% down from top of building
-    const facadeCx = bx + bw / 2;
-    const facadeIconY = by + Math.round(bh * 0.22);
-    const nameY = facadeIconY + iconSize / 2 + 9;
+    const bandH = 44;
+    const bandY = by + Math.round(bh * 0.18);
+    const cx = bx + bw / 2;
+    const iconSize = Math.min(22, bw - 12);
+    const iconY = bandY + (bandH - iconSize) / 2 - 2;
+    const nameY = bandY + bandH - 5;
 
-    const shapes: Record<string, (cx: number, cy: number) => React.ReactNode> = {
-      kuzu: (cx, cy) => (<>{/* Database cylinder */}
-        <ellipse cx={cx} cy={cy - 5} rx={8} ry={3.5} className="facade-icon" />
-        <line x1={cx - 8} y1={cy - 5} x2={cx - 8} y2={cy + 5} className="facade-icon" />
-        <line x1={cx + 8} y1={cy - 5} x2={cx + 8} y2={cy + 5} className="facade-icon" />
-        <ellipse cx={cx} cy={cy + 5} rx={8} ry={3.5} className="facade-icon" />
+    const shapes: Record<string, (cx: number, cy: number, s: number) => React.ReactNode> = {
+      kuzu: (cx, cy, s) => (<>
+        <ellipse cx={cx} cy={cy - s*0.4} rx={s*0.55} ry={s*0.25} className="facade-icon" />
+        <line x1={cx-s*0.55} y1={cy-s*0.4} x2={cx-s*0.55} y2={cy+s*0.4} className="facade-icon" />
+        <line x1={cx+s*0.55} y1={cy-s*0.4} x2={cx+s*0.55} y2={cy+s*0.4} className="facade-icon" />
+        <ellipse cx={cx} cy={cy+s*0.4} rx={s*0.55} ry={s*0.25} className="facade-icon" />
       </>),
-      chess: (cx, cy) => (<>{/* Crown */}
-        <path d={`M${cx-8},${cy+6} L${cx-6},${cy-2} L${cx-9},${cy-6} L${cx-3},${cy-3} L${cx},${cy-9} L${cx+3},${cy-3} L${cx+9},${cy-6} L${cx+6},${cy-2} L${cx+8},${cy+6}Z`} className="facade-icon" />
+      chess: (cx, cy, s) => (<>
+        <path d={`M${cx-s*.8},${cy+s*.6} L${cx-s*.55},${cy-s*.15} L${cx-s*.9},${cy-s*.6} L${cx-s*.25},${cy-s*.35} L${cx},${cy-s*.9} L${cx+s*.25},${cy-s*.35} L${cx+s*.9},${cy-s*.6} L${cx+s*.55},${cy-s*.15} L${cx+s*.8},${cy+s*.6}Z`} className="facade-icon" />
       </>),
-      horizon: (cx, cy) => (<>{/* Magnifying glass */}
-        <circle cx={cx - 2} cy={cy - 2} r={7} className="facade-icon" />
-        <line x1={cx + 3} y1={cy + 3} x2={cx + 9} y2={cy + 9} className="facade-icon" strokeWidth="2.5" />
+      horizon: (cx, cy, s) => (<>
+        <circle cx={cx-s*.15} cy={cy-s*.15} r={s*.55} className="facade-icon" />
+        <line x1={cx+s*.28} y1={cy+s*.28} x2={cx+s*.85} y2={cy+s*.85} className="facade-icon" strokeWidth="2" />
       </>),
-      unimap: (cx, cy) => (<>{/* Map pin */}
-        <circle cx={cx} cy={cy - 4} r={5} className="facade-icon" />
-        <path d={`M${cx-7},${cy-1} Q${cx},${cy+11} ${cx+7},${cy-1}`} className="facade-icon" />
+      unimap: (cx, cy, s) => (<>
+        <circle cx={cx} cy={cy-s*.3} r={s*.4} className="facade-icon" />
+        <path d={`M${cx-s*.6},${cy+s*.1} Q${cx},${cy+s*.95} ${cx+s*.6},${cy+s*.1}`} className="facade-icon" />
       </>),
-      mapflow: (cx, cy) => (<>{/* Data flow arrows */}
-        <line x1={cx-9} y1={cy-3} x2={cx+6} y2={cy-3} className="facade-icon" />
-        <polyline points={`${cx+2},${cy-7} ${cx+7},${cy-3} ${cx+2},${cy+1}`} className="facade-icon" fill="none" />
-        <line x1={cx+9} y1={cy+3} x2={cx-6} y2={cy+3} className="facade-icon" />
-        <polyline points={`${cx-2},${cy-1} ${cx-7},${cy+3} ${cx-2},${cy+7}`} className="facade-icon" fill="none" />
+      mapflow: (cx, cy, s) => (<>
+        <line x1={cx-s*.8} y1={cy-s*.25} x2={cx+s*.5} y2={cy-s*.25} className="facade-icon" />
+        <polyline points={`${cx+s*.15},${cy-s*.6} ${cx+s*.6},${cy-s*.25} ${cx+s*.15},${cy+s*.1}`} className="facade-icon" fill="none" />
+        <line x1={cx+s*.8} y1={cy+s*.25} x2={cx-s*.5} y2={cy+s*.25} className="facade-icon" />
+        <polyline points={`${cx-s*.15},${cy-s*.1} ${cx-s*.6},${cy+s*.25} ${cx-s*.15},${cy+s*.6}`} className="facade-icon" fill="none" />
       </>),
-      cc: (cx, cy) => (<>{/* Open book */}
-        <rect x={cx-8} y={cy-8} width={16} height={16} rx={1.5} className="facade-icon" />
-        <line x1={cx} y1={cy-8} x2={cx} y2={cy+8} className="facade-icon" />
-        <line x1={cx-8} y1={cy-1} x2={cx+8} y2={cy-1} className="facade-icon" />
+      cc: (cx, cy, s) => (<>
+        <rect x={cx-s*.7} y={cy-s*.7} width={s*1.4} height={s*1.4} rx={s*.12} className="facade-icon" />
+        <line x1={cx} y1={cy-s*.7} x2={cx} y2={cy+s*.7} className="facade-icon" />
+        <line x1={cx-s*.7} y1={cy-s*.1} x2={cx+s*.7} y2={cy-s*.1} className="facade-icon" />
       </>),
-      dealish: (cx, cy) => (<>{/* Target */}
-        <circle cx={cx} cy={cy} r={9} className="facade-icon" />
-        <circle cx={cx} cy={cy} r={4.5} className="facade-icon" />
-        <line x1={cx} y1={cy-10} x2={cx} y2={cy+10} className="facade-icon" />
-        <line x1={cx-10} y1={cy} x2={cx+10} y2={cy} className="facade-icon" />
+      dealish: (cx, cy, s) => (<>
+        <circle cx={cx} cy={cy} r={s*.75} className="facade-icon" />
+        <circle cx={cx} cy={cy} r={s*.35} className="facade-icon" />
+        <line x1={cx} y1={cy-s*.85} x2={cx} y2={cy+s*.85} className="facade-icon" />
+        <line x1={cx-s*.85} y1={cy} x2={cx+s*.85} y2={cy} className="facade-icon" />
       </>),
-      neodev: (cx, cy) => (<>{/* Code brackets */}
-        <polyline points={`${cx-3},${cy-9} ${cx-11},${cy} ${cx-3},${cy+9}`} className="facade-icon" fill="none" />
-        <polyline points={`${cx+3},${cy-9} ${cx+11},${cy} ${cx+3},${cy+9}`} className="facade-icon" fill="none" />
+      neodev: (cx, cy, s) => (<>
+        <polyline points={`${cx-s*.2},${cy-s*.85} ${cx-s*.95},${cy} ${cx-s*.2},${cy+s*.85}`} className="facade-icon" fill="none" />
+        <polyline points={`${cx+s*.2},${cy-s*.85} ${cx+s*.95},${cy} ${cx+s*.2},${cy+s*.85}`} className="facade-icon" fill="none" />
       </>),
-      uw: (cx, cy) => (<>{/* Graduation cap */}
-        <polygon points={`${cx},${cy-9} ${cx-12},${cy-2} ${cx},${cy+2} ${cx+12},${cy-2}`} className="facade-icon" />
-        <line x1={cx} y1={cy+2} x2={cx} y2={cy+9} className="facade-icon" />
-        <line x1={cx-7} y1={cy+7} x2={cx+7} y2={cy+7} className="facade-icon" />
+      uw: (cx, cy, s) => (<>
+        <polygon points={`${cx},${cy-s*.85} ${cx-s*.95},${cy-s*.2} ${cx},${cy+s*.15} ${cx+s*.95},${cy-s*.2}`} className="facade-icon" />
+        <line x1={cx} y1={cy+s*.15} x2={cx} y2={cy+s*.85} className="facade-icon" />
+        <line x1={cx-s*.55} y1={cy+s*.65} x2={cx+s*.55} y2={cy+s*.65} className="facade-icon" />
       </>),
-      shopify: (cx, cy) => (<>{/* Shopping bag */}
-        <rect x={cx-7} y={cy-2} width={14} height={12} rx={2} className="facade-icon" />
-        <path d={`M${cx-4},${cy-2} C${cx-4},${cy-9} ${cx+4},${cy-9} ${cx+4},${cy-2}`} className="facade-icon" fill="none" />
+      shopify: (cx, cy, s) => (<>
+        <rect x={cx-s*.6} y={cy-s*.2} width={s*1.2} height={s*.95} rx={s*.18} className="facade-icon" />
+        <path d={`M${cx-s*.35},${cy-s*.2} C${cx-s*.35},${cy-s*.85} ${cx+s*.35},${cy-s*.85} ${cx+s*.35},${cy-s*.2}`} className="facade-icon" fill="none" />
       </>),
     };
 
     return (
       <g key={`label-${id}`} style={{ pointerEvents: "none" }}>
+        {/* Dark band — flush with building edges, part of the structure */}
+        <rect className="facade-band"
+          x={bx} y={bandY} width={bw} height={bandH} />
+
+        {/* Logo image or SVG icon centered in band */}
         {logo ? (
-          <>
-            {/* Logo image mounted on facade */}
-            <rect className="facade-logo-bg"
-              x={facadeCx - iconSize/2 - 2} y={facadeIconY - iconSize/2 - 2}
-              width={iconSize + 4} height={iconSize + 4} rx={3} />
-            <image href={logo}
-              x={facadeCx - iconSize/2} y={facadeIconY - iconSize/2}
-              width={iconSize} height={iconSize}
-              preserveAspectRatio="xMidYMid meet" style={{ opacity: 0.92 }} />
-          </>
+          <image href={logo}
+            x={cx - iconSize/2} y={iconY}
+            width={iconSize} height={iconSize}
+            preserveAspectRatio="xMidYMid meet"
+            style={{ opacity: 0.9 }} />
         ) : (
-          <>
-            {/* SVG icon mounted on facade */}
-            <rect className="facade-logo-bg"
-              x={facadeCx - iconSize/2 - 2} y={facadeIconY - iconSize/2 - 2}
-              width={iconSize + 4} height={iconSize + 4} rx={3} />
-            {shapes[id]?.(facadeCx, facadeIconY)}
-          </>
+          shapes[id]?.(cx, iconY + iconSize/2, iconSize/2)
         )}
-        {/* Name in small caps below icon */}
+
+        {/* Name below band — small, tight, white */}
         <text className="facade-name-text"
-          x={facadeCx} y={nameY}
+          x={cx} y={nameY}
           textAnchor="middle">{name.toUpperCase()}</text>
       </g>
     );
@@ -999,7 +995,7 @@ export default function CitySvg({
         {projectLabel("uw", "UW", 945, 58, 62, 218, "/UW.png")}
         {projectLabel("mapflow", "MapFLOW", 35, 393, 85, 192, "/mapflow.png")}
         {projectLabel("cc", "CC", 130, 393, 72, 190)}
-        {projectLabel("shopify", "Shopify", 215, 395, 65, 188)}
+        {projectLabel("shopify", "Shopify", 215, 395, 65, 188, "/shopify.png")}
       </g>
 
     </svg>
