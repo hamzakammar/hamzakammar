@@ -206,114 +206,94 @@ export default function CitySvg({
     </g>
   );
 
-  /* ═══════ PROJECT LABELS (rooftop signboard style) ═══════ */
+  /* ═══════ PROJECT LABELS (logo mounted on building facade) ═══════ */
   const projectLabel = (
     id: string, name: string,
-    bx: number, by: number, bw: number, _bh: number,
+    bx: number, by: number, bw: number, bh: number,
     logo?: string,
   ) => {
-    const cls = "project-icon";
-    // Rooftop icon position: centered on isometric top face
-    const iconCx = bx + bw / 2 + D / 2;
-    const iconCy = by - D / 2;
-    const iconSize = logo ? 20 : 18;
+    const iconSize = 28;
+    // Center icon on the facade, ~25% down from top of building
+    const facadeCx = bx + bw / 2;
+    const facadeIconY = by + Math.round(bh * 0.22);
+    const nameY = facadeIconY + iconSize / 2 + 9;
 
     const shapes: Record<string, (cx: number, cy: number) => React.ReactNode> = {
       kuzu: (cx, cy) => (<>{/* Database cylinder */}
-        <ellipse cx={cx} cy={cy - 3} rx={5.5} ry={2.5} className={cls} />
-        <line x1={cx - 5.5} y1={cy - 3} x2={cx - 5.5} y2={cy + 3} className={cls} />
-        <line x1={cx + 5.5} y1={cy - 3} x2={cx + 5.5} y2={cy + 3} className={cls} />
-        <ellipse cx={cx} cy={cy + 3} rx={5.5} ry={2.5} className={cls} />
+        <ellipse cx={cx} cy={cy - 5} rx={8} ry={3.5} className="facade-icon" />
+        <line x1={cx - 8} y1={cy - 5} x2={cx - 8} y2={cy + 5} className="facade-icon" />
+        <line x1={cx + 8} y1={cy - 5} x2={cx + 8} y2={cy + 5} className="facade-icon" />
+        <ellipse cx={cx} cy={cy + 5} rx={8} ry={3.5} className="facade-icon" />
       </>),
       chess: (cx, cy) => (<>{/* Crown */}
-        <path d={`M${cx - 5},${cy + 4} L${cx - 3.5},${cy - 1} L${cx - 6},${cy - 4} L${cx - 2},${cy - 2.5} L${cx},${cy - 6} L${cx + 2},${cy - 2.5} L${cx + 6},${cy - 4} L${cx + 3.5},${cy - 1} L${cx + 5},${cy + 4}Z`} className={cls} />
+        <path d={`M${cx-8},${cy+6} L${cx-6},${cy-2} L${cx-9},${cy-6} L${cx-3},${cy-3} L${cx},${cy-9} L${cx+3},${cy-3} L${cx+9},${cy-6} L${cx+6},${cy-2} L${cx+8},${cy+6}Z`} className="facade-icon" />
       </>),
       horizon: (cx, cy) => (<>{/* Magnifying glass */}
-        <circle cx={cx - 1} cy={cy - 1} r={4.5} className={cls} />
-        <line x1={cx + 2} y1={cy + 2} x2={cx + 6} y2={cy + 6} className={cls} />
+        <circle cx={cx - 2} cy={cy - 2} r={7} className="facade-icon" />
+        <line x1={cx + 3} y1={cy + 3} x2={cx + 9} y2={cy + 9} className="facade-icon" strokeWidth="2.5" />
       </>),
       unimap: (cx, cy) => (<>{/* Map pin */}
-        <circle cx={cx} cy={cy - 2.5} r={3} className={cls} />
-        <path d={`M${cx - 4},${cy - 1} Q${cx},${cy + 7} ${cx + 4},${cy - 1}`} className={cls} />
+        <circle cx={cx} cy={cy - 4} r={5} className="facade-icon" />
+        <path d={`M${cx-7},${cy-1} Q${cx},${cy+11} ${cx+7},${cy-1}`} className="facade-icon" />
       </>),
       mapflow: (cx, cy) => (<>{/* Data flow arrows */}
-        <line x1={cx - 6} y1={cy - 2} x2={cx + 4} y2={cy - 2} className={cls} />
-        <polyline points={`${cx + 1.5},${cy - 4.5} ${cx + 5},${cy - 2} ${cx + 1.5},${cy + 0.5}`} className={cls} fill="none" />
-        <line x1={cx + 6} y1={cy + 2} x2={cx - 4} y2={cy + 2} className={cls} />
-        <polyline points={`${cx - 1.5},${cy + 0.5} ${cx - 5},${cy + 2} ${cx - 1.5},${cy + 4.5}`} className={cls} fill="none" />
+        <line x1={cx-9} y1={cy-3} x2={cx+6} y2={cy-3} className="facade-icon" />
+        <polyline points={`${cx+2},${cy-7} ${cx+7},${cy-3} ${cx+2},${cy+1}`} className="facade-icon" fill="none" />
+        <line x1={cx+9} y1={cy+3} x2={cx-6} y2={cy+3} className="facade-icon" />
+        <polyline points={`${cx-2},${cy-1} ${cx-7},${cy+3} ${cx-2},${cy+7}`} className="facade-icon" fill="none" />
       </>),
       cc: (cx, cy) => (<>{/* Open book */}
-        <rect x={cx - 5} y={cy - 6} width={10} height={12} rx={1} className={cls} />
-        <line x1={cx} y1={cy - 6} x2={cx} y2={cy + 6} className={cls} />
-        <line x1={cx - 5} y1={cy - 1} x2={cx + 5} y2={cy - 1} className={cls} />
+        <rect x={cx-8} y={cy-8} width={16} height={16} rx={1.5} className="facade-icon" />
+        <line x1={cx} y1={cy-8} x2={cx} y2={cy+8} className="facade-icon" />
+        <line x1={cx-8} y1={cy-1} x2={cx+8} y2={cy-1} className="facade-icon" />
       </>),
-      dealish: (cx, cy) => (<>{/* Target/discovery */}
-        <circle cx={cx} cy={cy} r={6} className={cls} />
-        <line x1={cx} y1={cy - 7} x2={cx} y2={cy + 7} className={cls} />
-        <line x1={cx - 7} y1={cy} x2={cx + 7} y2={cy} className={cls} />
+      dealish: (cx, cy) => (<>{/* Target */}
+        <circle cx={cx} cy={cy} r={9} className="facade-icon" />
+        <circle cx={cx} cy={cy} r={4.5} className="facade-icon" />
+        <line x1={cx} y1={cy-10} x2={cx} y2={cy+10} className="facade-icon" />
+        <line x1={cx-10} y1={cy} x2={cx+10} y2={cy} className="facade-icon" />
       </>),
       neodev: (cx, cy) => (<>{/* Code brackets */}
-        <polyline points={`${cx - 2.5},${cy - 6} ${cx - 7},${cy} ${cx - 2.5},${cy + 6}`} className={cls} fill="none" />
-        <polyline points={`${cx + 2.5},${cy - 6} ${cx + 7},${cy} ${cx + 2.5},${cy + 6}`} className={cls} fill="none" />
+        <polyline points={`${cx-3},${cy-9} ${cx-11},${cy} ${cx-3},${cy+9}`} className="facade-icon" fill="none" />
+        <polyline points={`${cx+3},${cy-9} ${cx+11},${cy} ${cx+3},${cy+9}`} className="facade-icon" fill="none" />
       </>),
       uw: (cx, cy) => (<>{/* Graduation cap */}
-        <polygon points={`${cx},${cy - 6} ${cx - 8},${cy - 1} ${cx},${cy + 1} ${cx + 8},${cy - 1}`} className={cls} />
-        <line x1={cx} y1={cy + 1} x2={cx} y2={cy + 6} className={cls} />
-        <line x1={cx - 5} y1={cy + 4} x2={cx + 5} y2={cy + 4} className={cls} />
+        <polygon points={`${cx},${cy-9} ${cx-12},${cy-2} ${cx},${cy+2} ${cx+12},${cy-2}`} className="facade-icon" />
+        <line x1={cx} y1={cy+2} x2={cx} y2={cy+9} className="facade-icon" />
+        <line x1={cx-7} y1={cy+7} x2={cx+7} y2={cy+7} className="facade-icon" />
       </>),
       shopify: (cx, cy) => (<>{/* Shopping bag */}
-        <rect x={cx - 5} y={cy - 2} width={10} height={9} rx={1.5} className={cls} />
-        <path d={`M${cx - 3},${cy - 2} C${cx - 3},${cy - 7} ${cx + 3},${cy - 7} ${cx + 3},${cy - 2}`} className={cls} fill="none" />
+        <rect x={cx-7} y={cy-2} width={14} height={12} rx={2} className="facade-icon" />
+        <path d={`M${cx-4},${cy-2} C${cx-4},${cy-9} ${cx+4},${cy-9} ${cx+4},${cy-2}`} className="facade-icon" fill="none" />
       </>),
     };
 
-    // Sign dimensions
-    const fontSize = Math.min(9, Math.max(7, bw / 10));
-    const signW = Math.max(name.length * fontSize * 0.65 + 10, 36);
-    const signH = fontSize + 6;
-    const signCx = bx + bw / 2;
-    const signY = by - D - 18;
-    const postHeight = 8;
-
     return (
-      <g key={`sign-${id}`} style={{ pointerEvents: "none" }}>
-        {/* Rooftop pedestal */}
-        <rect className="rooftop-pedestal"
-          x={iconCx - iconSize / 2 - 2} y={iconCy - iconSize / 2 - 3}
-          width={iconSize + 4} height={3} rx={1} />
-
-        {/* Rooftop icon */}
+      <g key={`label-${id}`} style={{ pointerEvents: "none" }}>
         {logo ? (
           <>
-            <rect className="logo-bg"
-              x={iconCx - iconSize / 2} y={iconCy - iconSize / 2}
-              width={iconSize} height={iconSize} rx={3} />
+            {/* Logo image mounted on facade */}
+            <rect className="facade-logo-bg"
+              x={facadeCx - iconSize/2 - 2} y={facadeIconY - iconSize/2 - 2}
+              width={iconSize + 4} height={iconSize + 4} rx={3} />
             <image href={logo}
-              x={iconCx - iconSize / 2 + 2} y={iconCy - iconSize / 2 + 2}
-              width={iconSize - 4} height={iconSize - 4}
-              preserveAspectRatio="xMidYMid meet" />
+              x={facadeCx - iconSize/2} y={facadeIconY - iconSize/2}
+              width={iconSize} height={iconSize}
+              preserveAspectRatio="xMidYMid meet" style={{ opacity: 0.92 }} />
           </>
         ) : (
           <>
-            <circle cx={iconCx} cy={iconCy} r={9} className="icon-bg" />
-            {shapes[id]?.(iconCx, iconCy)}
+            {/* SVG icon mounted on facade */}
+            <rect className="facade-logo-bg"
+              x={facadeCx - iconSize/2 - 2} y={facadeIconY - iconSize/2 - 2}
+              width={iconSize + 4} height={iconSize + 4} rx={3} />
+            {shapes[id]?.(facadeCx, facadeIconY)}
           </>
         )}
-
-        {/* Sign posts */}
-        <line x1={signCx - 6} y1={signY + signH} x2={signCx - 6} y2={signY + signH + postHeight}
-          stroke="var(--grid)" strokeWidth="0.8" opacity={0.6} />
-        <line x1={signCx + 6} y1={signY + signH} x2={signCx + 6} y2={signY + signH + postHeight}
-          stroke="var(--grid)" strokeWidth="0.8" opacity={0.6} />
-
-        {/* Name sign background */}
-        <rect className="rooftop-sign"
-          x={signCx - signW / 2} y={signY}
-          width={signW} height={signH} rx={1.5} />
-
-        {/* Name sign text */}
-        <text className="rooftop-sign-text" x={signCx} y={signY + signH - 3}
-          textAnchor="middle">{name}</text>
+        {/* Name in small caps below icon */}
+        <text className="facade-name-text"
+          x={facadeCx} y={nameY}
+          textAnchor="middle">{name.toUpperCase()}</text>
       </g>
     );
   };
@@ -997,12 +977,6 @@ export default function CitySvg({
           <rect className="bb-panel" x={BB.x} y={BB.y} width={BB.w} height={BB.h} rx={3} filter="url(#bb-shadow)" />
           <rect className="bb-inner-border" x={BB.x+4} y={BB.y+4} width={BB.w-8} height={BB.h-8} rx={2} />
           {[-50,0,50].map(dx => <circle key={dx} cx={BB.x+BB.w/2+dx} cy={BB.y-4} r="3" className="bb-light" />)}
-          <foreignObject x={BB.x+8} y={BB.y+8} width={BB.w-16} height={BB.h-16} className="billboard-foreign">
-            <div className="billboard-foreign-inner"
-              style={{ width: `${BB.w-16}px`, height: `${BB.h-16}px` }}>
-              {defaultContent}
-            </div>
-          </foreignObject>
         </g>
       </g>
 
@@ -1029,7 +1003,7 @@ export default function CitySvg({
       </g>
 
     </svg>
-    {overlayRect && (activeProject || showResume) && (
+    {overlayRect && (
       <div
         className="billboard-overlay"
         style={{
@@ -1041,14 +1015,14 @@ export default function CitySvg({
           overflow: "hidden",
           boxSizing: "border-box",
           zIndex: 10,
-          pointerEvents: "auto",
+          pointerEvents: activeProject || showResume ? "auto" : "none",
         }}
       >
         <div
           style={{ width: "100%", height: "100%" }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => { if (activeProject || showResume) e.stopPropagation(); }}
         >
-          {projectContent}
+          {activeProject || showResume ? projectContent : defaultContent}
         </div>
       </div>
     )}
