@@ -1064,7 +1064,7 @@ export default function CitySvg({
           style={{
             width: "100%",
             height: "100%",
-            pointerEvents: "auto",
+            pointerEvents: activeProject ? "auto" : "none",
           }}
           onClick={(e) => e.stopPropagation()}
         >
