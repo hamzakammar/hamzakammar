@@ -779,8 +779,6 @@ export default function CitySvg({
           return <circle key={`pt${i}`} cx={569+Math.cos(r)*20} cy={379+Math.sin(r)*20} r="2.5" className="roundabout-plant" style={{pointerEvents:"none"}}/>;
         })}
 
-        <text className="road-label" x="581" y="56" opacity="0.6">HACKATHON ST</text>
-        <text className="road-label" x="40" y="367" opacity="0.6">INFRASTRUCTURE AVE</text>
 
         {/* Cross-streets */}
         {[140,300,440].map(x => <rect key={`xs${x}`} className="street" x={x} y="358" width="6" height="34" rx={1} opacity="0.6" />)}
