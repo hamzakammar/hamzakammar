@@ -583,17 +583,17 @@ export default function CitySvg({
   // Default billboard — rendered directly in foreignObject (no scroll needed, explicit px = Safari-safe)
   const defaultContent = !activeProject && !showResume ? (
     <div className="billboard-content" style={{
-      fontFamily: mono, padding: "16px 22px",
+      fontFamily: mono, padding: "10px 16px",
       width: "100%", height: "100%",
       overflow: "hidden",
       boxSizing: "border-box",
-      display: "flex", flexDirection: "column" as const, justifyContent: "center", alignItems: "center", textAlign: "center" as const,
+      display: "flex", flexDirection: "column" as const, justifyContent: "flex-start", alignItems: "center", textAlign: "center" as const,
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px", marginTop: "4px" }}>
         <div
           style={{
-            width: "52px",
-            height: "52px",
+            width: "44px",
+            height: "44px",
             borderRadius: "9999px",
             overflow: "hidden",
             border: "1px solid rgba(148, 163, 184, 0.8)",
@@ -618,8 +618,8 @@ export default function CitySvg({
           </div>
         </div>
       </div>
-      <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "12px" }} />
-      <div style={{ width: "100%", maxWidth: "360px", textAlign: "left" as const, marginBottom: "10px" }}>
+      <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "8px" }} />
+      <div style={{ width: "100%", maxWidth: "360px", textAlign: "left" as const, marginBottom: "8px" }}>
         {[
           { bullet: "→", text: "Wrote query planner internals at KùzuDB — youngest on the team" },
           { bullet: "→", text: "One JSON file → 3,500 pharmacists save 15 min per patient" },
@@ -627,52 +627,32 @@ export default function CitySvg({
           { bullet: "→", text: "Elected rep for 100+ engineers at Waterloo" },
         ].map((item, i) => (
           <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start",
-            fontSize: "8.5px", color: "var(--foreground)", lineHeight: 1.7,
-            marginBottom: "5px" }}>
+            fontSize: "8px", color: "var(--foreground)", lineHeight: 1.6,
+            marginBottom: "4px" }}>
             <span style={{ flexShrink: 0, color: "var(--accent)", fontWeight: 700 }}>{item.bullet}</span>
             <span>{item.text}</span>
           </div>
         ))}
       </div>
-      <div className="billboard-cta" style={{ fontSize: "7.5px", color: "var(--accent)", letterSpacing: "0.12em",
-        textTransform: "uppercase" as const, marginBottom: "8px" }}>
+      <div className="billboard-cta" style={{ fontSize: "7px", color: "var(--accent)", letterSpacing: "0.12em",
+        textTransform: "uppercase" as const, marginBottom: "6px" }}>
         Click a building · press &#x2318;K to explore
       </div>
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "6px" }} />
       <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "center" }}>
         {[
-          {
-            label: "se30webring",
-            href: "https://www.se30webring.com",
-            logo: "https://www.se30webring.com/assets/icon-yellow.svg",
-          },
-          {
-            label: "se-webring",
-            href: "https://se-webring.xyz",
-            logo: "https://raw.githubusercontent.com/simcard0000/se-webring/main/assets/logo/logo_w.svg",
-          },
-          {
-            label: "uwaterloo.network",
-            href: "https://www.uwaterloo.network",
-            logo: "https://www.uwaterloo.network/favicon.svg",
-          },
+          { label: "se30webring", href: "https://www.se30webring.com", logo: "https://www.se30webring.com/assets/icon-yellow.svg" },
+          { label: "se-webring", href: "https://se-webring.xyz", logo: "https://raw.githubusercontent.com/simcard0000/se-webring/main/assets/logo/logo_w.svg" },
+          { label: "uwaterloo.network", href: "https://www.uwaterloo.network", logo: "https://www.uwaterloo.network/favicon.svg" },
         ].map((ring) => (
-          <a
-            key={ring.href}
-            href={ring.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={ring.label}
+          <a key={ring.href} href={ring.href} target="_blank" rel="noopener noreferrer" title={ring.label}
             onClick={(e) => e.stopPropagation()}
-            style={{
-              display: "flex", alignItems: "center", justifyContent: "center",
-              opacity: 0.7, transition: "opacity 0.15s", textDecoration: "none",
-            }}
+            style={{ display: "flex", alignItems: "center", justifyContent: "center", opacity: 0.7, transition: "opacity 0.15s", textDecoration: "none" }}
             onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={ring.logo} alt={ring.label} style={{ width: "18px", height: "18px", objectFit: "contain" }} />
+            <img src={ring.logo} alt={ring.label} style={{ width: "16px", height: "16px", objectFit: "contain" }} />
           </a>
         ))}
       </div>
