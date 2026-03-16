@@ -433,7 +433,8 @@ export default function CitySvg({
   const mono = "var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace";
   const headshotSrc = "/me.png";
 
-  const billboardContent = activeProject ? (
+  // Project detail — rendered in fixed overlay (needs scroll, complex layout)
+  const projectContent = activeProject ? (
     <div 
       ref={billboardScrollRef}
       className="billboard-content billboard-project" 
@@ -577,7 +578,10 @@ export default function CitySvg({
         Open Full Resume &#x2197;
       </a>
     </div>
-  ) : (
+  ) : null;
+
+  // Default billboard — rendered directly in foreignObject (no scroll needed, explicit px = Safari-safe)
+  const defaultContent = !activeProject && !showResume ? (
     <div className="billboard-content" style={{
       fontFamily: mono, padding: "16px 22px",
       width: "100%", height: "100%",
@@ -673,7 +677,7 @@ export default function CitySvg({
         ))}
       </div>
     </div>
-  );
+  ) : null;
 
   /* ═══════ RENDER ═══════ */
   return (
@@ -1015,8 +1019,11 @@ export default function CitySvg({
           <rect className="bb-panel" x={BB.x} y={BB.y} width={BB.w} height={BB.h} rx={3} filter="url(#bb-shadow)" />
           <rect className="bb-inner-border" x={BB.x+4} y={BB.y+4} width={BB.w-8} height={BB.h-8} rx={2} />
           {[-50,0,50].map(dx => <circle key={dx} cx={BB.x+BB.w/2+dx} cy={BB.y-4} r="3" className="bb-light" />)}
-          <foreignObject x={BB.x+8} y={BB.y+8} width={BB.w-16} height={BB.h-16} className="billboard-foreign" aria-hidden="true">
-            {/* Content rendered via overlay below for consistent cross-browser positioning */}
+          <foreignObject x={BB.x+8} y={BB.y+8} width={BB.w-16} height={BB.h-16} className="billboard-foreign">
+            <div className="billboard-foreign-inner"
+              style={{ width: `${BB.w-16}px`, height: `${BB.h-16}px` }}>
+              {defaultContent}
+            </div>
           </foreignObject>
         </g>
       </g>
@@ -1044,7 +1051,7 @@ export default function CitySvg({
       </g>
 
     </svg>
-    {overlayRect && (
+    {overlayRect && (activeProject || showResume) && (
       <div
         className="billboard-overlay"
         style={{
@@ -1056,19 +1063,14 @@ export default function CitySvg({
           overflow: "hidden",
           boxSizing: "border-box",
           zIndex: 10,
-          // Let interactions pass through by default; inner content opts-in.
-          pointerEvents: "none",
+          pointerEvents: "auto",
         }}
       >
         <div
-          style={{
-            width: "100%",
-            height: "100%",
-            pointerEvents: activeProject ? "auto" : "none",
-          }}
+          style={{ width: "100%", height: "100%" }}
           onClick={(e) => e.stopPropagation()}
         >
-          {billboardContent}
+          {projectContent}
         </div>
       </div>
     )}
