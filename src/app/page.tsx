@@ -222,7 +222,7 @@ export default function Home() {
 
   /* ═══════ DESKTOP LAYOUT ═══════ */
   return (
-    <div className="viewport-fill overflow-hidden flex items-center justify-center">
+    <div className="viewport-fill overflow-hidden">
       <div className="city-svg-wrapper">
         <CitySvg
         onBuildingClick={(id) => {
