@@ -16,10 +16,13 @@ export default function CitySvg({
   onClose,
   showResume,
 }: CitySvgProps) {
+  // Billboard dimensions — defined first so useEffect can reference them
+  const BB = { x: 595, y: 395, w: 490, h: 255 };
+  const BBD = 8;
+
   const [billboardScrolled, setBillboardScrolled] = useState(false);
   const billboardScrollRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const [billboardPx, setBillboardPx] = useState({ w: 404, h: 199 });
   const [overlayRect, setOverlayRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
 
   // Reset scroll state when project changes
@@ -66,7 +69,7 @@ export default function CitySvg({
       window.removeEventListener("scroll", update, true);
       window.removeEventListener("resize", update);
     };
-  }, []);
+  }, [BB.x, BB.y, BB.w, BB.h]);
     const [hoverId, setHoverId] = useState<string | null>(null);
   const activeProjectId = activeProject?.id ?? null;
   const D = 8;
@@ -671,9 +674,6 @@ export default function CitySvg({
       </div>
     </div>
   );
-
-  const BB = { x: 595, y: 395, w: 490, h: 255 };
-  const BBD = 8;
 
   /* ═══════ RENDER ═══════ */
   return (
