@@ -14,7 +14,7 @@ export const stories: Record<string, string> = {
   horizon: horizonStory,
   unimap: unimapStory,
   mapflow: mapflowStory,
-  CC: ccStory,
+  cc: ccStory,
   dealish: dealishStory,
   neodev: neodevStory,
   uw: uwStory,

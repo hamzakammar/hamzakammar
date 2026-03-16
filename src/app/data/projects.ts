@@ -97,7 +97,7 @@ export const Projects: Project[] = [
     story: getStoryById("mapflow"),
   },
   {
-    id: "CC",
+    id: "cc",
     title: "CourseConnect",
     tagline: "Structured course data for degree validation.",
     narrative:
@@ -110,7 +110,7 @@ export const Projects: Project[] = [
     stack: ["Python", "Playwright", "React Native", "Supabase"],
     status: "shipped",
     links: { demo: "https://cc.hamzaammar.ca" },
-    story: getStoryById("CC"),
+    story: getStoryById("cc"),
   },
   {
     id: "dealish",
@@ -161,5 +161,18 @@ export const Projects: Project[] = [
     stack: ["Strategy", "Advocacy", "Communication"],
     status: "ongoing",
     story: getStoryById("uw"),
+  },
+  {
+    id: "shopify",
+    title: "Shopify",
+    role: "Incoming SWE Intern",
+    tagline: "Incoming Software Engineering intern — Summer 2026.",
+    narrative:
+      "Joining Shopify as a Software Engineering intern for Summer 2026.",
+    highlights: [
+      "Incoming Software Engineering Intern — Summer 2026."
+    ],
+    stack: ["Ruby", "React", "TypeScript"],
+    status: "ongoing",
   },
 ];

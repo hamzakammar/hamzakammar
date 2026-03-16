@@ -30,7 +30,7 @@ export default function CitySvg({
     }
   }, [activeProject?.id]);
 
-  // Billboard pixel size + Safari overlay rect from SVG (viewBox 1200x700, meet)
+  // Billboard overlay rect from SVG (viewBox 1200x700 starting at y=0, meet)
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
@@ -39,15 +39,21 @@ export default function CitySvg({
       const w = rect.width;
       const h = rect.height;
       if (!w || !h) return;
-      const scale = Math.min(w / 1200, h / 700);
-      const offX = (w - 1200 * scale) / 2;
-      const offY = (h - 700 * scale) / 2;
-      setBillboardPx({ w: Math.round(404 * scale), h: Math.round(199 * scale) });
+      const VIEW_W = 1200;
+      const VIEW_H = 700;
+      const VIEW_MIN_Y = 0;
+      const scale = Math.min(w / VIEW_W, h / VIEW_H);
+      const offX = (w - VIEW_W * scale) / 2;
+      const offY = (h - VIEW_H * scale) / 2;
+      const contentW = BB.w - 2 * BBD;
+      const contentH = BB.h - 2 * BBD;
+      const contentX = BB.x + BBD;
+      const contentY = BB.y + BBD;
       setOverlayRect({
-        left: rect.left + offX + (630 + 8) * scale,
-        top: rect.top + offY + (425 + 8) * scale,
-        width: (420 - 16) * scale,
-        height: (215 - 16) * scale,
+        left: rect.left + offX + contentX * scale,
+        top: rect.top + offY + (contentY - VIEW_MIN_Y) * scale,
+        width: contentW * scale,
+        height: contentH * scale,
       });
     };
     update();
@@ -160,9 +166,11 @@ export default function CitySvg({
   /* ═══════ WINDOW / ACCENT HELPERS ═══════ */
   const projectWindows = (x: number, y: number, w: number, h: number) => {
     const els: React.ReactElement[] = [];
+    const hGap = w > 70 ? 13 : 11;
+    const winW = w > 70 ? 10 : 8;
     for (let wy = y + 10; wy + 2 < y + h - 10; wy += 7)
-      for (let wx = x + 6; wx + 8 < x + w - 4; wx += 11)
-        els.push(<rect key={`sw${wx}_${wy}`} className="bldg-win" x={wx} y={wy} width={8} height={2} rx={0.3} />);
+      for (let wx = x + 6; wx + winW < x + w - 4; wx += hGap)
+        els.push(<rect key={`sw${wx}_${wy}`} className="bldg-win" x={wx} y={wy} width={winW} height={2} rx={0.3} />);
     return <g style={{ pointerEvents: "none" }}>{els}</g>;
   };
   const floorLines = (x: number, y: number, w: number, h: number) => {
@@ -195,80 +203,114 @@ export default function CitySvg({
     </g>
   );
 
-  /* ═══════ PROJECT ICONS ═══════ */
-  const projectIcon = (id: string, name: string, cx: number, cy: number, logo?: string, role?: string) => {
+  /* ═══════ PROJECT LABELS (rooftop signboard style) ═══════ */
+  const projectLabel = (
+    id: string, name: string,
+    bx: number, by: number, bw: number, _bh: number,
+    logo?: string,
+  ) => {
     const cls = "project-icon";
-    const shapes: Record<string, React.ReactNode> = {
-      kuzu: (<>{/* Database cylinder */}
-        <ellipse cx={cx} cy={cy - 3} rx={4.5} ry={2} className={cls} />
-        <line x1={cx - 4.5} y1={cy - 3} x2={cx - 4.5} y2={cy + 3} className={cls} />
-        <line x1={cx + 4.5} y1={cy - 3} x2={cx + 4.5} y2={cy + 3} className={cls} />
-        <ellipse cx={cx} cy={cy + 3} rx={4.5} ry={2} className={cls} />
+    // Rooftop icon position: centered on isometric top face
+    const iconCx = bx + bw / 2 + D / 2;
+    const iconCy = by - D / 2;
+    const iconSize = logo ? 20 : 18;
+
+    const shapes: Record<string, (cx: number, cy: number) => React.ReactNode> = {
+      kuzu: (cx, cy) => (<>{/* Database cylinder */}
+        <ellipse cx={cx} cy={cy - 3} rx={5.5} ry={2.5} className={cls} />
+        <line x1={cx - 5.5} y1={cy - 3} x2={cx - 5.5} y2={cy + 3} className={cls} />
+        <line x1={cx + 5.5} y1={cy - 3} x2={cx + 5.5} y2={cy + 3} className={cls} />
+        <ellipse cx={cx} cy={cy + 3} rx={5.5} ry={2.5} className={cls} />
       </>),
-      chess: (<>{/* Crown */}
-        <path d={`M${cx - 4},${cy + 3} L${cx - 3},${cy - 1} L${cx - 5},${cy - 3} L${cx - 2},${cy - 2} L${cx},${cy - 5} L${cx + 2},${cy - 2} L${cx + 5},${cy - 3} L${cx + 3},${cy - 1} L${cx + 4},${cy + 3}Z`} className={cls} />
+      chess: (cx, cy) => (<>{/* Crown */}
+        <path d={`M${cx - 5},${cy + 4} L${cx - 3.5},${cy - 1} L${cx - 6},${cy - 4} L${cx - 2},${cy - 2.5} L${cx},${cy - 6} L${cx + 2},${cy - 2.5} L${cx + 6},${cy - 4} L${cx + 3.5},${cy - 1} L${cx + 5},${cy + 4}Z`} className={cls} />
       </>),
-      horizon: (<>{/* Magnifying glass */}
-        <circle cx={cx - 1} cy={cy - 1} r={3.5} className={cls} />
-        <line x1={cx + 1.5} y1={cy + 1.5} x2={cx + 5} y2={cy + 5} className={cls} />
+      horizon: (cx, cy) => (<>{/* Magnifying glass */}
+        <circle cx={cx - 1} cy={cy - 1} r={4.5} className={cls} />
+        <line x1={cx + 2} y1={cy + 2} x2={cx + 6} y2={cy + 6} className={cls} />
       </>),
-      unimap: (<>{/* Map pin */}
-        <circle cx={cx} cy={cy - 2} r={2.5} className={cls} />
-        <path d={`M${cx - 3.5},${cy - 1} Q${cx},${cy + 6} ${cx + 3.5},${cy - 1}`} className={cls} />
+      unimap: (cx, cy) => (<>{/* Map pin */}
+        <circle cx={cx} cy={cy - 2.5} r={3} className={cls} />
+        <path d={`M${cx - 4},${cy - 1} Q${cx},${cy + 7} ${cx + 4},${cy - 1}`} className={cls} />
       </>),
-      mapflow: (<>{/* Data flow arrows */}
-        <line x1={cx - 5} y1={cy - 2} x2={cx + 3} y2={cy - 2} className={cls} />
-        <polyline points={`${cx + 1},${cy - 4} ${cx + 4},${cy - 2} ${cx + 1},${cy}`} className={cls} fill="none" />
-        <line x1={cx + 5} y1={cy + 2} x2={cx - 3} y2={cy + 2} className={cls} />
-        <polyline points={`${cx - 1},${cy} ${cx - 4},${cy + 2} ${cx - 1},${cy + 4}`} className={cls} fill="none" />
+      mapflow: (cx, cy) => (<>{/* Data flow arrows */}
+        <line x1={cx - 6} y1={cy - 2} x2={cx + 4} y2={cy - 2} className={cls} />
+        <polyline points={`${cx + 1.5},${cy - 4.5} ${cx + 5},${cy - 2} ${cx + 1.5},${cy + 0.5}`} className={cls} fill="none" />
+        <line x1={cx + 6} y1={cy + 2} x2={cx - 4} y2={cy + 2} className={cls} />
+        <polyline points={`${cx - 1.5},${cy + 0.5} ${cx - 5},${cy + 2} ${cx - 1.5},${cy + 4.5}`} className={cls} fill="none" />
       </>),
-      CC: (<>{/* Open book */}
-        <rect x={cx - 4} y={cy - 5} width={8} height={10} rx={0.8} className={cls} />
-        <line x1={cx} y1={cy - 5} x2={cx} y2={cy + 5} className={cls} />
-        <line x1={cx - 4} y1={cy - 1} x2={cx + 4} y2={cy - 1} className={cls} />
-      </>),
-      dealish: (<>{/* Target/discovery */}
-        <circle cx={cx} cy={cy} r={5} className={cls} />
+      cc: (cx, cy) => (<>{/* Open book */}
+        <rect x={cx - 5} y={cy - 6} width={10} height={12} rx={1} className={cls} />
         <line x1={cx} y1={cy - 6} x2={cx} y2={cy + 6} className={cls} />
-        <line x1={cx - 6} y1={cy} x2={cx + 6} y2={cy} className={cls} />
+        <line x1={cx - 5} y1={cy - 1} x2={cx + 5} y2={cy - 1} className={cls} />
       </>),
-      neodev: (<>{/* Code brackets */}
-        <polyline points={`${cx - 2},${cy - 5} ${cx - 6},${cy} ${cx - 2},${cy + 5}`} className={cls} fill="none" />
-        <polyline points={`${cx + 2},${cy - 5} ${cx + 6},${cy} ${cx + 2},${cy + 5}`} className={cls} fill="none" />
+      dealish: (cx, cy) => (<>{/* Target/discovery */}
+        <circle cx={cx} cy={cy} r={6} className={cls} />
+        <line x1={cx} y1={cy - 7} x2={cx} y2={cy + 7} className={cls} />
+        <line x1={cx - 7} y1={cy} x2={cx + 7} y2={cy} className={cls} />
       </>),
-      uw: (<>{/* Graduation cap */}
-        <polygon points={`${cx},${cy - 5} ${cx - 7},${cy - 1} ${cx},${cy + 1} ${cx + 7},${cy - 1}`} className={cls} />
-        <line x1={cx} y1={cy + 1} x2={cx} y2={cy + 5} className={cls} />
-        <line x1={cx - 4} y1={cy + 3} x2={cx + 4} y2={cy + 3} className={cls} />
+      neodev: (cx, cy) => (<>{/* Code brackets */}
+        <polyline points={`${cx - 2.5},${cy - 6} ${cx - 7},${cy} ${cx - 2.5},${cy + 6}`} className={cls} fill="none" />
+        <polyline points={`${cx + 2.5},${cy - 6} ${cx + 7},${cy} ${cx + 2.5},${cy + 6}`} className={cls} fill="none" />
+      </>),
+      uw: (cx, cy) => (<>{/* Graduation cap */}
+        <polygon points={`${cx},${cy - 6} ${cx - 8},${cy - 1} ${cx},${cy + 1} ${cx + 8},${cy - 1}`} className={cls} />
+        <line x1={cx} y1={cy + 1} x2={cx} y2={cy + 6} className={cls} />
+        <line x1={cx - 5} y1={cy + 4} x2={cx + 5} y2={cy + 4} className={cls} />
+      </>),
+      shopify: (cx, cy) => (<>{/* Shopping bag */}
+        <rect x={cx - 5} y={cy - 2} width={10} height={9} rx={1.5} className={cls} />
+        <path d={`M${cx - 3},${cy - 2} C${cx - 3},${cy - 7} ${cx + 3},${cy - 7} ${cx + 3},${cy - 2}`} className={cls} fill="none" />
       </>),
     };
-    const nameY = cy + 20;
-    const nameTw = name.length * 6.4;
-    const roleTw = role ? role.length * 6.0 : 0;
-    const tw = Math.max(nameTw, roleTw);
-    const roleY = nameY + 11;
+
+    // Sign dimensions
+    const fontSize = Math.min(9, Math.max(7, bw / 10));
+    const signW = Math.max(name.length * fontSize * 0.65 + 10, 36);
+    const signH = fontSize + 6;
+    const signCx = bx + bw / 2;
+    const signY = by - D - 18;
+    const postHeight = 8;
+
     return (
       <g key={`sign-${id}`} style={{ pointerEvents: "none" }}>
+        {/* Rooftop pedestal */}
+        <rect className="rooftop-pedestal"
+          x={iconCx - iconSize / 2 - 2} y={iconCy - iconSize / 2 - 3}
+          width={iconSize + 4} height={3} rx={1} />
+
+        {/* Rooftop icon */}
         {logo ? (
           <>
-            <rect className="logo-bg" x={cx - 12} y={cy - 12} width={24} height={24} rx={3} />
-            <image href={logo} x={cx - 10} y={cy - 10} width={20} height={20}
+            <rect className="logo-bg"
+              x={iconCx - iconSize / 2} y={iconCy - iconSize / 2}
+              width={iconSize} height={iconSize} rx={3} />
+            <image href={logo}
+              x={iconCx - iconSize / 2 + 2} y={iconCy - iconSize / 2 + 2}
+              width={iconSize - 4} height={iconSize - 4}
               preserveAspectRatio="xMidYMid meet" />
           </>
         ) : (
           <>
-            <circle cx={cx} cy={cy} r={9} className="icon-bg" />
-            {shapes[id]}
+            <circle cx={iconCx} cy={iconCy} r={9} className="icon-bg" />
+            {shapes[id]?.(iconCx, iconCy)}
           </>
         )}
-        <rect className="label-bg" x={cx - tw / 2 - 6} y={nameY - 9}
-          width={tw + 12} height={role ? 22 : 13} rx={2} />
-        <text className="node" x={cx} y={nameY}
-          textAnchor="middle" style={{ fontSize: "10px", fontWeight: 700 }}>{name}</text>
-        {role && (
-          <text className="role-label" x={cx} y={roleY}
-            textAnchor="middle" style={{ fontSize: "7.5px" }}>{role}</text>
-        )}
+
+        {/* Sign posts */}
+        <line x1={signCx - 6} y1={signY + signH} x2={signCx - 6} y2={signY + signH + postHeight}
+          stroke="var(--grid)" strokeWidth="0.8" opacity={0.6} />
+        <line x1={signCx + 6} y1={signY + signH} x2={signCx + 6} y2={signY + signH + postHeight}
+          stroke="var(--grid)" strokeWidth="0.8" opacity={0.6} />
+
+        {/* Name sign background */}
+        <rect className="rooftop-sign"
+          x={signCx - signW / 2} y={signY}
+          width={signW} height={signH} rx={1.5} />
+
+        {/* Name sign text */}
+        <text className="rooftop-sign-text" x={signCx} y={signY + signH - 3}
+          textAnchor="middle">{name}</text>
       </g>
     );
   };
@@ -300,7 +342,7 @@ export default function CitySvg({
           filter="url(#shadow)" />
         {!isFiller && (
           <rect className="bldg-accent"
-            x={x + 1} y={y + 1} width={w - 2} height={3} rx={0.5}
+            x={x + 1} y={y + 1} width={w - 2} height={Math.max(3, Math.round(w / 25))} rx={0.5}
             style={{
               pointerEvents: "none",
               fill: id ? ({
@@ -309,10 +351,11 @@ export default function CitySvg({
                 horizon: '#06B6D4',
                 unimap: '#10B981',
                 mapflow: '#F59E0B',
-                CC: '#EF4444',
+                cc: '#EF4444',
                 dealish: '#F97316',
                 neodev: '#EC4899',
                 uw: '#14B8A6',
+                shopify: '#7AB55C',
               } as Record<string, string>)[id] || 'var(--accent)' : 'var(--accent)'
             }} />
         )}
@@ -385,6 +428,7 @@ export default function CitySvg({
 
   /* ═══════ BILLBOARD ═══════ */
   const mono = "var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace";
+  const headshotSrc = "/me.png";
 
   const billboardContent = activeProject ? (
     <div 
@@ -409,28 +453,28 @@ export default function CitySvg({
     >
       {/* Accent bar */}
       <div style={{ height: "3px", background: "var(--accent)" }} />
-      <div style={{ padding: "10px 14px 12px" }}>
+      <div style={{ padding: "14px 18px 14px" }}>
         <button onClick={(e) => { e.stopPropagation(); onClose?.(); }}
           style={{ position: "absolute", top: 8, right: 10, background: "none", border: "none",
             cursor: "pointer", fontSize: "12px", color: "var(--muted)", lineHeight: 1, padding: "2px 4px" }}
           aria-label="Close">&#x2715;</button>
 
         {/* Title — big, bold, the hero */}
-        <div style={{ fontSize: "20px", fontWeight: 800, letterSpacing: "0.04em",
+        <div style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "0.04em",
           color: "var(--foreground)", marginBottom: activeProject.role ? "2px" : "6px" }}>{activeProject.title}</div>
         {activeProject.role && (
-          <div style={{ fontSize: "8px", fontWeight: 600, letterSpacing: "0.1em",
+          <div style={{ fontSize: "9px", fontWeight: 600, letterSpacing: "0.1em",
             color: "var(--accent)", textTransform: "uppercase" as const, marginBottom: "6px" }}>{activeProject.role}</div>
         )}
 
         {/* Narrative — the story, not bullet points */}
-        <div style={{ fontSize: "9px", color: "var(--foreground)", lineHeight: 1.7,
+        <div style={{ fontSize: "10px", color: "var(--foreground)", lineHeight: 1.8,
           opacity: 0.85, marginBottom: "10px" }}>
           {activeProject.narrative}
         </div>
 
         {/* Stack — inline subtle text, not noisy pills */}
-        <div style={{ fontSize: "8px", color: "var(--muted)", marginBottom: "10px",
+        <div style={{ fontSize: "9px", color: "var(--muted)", marginBottom: "10px",
           letterSpacing: "0.03em" }}>
           {activeProject.stack.join(" \u00B7 ")}
         </div>
@@ -446,14 +490,14 @@ export default function CitySvg({
         {/* Links — prominent, accent-colored */}
         {activeProject.links && Object.keys(activeProject.links).length > 0 && (
           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "10px" }}>
-            {activeProject.links.demo && (
+                    {activeProject.links.demo && (
               <a href={activeProject.links.demo} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: "8.5px", color: "var(--accent)", textDecoration: "none",
+                style={{ fontSize: "9px", color: "var(--accent)", textDecoration: "none",
                   padding: "3px 10px", border: "1px solid var(--accent)", borderRadius: "2px", fontWeight: 600 }}>Live Demo &#x2192;</a>
-            )}
-            {activeProject.links.github && (
+                    )}
+                    {activeProject.links.github && (
               <a href={activeProject.links.github} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: "8.5px", color: "var(--accent)", textDecoration: "none",
+                style={{ fontSize: "9px", color: "var(--accent)", textDecoration: "none",
                   padding: "3px 10px", border: "1px solid var(--accent)", borderRadius: "2px", fontWeight: 600 }}>Source &#x2192;</a>
             )}
           </div>
@@ -532,18 +576,43 @@ export default function CitySvg({
     </div>
   ) : (
     <div className="billboard-content" style={{
-      fontFamily: mono, padding: "12px 18px",
+      fontFamily: mono, padding: "16px 22px",
       width: "100%", height: "100%",
       overflow: "hidden",
       boxSizing: "border-box",
       display: "flex", flexDirection: "column" as const, justifyContent: "center", alignItems: "center", textAlign: "center" as const,
     }}>
-      <div style={{ fontSize: "22px", fontWeight: 900, letterSpacing: "0.15em",
-        color: "var(--foreground)", marginBottom: "4px" }}>HAMZA AMMAR</div>
-      <div style={{ fontSize: "8px", fontWeight: 500, letterSpacing: "0.28em",
-        color: "var(--accent)", textTransform: "uppercase" as const, marginBottom: "4px" }}>Software Engineer · UWaterloo</div>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+        <div
+          style={{
+            width: "52px",
+            height: "52px",
+            borderRadius: "9999px",
+            overflow: "hidden",
+            border: "1px solid rgba(148, 163, 184, 0.8)",
+            flexShrink: 0,
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={headshotSrc}
+            alt="Hamza Ammar"
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
+        </div>
+        <div style={{ textAlign: "left", lineHeight: 1.4 }}>
+          <div style={{ fontSize: "11px", fontWeight: 800, letterSpacing: "0.16em",
+            color: "var(--foreground)", textTransform: "uppercase" as const, marginBottom: "2px" }}>
+            HAMZA AMMAR
+          </div>
+          <div style={{ fontSize: "9px", fontWeight: 500, letterSpacing: "0.14em",
+            color: "var(--accent)", textTransform: "uppercase" as const }}>
+            Software Engineering · UWaterloo
+          </div>
+        </div>
+      </div>
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "12px" }} />
-      <div style={{ width: "100%", maxWidth: "340px", textAlign: "left" as const, marginBottom: "8px" }}>
+      <div style={{ width: "100%", maxWidth: "360px", textAlign: "left" as const, marginBottom: "10px" }}>
         {[
           { bullet: "→", text: "Wrote query planner internals at KùzuDB — youngest on the team" },
           { bullet: "→", text: "One JSON file → 3,500 pharmacists save 15 min per patient" },
@@ -551,15 +620,15 @@ export default function CitySvg({
           { bullet: "→", text: "Elected rep for 100+ engineers at Waterloo" },
         ].map((item, i) => (
           <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start",
-            fontSize: "7.5px", color: "var(--foreground)", lineHeight: 1.6,
+            fontSize: "8.5px", color: "var(--foreground)", lineHeight: 1.7,
             marginBottom: "5px" }}>
             <span style={{ flexShrink: 0, color: "var(--accent)", fontWeight: 700 }}>{item.bullet}</span>
             <span>{item.text}</span>
           </div>
         ))}
       </div>
-      <div className="billboard-cta" style={{ fontSize: "7px", color: "var(--accent)", letterSpacing: "0.12em",
-        textTransform: "uppercase" as const, marginBottom: "6px" }}>
+      <div className="billboard-cta" style={{ fontSize: "7.5px", color: "var(--accent)", letterSpacing: "0.12em",
+        textTransform: "uppercase" as const, marginBottom: "8px" }}>
         Click a building · press &#x2318;K to explore
       </div>
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "6px" }} />
@@ -603,7 +672,7 @@ export default function CitySvg({
     </div>
   );
 
-  const BB = { x: 630, y: 425, w: 420, h: 215 };
+  const BB = { x: 595, y: 395, w: 490, h: 255 };
   const BBD = 8;
 
   /* ═══════ RENDER ═══════ */
@@ -656,9 +725,9 @@ export default function CitySvg({
         <rect className="sky-layer" x="0" y="0" width="1200" height="250" />
         <g className="sky-stars">
           {[
-            [87,22],[203,41],[345,18],[478,35],[621,12],[752,28],[889,45],[1023,15],[1142,38],
             [55,58],[168,72],[312,55],[445,68],[567,48],[698,62],[834,42],[978,75],[1105,52],
             [130,95],[270,82],[410,98],[560,88],[710,78],[850,92],[1000,85],[1150,72],
+            [87,22],[203,41],[345,18],[478,35],[621,12],[752,28],[889,45],[1023,15],[1142,38],
           ].map(([sx, sy], i) => (
             <circle key={`star${i}`} cx={sx} cy={sy} r={i % 3 === 0 ? 1.2 : 0.8}
               className="sky-star" />
@@ -697,13 +766,13 @@ export default function CitySvg({
         {[0,3,6,9].map(d => <rect key={`ce${d}`} x={583+d} y="370" width="1.5" height="18" fill="#FFF" opacity="0.55" rx={0.3}/>)}
 
         {/* Roundabout */}
-        <circle cx="569" cy="379" r="24" fill="#E0E4E9" stroke="#CBD5E1" strokeWidth="0.8" />
-        <circle cx="569" cy="379" r="16" fill="#D4E2D1" stroke="#B5CCB0" strokeWidth="0.5" />
-        <circle cx="569" cy="379" r="7" fill="#DBEAFE" stroke="#93C5FD" strokeWidth="0.6" />
+        <circle cx="569" cy="379" r="24" className="roundabout-outer" />
+        <circle cx="569" cy="379" r="16" className="roundabout-green" />
+        <circle cx="569" cy="379" r="7" className="roundabout-inner" />
         <circle cx="569" cy="379" r="3" className="water" />
         {[0,45,90,135,180,225,270,315].map((a,i) => {
           const r=(a*Math.PI)/180;
-          return <circle key={`pt${i}`} cx={569+Math.cos(r)*20} cy={379+Math.sin(r)*20} r="2.5" fill="#7FA07B" opacity="0.5" style={{pointerEvents:"none"}}/>;
+          return <circle key={`pt${i}`} cx={569+Math.cos(r)*20} cy={379+Math.sin(r)*20} r="2.5" className="roundabout-plant" style={{pointerEvents:"none"}}/>;
         })}
 
         <text className="road-label" x="581" y="56" opacity="0.6">HACKATHON ST</text>
@@ -773,38 +842,41 @@ export default function CitySvg({
         {busStop(596, 590)}
       </g>
 
-      {/* ═══════ TOP-LEFT (x:5-545, y:40-365) ═══════ */}
+      {/* ═══════ TOP-LEFT (x:5-545, y:0-365) ═══════ */}
       <g id="tl">
-        {/* BACK ROW */}
-        {bldg(null, 5, 65, 35, 208)}
-        {bldg("kuzu", 44, 48, 82, 230)}
-        {bldgStepped(136, 70, 32, 198, 0.6)}
-        {bldg("chess", 168, 55, 60, 222)}
-        {bldg(null, 238, 74, 26, 190)}
-        {bldg("horizon", 274, 60, 52, 218)}
-        {bldg(null, 336, 78, 26, 182)}
-        {bldg("unimap", 372, 62, 46, 212)}
-        {bldg(null, 428, 68, 28, 200)}
-        {bldgStepped(466, 58, 34, 210, 0.55)}
-        {bldg(null, 506, 72, 28, 194)}
+        {/* BACK ROW — project buildings ~1.2x wide, original heights, fillers between */}
+        {bldg(null, 5, 65, 22, 208)}
+        {bldg("kuzu", 38, 48, 95, 230)}
+        {bldg(null, 138, 62, 14, 210)}
+        {bldg("chess", 155, 55, 78, 222)}
+        {bldg(null, 237, 66, 16, 206)}
+        {bldg("horizon", 258, 60, 68, 218)}
+        {bldg(null, 330, 68, 16, 200)}
+        {bldg("unimap", 350, 62, 60, 212)}
+        {bldg(null, 415, 68, 28, 200)}
+        {bldgStepped(450, 58, 34, 210, 0.55)}
+        {bldg(null, 492, 72, 28, 194)}
+        {bldg(null, 528, 68, 26, 198)}
 
         {/* MID ROW */}
         {F([
-          [8,162,24,120],[40,152,26,132],[74,168,22,112],[108,155,24,128],
-          [142,170,22,108],[174,150,26,135],[208,168,22,112],
-          [276,172,24,105],[310,155,26,128],[346,168,22,112],[380,152,24,132],
-          [414,170,22,108],[448,155,24,128],[482,168,22,112],[516,155,26,125],
+          [8,162,24,120],[38,168,22,112],[68,158,24,126],
+          [100,170,22,110],[128,160,26,120],[160,168,22,114],
+          [190,156,24,128],[220,170,22,110],[250,158,26,124],
+          [282,168,24,112],[312,156,22,128],[342,170,24,110],
+          [374,160,22,122],[404,168,24,112],[436,155,26,128],
+          [468,168,22,112],[500,155,24,125],[532,162,22,118],
         ])}
 
         {/* FRONT ROW */}
         {F([
-          [5,292,22,60],[35,286,20,68],
-          [125,294,20,60],[153,288,22,65],[183,298,20,55],[211,284,24,72],
-          [273,300,22,52],[303,286,24,70],[335,296,20,58],
-          [365,288,22,65],[395,298,20,55],[425,284,24,72],
-          [457,294,20,60],[487,288,22,66],[517,296,20,56],
+          [5,292,22,60],[35,286,20,68],[65,294,20,60],[95,288,22,65],
+          [125,296,20,56],[155,284,24,72],[185,292,22,60],[215,288,20,66],
+          [245,296,22,56],[275,286,20,68],[305,294,22,58],[335,288,20,66],
+          [365,296,22,56],[395,284,24,72],[425,292,20,62],
+          [455,288,22,66],[485,296,20,56],[515,286,22,68],
         ])}
-        {/* Street-level park — in the front row gap, at sidewalk level y~354 */}
+        {/* Street-level park */}
         {park(63, 354, 52, 10)}
 
         {pedestrian(120,290)}
@@ -813,39 +885,43 @@ export default function CitySvg({
         {pedestrian(470,298)}
       </g>
 
-      {/* ═══════ TOP-RIGHT (x:585-1185, y:40-365) ═══════ */}
+      {/* ═══════ TOP-RIGHT (x:585-1185, y:0-365) ═══════ */}
       <g id="tr">
-        {/* BACK ROW */}
-        {bldg(null, 585, 68, 30, 202)}
-        {bldg("dealish", 624, 48, 78, 230)}
-        {bldgStepped(712, 72, 32, 195, 0.6)}
-        {bldg("neodev", 750, 52, 65, 225)}
-        {bldg(null, 825, 75, 26, 188)}
-        {bldg(null, 861, 68, 52, 208)}
-        {bldg(null, 923, 78, 26, 185)}
-        {bldg("uw", 959, 55, 48, 222)}
-        {bldg(null, 1017, 70, 28, 198)}
-        {bldgStepped(1055, 62, 36, 210, 0.55)}
-        {bldg(null, 1097, 75, 28, 192)}
-        {bldg(null, 1135, 68, 30, 200)}
+        {/* BACK ROW — 3 project buildings + fillers */}
+        {bldg(null, 585, 68, 24, 202)}
+        {bldg("dealish", 614, 48, 100, 230)}
+        {bldg(null, 718, 62, 16, 210)}
+        {bldg("neodev", 740, 52, 82, 225)}
+        {bldg(null, 826, 66, 16, 206)}
+        {bldg(null, 848, 62, 28, 210)}
+        {bldg(null, 882, 68, 24, 204)}
+        {bldg(null, 912, 64, 26, 208)}
+        {bldg("uw", 945, 58, 62, 218)}
+        {bldg(null, 1012, 68, 28, 198)}
+        {bldgStepped(1048, 62, 36, 210, 0.55)}
+        {bldg(null, 1096, 75, 28, 192)}
+        {bldg(null, 1136, 68, 30, 200)}
+        {bldg(null, 1178, 72, 20, 196)}
 
         {/* MID ROW */}
         {F([
-          [588,162,24,118],[620,152,26,130],[654,170,22,108],[688,155,24,128],
-          [722,168,22,112],[754,150,26,135],[788,168,22,112],
-          [856,172,24,105],[890,155,26,128],[924,168,22,112],[958,150,24,132],
-          [992,168,22,108],[1026,155,24,128],[1060,170,22,110],
-          [1128,168,22,108],[1162,155,24,122],
+          [588,162,24,118],[616,168,22,112],[646,158,24,126],
+          [676,170,22,110],[706,160,26,120],[736,168,22,114],
+          [766,156,24,128],[796,170,22,110],[826,158,26,124],
+          [856,168,24,112],[886,156,22,128],[916,170,24,110],
+          [946,160,22,122],[976,168,24,112],[1008,155,26,128],
+          [1042,168,22,112],[1074,155,24,125],[1106,162,22,118],
+          [1136,168,22,112],[1166,155,24,122],
         ])}
 
         {/* FRONT ROW */}
         {F([
-          [586,292,22,60],[614,286,20,68],[642,296,22,55],[670,284,24,72],
-          [698,294,20,60],[726,288,22,65],[754,298,20,55],[782,284,24,70],
-          [810,292,20,62],[838,300,22,52],[866,286,24,70],[894,296,20,58],
-          [922,288,22,65],[950,298,20,55],[978,284,24,72],[1006,294,20,60],
-          [1034,288,22,66],[1062,296,20,56],[1090,284,24,70],
-          [1118,294,20,58],[1146,288,22,65],
+          [586,292,22,60],[614,286,20,68],[644,294,20,60],[674,288,22,65],
+          [704,296,20,56],[734,284,24,72],[764,292,22,60],[794,288,20,66],
+          [824,296,22,56],[854,286,20,68],[884,294,22,58],[914,288,20,66],
+          [944,296,22,56],[974,284,24,72],[1004,288,22,65],
+          [1034,298,20,55],[1064,284,24,72],[1096,294,20,60],
+          [1126,288,22,66],[1158,296,20,56],[1182,290,16,62],
         ])}
 
         {pedestrian(740,290)}
@@ -856,44 +932,45 @@ export default function CitySvg({
 
       {/* ═══════ BOTTOM-LEFT (x:5-545, y:395-695) ═══════ */}
       <g id="bl">
-        {/* BACK ROW */}
-        {bldg(null, 5, 395, 30, 185)}
-        {bldg("mapflow", 40, 393, 76, 192)}
-        {bldg(null, 125, 398, 26, 180)}
-        {bldg("CC", 154, 393, 56, 190)}
-        {bldgStepped(220, 400, 28, 175, 0.6)}
-        {bldg(null, 254, 400, 48, 183)}
-        {bldg(null, 312, 398, 26, 180)}
-        {bldg(null, 348, 393, 28, 190)}
-        {bldg(null, 386, 400, 24, 175)}
-        {bldg(null, 420, 395, 26, 185)}
-        {bldgStepped(456, 393, 32, 190, 0.55)}
-        {bldg(null, 494, 398, 26, 180)}
+        {/* BACK ROW — mapflow, cc, shopify + fillers */}
+        {bldg(null, 5, 395, 18, 185)}
+        {bldg("mapflow", 35, 393, 85, 192)}
+        {bldg("cc", 130, 393, 72, 190)}
+        {bldg("shopify", 215, 395, 65, 188)}
+        {bldg(null, 290, 400, 28, 175)}
+        {bldg(null, 326, 398, 26, 180)}
+        {bldg(null, 360, 393, 28, 190)}
+        {bldg(null, 396, 400, 24, 175)}
+        {bldg(null, 428, 395, 26, 185)}
+        {bldgStepped(462, 393, 32, 190, 0.55)}
+        {bldg(null, 502, 398, 26, 180)}
+        {bldg(null, 536, 395, 18, 183)}
 
         {/* MID ROW */}
         {F([
           [8,478,24,82],[40,470,22,92],[72,482,24,78],[106,472,26,88],
-          [140,480,22,82],[172,468,24,94],[206,480,22,82],
-          [274,484,24,76],[308,470,26,90],[342,480,22,82],[376,468,24,92],
-          [410,482,22,78],[444,470,26,90],[478,480,24,80],[512,472,22,88],
+          [140,480,22,82],[172,468,24,94],[206,480,22,82],[236,472,24,88],
+          [268,484,24,76],[300,470,26,90],[334,480,22,82],[366,468,24,92],
+          [398,482,22,78],[430,470,26,90],[464,480,24,80],[498,472,22,88],
+          [528,478,22,82],
         ])}
 
         {/* FRONT ROW */}
         {F([
-          [5,552,22,58],[35,545,20,65],[65,554,22,56],
+          [5,552,22,58],[35,545,20,65],[65,554,22,56],[95,548,20,62],
           [127,554,20,56],[157,548,22,62],[187,558,20,50],[217,544,24,66],
           [249,554,22,56],[281,560,20,48],[311,546,24,64],[343,554,20,56],
           [375,548,22,60],[407,558,20,50],[439,544,24,66],[471,554,20,56],
-          [503,548,22,60],
+          [503,548,22,60],[533,554,18,56],
         ])}
 
         {/* BOTTOM EDGE ROW */}
         {F([
           [8,632,22,46],[38,626,20,52],[68,634,22,42],[98,628,24,50],
-          [160,628,22,50],[190,634,20,44],[220,624,24,55],
+          [128,632,22,48],[160,628,22,50],[190,634,20,44],[220,624,24,55],
           [252,632,22,46],[284,626,20,52],[316,634,22,42],[348,624,24,55],
           [380,636,20,40],[412,628,22,50],[444,634,20,44],
-          [476,624,24,55],[508,632,22,46],
+          [476,624,24,55],[508,632,22,46],[536,628,18,50],
         ])}
 
         {pedestrian(200,548)}
@@ -954,50 +1031,47 @@ export default function CitySvg({
 
       {/* ═══════ BUILDING SIGNS ═══════ */}
       <g id="building-signs" style={{ pointerEvents: "none" }}>
-        {projectIcon("kuzu", "Kuzu", 85, 87, "/kuzu.png", "Software Intern")}
-        {projectIcon("chess", "Chess", 198, 93)}
-        {projectIcon("horizon", "Horizon MCP", 300, 97)}
-        {projectIcon("unimap", "UniMap", 395, 98)}
-        {projectIcon("mapflow", "MapFLOW", 78, 426, "/mapflow.png", "Data Manager")}
-        {projectIcon("CC", "CC", 182, 425)}
-        {projectIcon("dealish", "Dealish", 663, 87, "/dealish.png", "Co-Founder")}
-        {projectIcon("neodev", "NeoDev", 782, 90, "/neodev.png", "Founder")}
-        {projectIcon("uw", "UW", 983, 93, undefined, "SE Rep")}
+        {projectLabel("kuzu", "Kuzu", 38, 48, 95, 230, "/kuzu.png")}
+        {projectLabel("chess", "Chess", 155, 55, 78, 222)}
+        {projectLabel("horizon", "Horizon MCP", 258, 60, 68, 218)}
+        {projectLabel("unimap", "UniMap", 350, 62, 60, 212)}
+        {projectLabel("dealish", "Dealish", 614, 48, 100, 230, "/dealish.png")}
+        {projectLabel("neodev", "NeoDev", 740, 52, 82, 225, "/neodev.png")}
+        {projectLabel("uw", "UW", 945, 58, 62, 218, "/UW.png")}
+        {projectLabel("mapflow", "MapFLOW", 35, 393, 85, 192, "/mapflow.png")}
+        {projectLabel("cc", "CC", 130, 393, 72, 190)}
+        {projectLabel("shopify", "Shopify", 215, 395, 65, 188)}
       </g>
 
     </svg>
-    {overlayRect && (() => {
-      const designW = 404;
-      const designH = 199;
-      const scale = Math.min(overlayRect.width / designW, overlayRect.height / designH);
-      return (
+    {overlayRect && (
+      <div
+        className="billboard-overlay"
+        style={{
+          position: "fixed",
+          left: overlayRect.left,
+          top: overlayRect.top,
+          width: overlayRect.width,
+          height: overlayRect.height,
+          overflow: "hidden",
+          boxSizing: "border-box",
+          zIndex: 10,
+          // Let interactions pass through by default; inner content opts-in.
+          pointerEvents: "none",
+        }}
+      >
         <div
-          className="billboard-overlay"
           style={{
-            position: "fixed",
-            left: overlayRect.left,
-            top: overlayRect.top,
-            width: overlayRect.width,
-            height: overlayRect.height,
-            overflow: "hidden",
-            boxSizing: "border-box",
-            zIndex: 10,
+            width: "100%",
+            height: "100%",
             pointerEvents: "auto",
           }}
+          onClick={(e) => e.stopPropagation()}
         >
-          <div
-            style={{
-              width: designW,
-              height: designH,
-              transform: `scale(${scale})`,
-              transformOrigin: "top left",
-            }}
-          >
-            {billboardContent}
-          </div>
+          {billboardContent}
         </div>
-      );
-    })()}
+      </div>
+    )}
     </>
   );
 }

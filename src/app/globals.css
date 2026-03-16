@@ -270,6 +270,41 @@ body {
   letter-spacing: 0.06em;
 }
 
+/* ── Rooftop Sign Labels ── */
+.citySvg .rooftop-sign {
+  fill: var(--bg);
+  stroke: var(--grid);
+  stroke-width: 0.5;
+  opacity: 0.92;
+}
+[data-theme="dark"] .citySvg .rooftop-sign {
+  fill: #1E293B;
+  stroke: #334155;
+}
+.citySvg .rooftop-sign-text {
+  font-family: var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace;
+  font-size: 8px;
+  font-weight: 700;
+  fill: var(--text);
+  letter-spacing: 0.04em;
+}
+
+.citySvg .rooftop-pedestal { fill: #C8D0D8; opacity: 0.7; }
+[data-theme="dark"] .citySvg .rooftop-pedestal { fill: #3A4A5A; opacity: 0.7; }
+
+/* ── Roundabout — dark mode ── */
+.citySvg .roundabout-outer { fill: #E0E4E9; stroke: #CBD5E1; stroke-width: 0.8; }
+[data-theme="dark"] .citySvg .roundabout-outer { fill: #1E293B; stroke: #334155; }
+
+.citySvg .roundabout-green { fill: #D4E2D1; stroke: #B5CCB0; stroke-width: 0.5; }
+[data-theme="dark"] .citySvg .roundabout-green { fill: #1A2E1A; stroke: #2A4A2A; }
+
+.citySvg .roundabout-inner { fill: #DBEAFE; stroke: #93C5FD; stroke-width: 0.6; }
+[data-theme="dark"] .citySvg .roundabout-inner { fill: #1E3A5F; stroke: #3B82F6; }
+
+.citySvg .roundabout-plant { fill: #7FA07B; opacity: 0.5; }
+[data-theme="dark"] .citySvg .roundabout-plant { fill: #4A7A4A; opacity: 0.6; }
+
 
 
 /* ── Billboard panel — more dramatic ── */
