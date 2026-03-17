@@ -26,7 +26,7 @@ export const Projects: Project[] = [
     role: "Software Intern",
     tagline: "Database internals at the query planner level.",
     narrative:
-      "Joined as the youngest intern on KuzuDB's core team. Built operator printing for the query planner in C++, improving plan visualization and cutting debugging time.",
+      "Joined as the youngest intern on KuzuDB's core team. Built operator printing for the query planner in C++, improving plan visualization and cutting debugging time. Also worked on the explorer design for the visual node display.",
     highlights: [
       "Built the printing engine for 40+ operators, cutting query debugging time for the core team.",
       "Refined the Explorer UI using Chroma.js to make complex graph schemas visually intuitive.",
@@ -35,13 +35,14 @@ export const Projects: Project[] = [
     stack: ["C++", "Database Internals", "Query Optimization", "Chroma.js"],
     status: "shipped",
     story: getStoryById("kuzu"),
+    links: { demo: "https://kuzudb.github.io/" },
   },
   {
     id: "chess",
     title: "Chess Engine",
     tagline: "Deep learning meets classical strategy.",
     narrative:
-      "Developed a deep CNN-based chess engine trained end-to-end on millions of grandmaster games with a residual convolutional architecture.",
+      "Developed a deep CNN-based chess engine trained end-to-end on millions of grandmaster games with a residual convolutional architecture, as my first real project in CNNs and Machine Learning. I built this model with 2 other friends in 24 hours at ChessHacks 2025.",
     highlights: [
       "Implemented a residual convolutional architecture with policy and value heads using PyTorch.",
       "Trained end-to-end on millions of grandmaster games for move prediction and board evaluation.",
@@ -56,7 +57,7 @@ export const Projects: Project[] = [
     title: "Horizon MCP",
     tagline: "Unified academic intelligence layer.",
     narrative:
-      "Built an MCP academic assistant unifying course content, notes, and discussions into a searchable system with semantic retrieval.",
+      "Built Horizon (React Native + MCP server): unified D2L Brightspace, Piazza, and personal notes into a mobile-first academic assistant with semantic search.",
     highlights: [
       "Implemented a semantic retrieval pipeline using PDF embeddings and vector search for quick notes access.",
       "Integrated D2L/Brightspace and Piazza with asynchronous, fault-tolerant syncing.",
@@ -71,7 +72,7 @@ export const Projects: Project[] = [
     title: "UniMap",
     tagline: "Graph algorithms applied to physical space.",
     narrative:
-      "Built a Python + NetworkX navigation tool applying Dijkstra's algorithm to map campus routes, with a React frontend for path visualization.",
+      "Built a Python + NetworkX navigation tool applying Dijkstra's algorithm to map campus routes, with a React frontend for path visualization. This was one of ym first big projects, and while it's no longe very technically impressive, it holds a special place in my portfolio.",
     highlights: [
       "Applied Dijkstra's algorithm via NetworkX to compute optimal campus routes.",
       "Developed a React-based website to host UniMap and visualize paths between university buildings."
@@ -86,7 +87,7 @@ export const Projects: Project[] = [
     role: "Data Manager",
     tagline: "Data infrastructure trusted by 3,500+ pharmacists.",
     narrative:
-      "Structured medical research into JSON datasets powering MapFLOW's app, reducing consultation time by ~15 minutes and driving 10x pharmacy revenue.",
+      "Built JSON-structured medical datasets powering MapFLOW's symptom-to-pharmacy app (reduced consultation time ~15 min, drove 10x pharmacy revenue growth).",
     highlights: [
       "Transformed static research into dynamic JSON engines, saving pharmacists ~15 minutes per patient.",
       "Directly contributed to a 10x revenue increase by streamlining the consultation workflow.",
@@ -95,13 +96,14 @@ export const Projects: Project[] = [
     stack: ["Python", "OpenAI API", "Data Engineering", "JSON"],
     status: "shipped",
     story: getStoryById("mapflow"),
+    links: { demo: "https://mapflow.ca" },
   },
   {
     id: "cc",
     title: "CourseConnect",
     tagline: "Structured course data for degree validation.",
     narrative:
-      "Built a Python + Playwright scraper to collect and normalize 1,000+ courses into a structured dataset, enabling SE students to validate degree plans.",
+      "Built a Python + Playwright scraper to collect and normalize 1,000+ courses into a structured dataset, enabling SE students to see their degree plan requirements in a simpler way. Built because I didn't understnad the university's website the first time around.",
     highlights: [
       "Scraped and normalized 1,000+ courses into a structured, queryable dataset.",
       "Modeled degree requirements and dependencies for automated plan validation.",
@@ -118,8 +120,8 @@ export const Projects: Project[] = [
     role: "Co-Founder",
     tagline: "Real-time food discovery, founded from scratch.",
     narrative:
-      "Building a React Native location-based app for real-time food and drink discovery with a secure Supabase backend and map-driven UX.",
-    highlights: [
+"Building Dealish in React Native: map-first deal discovery app with Supabase backend, geospatial search, and restaurant-side inventory management for time-sensitive stock. Building part time during school, launching soon 👀",
+   highlights: [
       "Architected a map-first UX handling live location-based filtering with zero lag.",
       "Engineered a secure Supabase backend with role-based access control for merchants and users.",
       "Integrated react-native-maps bridging digital discovery and physical navigation."
@@ -135,7 +137,7 @@ export const Projects: Project[] = [
     role: "Founder",
     tagline: "Competitive programming, reinvented.",
     narrative:
-      "Founded a competitive programming league where engineering excellence is the currency.",
+      "Founded a competitive programming league for highschoolers and raised 12,000$ in funding from sponsors. Started because I was bored of hackathons, and wanted to change it up a little bit.",
     highlights: [
       "Founded and scaled a multi-event series from zero to a recognized community staple.",
       "Led full-cycle event ops: sponsorships, platform architecture, and competition design.",

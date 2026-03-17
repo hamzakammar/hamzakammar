@@ -455,7 +455,7 @@ export default function CitySvg({
                     {activeProject.links.demo && (
               <a href={activeProject.links.demo} target="_blank" rel="noopener noreferrer"
                 style={{ fontSize: "9px", color: "var(--accent)", textDecoration: "none",
-                  padding: "3px 10px", border: "1px solid var(--accent)", borderRadius: "2px", fontWeight: 600 }}>Live Demo &#x2192;</a>
+                  padding: "3px 10px", border: "1px solid var(--accent)", borderRadius: "2px", fontWeight: 600 }}>Link &#x2192;</a>
                     )}
                     {activeProject.links.github && (
               <a href={activeProject.links.github} target="_blank" rel="noopener noreferrer"
@@ -526,16 +526,50 @@ export default function CitySvg({
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "8px" }} />
       <div style={{ width: "100%", maxWidth: "360px", textAlign: "left" as const, marginBottom: "8px" }}>
         {[
-          { bullet: "→", text: "Wrote query planner internals at KùzuDB — youngest on the team" },
-          { bullet: "→", text: "One JSON file → 3,500 pharmacists save 15 min per patient" },
-          { bullet: "→", text: "Co-building an app that replaces aimless Yelp scrolling" },
-          { bullet: "→", text: "Elected rep for 100+ engineers at Waterloo" },
+          { bullet: "→", text: "Worked on internal query planners at Kùzu — youngest intern on the team", projectId: "kuzu" },
+          { bullet: "→", text: "Wrote JSON datasets helping 3,500 pharmacists save ~15 min/patient", projectId: "mapflow" },
+          { bullet: "→", text: "Building an app helping restaurants cut waste + customers save money", projectId: "dealish" },
+          { bullet: "→", text: "Elected Software Engineering rep for 150 Waterloo students", projectId: "uw" },
         ].map((item, i) => (
           <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start",
             fontSize: "8px", color: "var(--foreground)", lineHeight: 1.6,
             marginBottom: "4px" }}>
             <span style={{ flexShrink: 0, color: "var(--accent)", fontWeight: 700 }}>{item.bullet}</span>
-            <span>{item.text}</span>
+            {item.projectId ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onBuildingClick?.(item.projectId);
+                }}
+                style={{
+                  padding: 0,
+                  border: "none",
+                  background: "rgba(59, 130, 246, 0.10)",
+                  color: "inherit",
+                  font: "inherit",
+                  lineHeight: "inherit",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  borderRadius: "4px",
+                  paddingInline: "4px",
+                  marginInline: "-4px",
+                  transition: "background 0.15s ease, color 0.15s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(59, 130, 246, 0.18)";
+                  e.currentTarget.style.color = "var(--accent)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(59, 130, 246, 0.10)";
+                  e.currentTarget.style.color = "inherit";
+                }}
+              >
+                {item.text}
+              </button>
+            ) : (
+              <span>{item.text}</span>
+            )}
           </div>
         ))}
       </div>
@@ -941,12 +975,13 @@ export default function CitySvg({
           overflow: "hidden",
           boxSizing: "border-box",
           zIndex: 10,
-          pointerEvents: activeProject || showResume ? "auto" : "none",
+          // Don't block city interactions outside the billboard area
+          pointerEvents: "none",
         }}
       >
         <div
-          style={{ width: "100%", height: "100%" }}
-          onClick={(e) => { if (activeProject || showResume) e.stopPropagation(); }}
+          style={{ width: "100%", height: "100%", pointerEvents: "auto" }}
+          onClick={(e) => e.stopPropagation()}
         >
           {activeProject || showResume ? projectContent : defaultContent}
         </div>
