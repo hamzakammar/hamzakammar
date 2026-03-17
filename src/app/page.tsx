@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import CitySvg from "./components/CitySvg";
 import CommandPalette from "./components/CommandPalette";
 import { Projects } from "./data/projects";
@@ -255,6 +256,12 @@ export default function Home() {
           </a>
         ))}
       </nav>
+
+      {/* Bottom-left classic link */}
+      <Link href="/classic" className="cmdk-hint bottom-safe left-safe"
+        style={{ textDecoration: "none", position: "fixed", zIndex: 40 }}>
+        CLASSIC
+      </Link>
 
       {/* Bottom-right controls */}
       <div className="fixed z-40 flex items-center gap-2 bottom-safe right-safe">

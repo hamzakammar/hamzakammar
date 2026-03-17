@@ -1,6 +1,7 @@
 "use client";
 
 import { Command } from "cmdk";
+import { useRouter } from "next/navigation";
 import { Projects } from "../data/projects";
 
 interface CommandPaletteProps {
@@ -11,6 +12,7 @@ interface CommandPaletteProps {
 }
 
 export default function CommandPalette({ open, onOpenChange, onSelect, onAction }: CommandPaletteProps) {
+  const router = useRouter();
   if (!open) return null;
 
   return (
@@ -48,6 +50,10 @@ export default function CommandPalette({ open, onOpenChange, onSelect, onAction 
               <Command.Item value="Resume CV PDF download" onSelect={() => { onAction?.("resume"); onOpenChange(false); }}>
                 <span className="cmdk-item-title">View Resume</span>
                 <span className="cmdk-item-tagline">Open resume preview on billboard</span>
+              </Command.Item>
+              <Command.Item value="Classic View old portfolio" onSelect={() => { router.push("/classic"); onOpenChange(false); }}>
+                <span className="cmdk-item-title">Classic View</span>
+                <span className="cmdk-item-tagline">View the original dark portfolio</span>
               </Command.Item>
             </Command.Group>
             <Command.Group heading="Projects">

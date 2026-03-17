@@ -662,6 +662,7 @@ body {
 
 .bottom-safe { bottom: max(20px, env(safe-area-inset-bottom)); }
 .right-safe { right: max(20px, env(safe-area-inset-right)); }
+.left-safe { left: max(20px, env(safe-area-inset-left)); }
 
 /* SVG container: same behavior in all browsers — fill viewport, viewBox scales with meet */
 .city-svg-wrapper {

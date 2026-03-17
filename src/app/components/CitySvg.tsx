@@ -19,19 +19,11 @@ export default function CitySvg({
   // Billboard dimensions — defined first so useEffect can reference them
   const BB = { x: 595, y: 395, w: 490, h: 255 };
   const BBD = 8;
+  const DESIGN_W = BB.w - 2 * BBD; // 474
+  const DESIGN_H = BB.h - 2 * BBD; // 239
 
-  const [billboardScrolled, setBillboardScrolled] = useState(false);
-  const billboardScrollRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [overlayRect, setOverlayRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
-
-  // Reset scroll state when project changes
-  useEffect(() => {
-    setBillboardScrolled(false);
-    if (billboardScrollRef.current) {
-      billboardScrollRef.current.scrollTop = 0;
-    }
-  }, [activeProject?.id]);
 
   // Billboard overlay rect from SVG (viewBox 1200x700 starting at y=0, meet)
   useEffect(() => {
@@ -411,24 +403,14 @@ export default function CitySvg({
 
   // Project detail — rendered in fixed overlay (needs scroll, complex layout)
   const projectContent = activeProject ? (
-    <div 
-      ref={billboardScrollRef}
-      className="billboard-content billboard-project" 
+    <div
+      className="billboard-content billboard-project"
       style={{
         fontFamily: mono, padding: "0",
         width: "100%", height: "100%",
         minHeight: 0,
         overflowY: "auto", overflowX: "hidden", position: "relative",
         boxSizing: "border-box",
-      }}
-      onScroll={(e) => {
-        const target = e.currentTarget;
-        // Show story preview when scrolled down a bit (lower threshold)
-        if (target.scrollTop > 20) {
-          setBillboardScrolled(true);
-        } else {
-          setBillboardScrolled(false);
-        }
       }}
     >
       {/* Accent bar */}
@@ -483,64 +465,6 @@ export default function CitySvg({
           </div>
         )}
 
-        {/* Read Full Story Link — always visible, positioned before story */}
-        {activeProject.story && (
-          <div style={{ 
-            paddingTop: "10px",
-            marginTop: "10px",
-            borderTop: "1px solid var(--panel-border)",
-            marginBottom: billboardScrolled ? "10px" : "0",
-            paddingBottom: billboardScrolled ? "0" : "0"
-          }}>
-            <a 
-              href={`/stories/${activeProject.id}`}
-              style={{ 
-                fontSize: "8.5px", 
-                color: "var(--accent)", 
-                textDecoration: "none",
-                display: "inline-block",
-                fontWeight: 600,
-                letterSpacing: "0.05em"
-              }}
-            >
-              Read Full Story &#x2192;
-            </a>
-          </div>
-        )}
-
-        {/* Story Preview — always rendered but hidden until scrolled */}
-        {activeProject.story && (
-          <div style={{ 
-            fontSize: "7px", 
-            color: "var(--foreground)", 
-            lineHeight: 1.6,
-            opacity: billboardScrolled ? 0.75 : 0,
-            marginBottom: billboardScrolled ? "10px" : "0",
-            maxHeight: billboardScrolled ? "none" : "0",
-            overflowY: billboardScrolled ? "visible" : "hidden",
-            paddingRight: billboardScrolled ? "4px" : "0",
-            borderTop: billboardScrolled ? "1px solid var(--panel-border)" : "none",
-            paddingTop: billboardScrolled ? "8px" : "0",
-            marginTop: billboardScrolled ? "8px" : "0",
-            transition: "opacity 0.3s ease-in, margin 0.3s ease-in, padding 0.3s ease-in",
-            pointerEvents: billboardScrolled ? "auto" : "none",
-            height: billboardScrolled ? "auto" : "0",
-            overflow: billboardScrolled ? "visible" : "hidden",
-            visibility: billboardScrolled ? "visible" : "hidden"
-          }}>
-            <div style={{ 
-              whiteSpace: "pre-wrap",
-              wordBreak: "break-word"
-            }}>
-              {activeProject.story}
-            </div>
-          </div>
-        )}
-        
-        {/* Spacer to ensure scrollable content */}
-        {activeProject.story && (
-          <div style={{ height: "100px", minHeight: "100px" }} />
-        )}
       </div>
     </div>
   ) : showResume ? (
@@ -556,8 +480,13 @@ export default function CitySvg({
     </div>
   ) : null;
 
-  // Default billboard — rendered directly in foreignObject (no scroll needed, explicit px = Safari-safe)
+  // Default billboard — render at fixed design size, then CSS-scale to fill overlay
+  const overlayScale = overlayRect ? overlayRect.width / DESIGN_W : 1;
   const defaultContent = !activeProject && !showResume ? (
+    <div style={{
+      width: `${DESIGN_W}px`, height: `${DESIGN_H}px`,
+      transform: `scale(${overlayScale})`, transformOrigin: "top left",
+    }}>
     <div className="billboard-content" style={{
       fontFamily: mono, padding: "10px 16px",
       width: "100%", height: "100%",
@@ -632,6 +561,7 @@ export default function CitySvg({
           </a>
         ))}
       </div>
+    </div>
     </div>
   ) : null;
 
