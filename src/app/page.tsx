@@ -6,17 +6,12 @@ import CitySvg from "./components/CitySvg";
 import CommandPalette from "./components/CommandPalette";
 import { Projects } from "./data/projects";
 
-/* ═══════════════════════════════════════════════════════
-   PORTFOLIO CITY — Home Page
-   ═══════════════════════════════════════════════════════ */
-
 const statusLabels: Record<string, string> = {
   shipped: "Shipped",
   ongoing: "In Progress",
   experimental: "Experimental",
 };
 
-/* ── Social link icons (inline SVGs) ── */
 const LinkedInIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
@@ -41,6 +36,36 @@ const XIcon = () => (
   </svg>
 );
 
+const notableBlogs = [
+  {
+    id: "kuzu-internship",
+    title: "Kuzu DB: The High School Internship",
+    description: "Database internals at 16. Query planners, C++ cores, and graph schemas. Kuzu got acquired by Apple in 2025.",
+    date: "2024",
+    href: "/blog/kuzu-internship",
+    tag: "Internship",
+    live: true,
+  },
+  {
+    id: "neodev",
+    title: "Building NeoDev League From Scratch",
+    description: "How I founded a competitive programming league that raised $12,000 and ran three seasons while still in high school.",
+    date: "2024",
+    href: "/blog/neodev",
+    tag: "Founding",
+    live: false,
+  },
+  {
+    id: "horizon",
+    title: "Horizon: The Academic OS I Wish Existed",
+    description: "Building a unified academic intelligence layer with MCP, vector search, and Brightspace integrations.",
+    date: "2025",
+    href: "/blog/horizon",
+    tag: "Building",
+    live: false,
+  },
+];
+
 export default function Home() {
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [cmdkOpen, setCmdkOpen] = useState(false);
@@ -53,7 +78,6 @@ export default function Home() {
     ? Projects.find((p) => p.id === activeProjectId) ?? null
     : null;
 
-  /* ── Initialize dark mode from localStorage / system pref ── */
   useEffect(() => {
     const stored = localStorage.getItem("theme");
     if (stored === "dark") {
@@ -68,7 +92,6 @@ export default function Home() {
     }
   }, []);
 
-  /* ── Mobile detection ── */
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
@@ -76,7 +99,6 @@ export default function Home() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  /* ── Toggle dark mode ── */
   const toggleDark = () => {
     const next = !dark;
     setDark(next);
@@ -89,7 +111,6 @@ export default function Home() {
     }
   };
 
-  /* ── Keyboard shortcuts ── */
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -109,7 +130,6 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handler);
   }, [cmdkOpen, activeProjectId]);
 
-  /* ── Contact links data ── */
   const contactLinks = [
     { href: "https://linkedin.com/in/hamzakammar", label: "LinkedIn", icon: <LinkedInIcon /> },
     { href: "https://github.com/hamzakammar", label: "GitHub", icon: <GitHubIcon /> },
@@ -117,23 +137,20 @@ export default function Home() {
     { href: "https://x.com/hamzakammar", label: "X", icon: <XIcon /> },
   ];
 
-  /* ═══════ MOBILE LAYOUT ═══════ */
   if (isMobile) {
     return (
       <div className="min-h-screen" style={{ background: "var(--background)" }}>
-        {/* City hero banner */}
         <div className="city-hero">
           <CitySvg />
         </div>
 
-        {/* Header */}
         <div className="mobile-header">
           <h1>HAMZA AMMAR</h1>
           <p className="subtitle">Software Engineer</p>
           <p className="school">University of Waterloo &middot; Software Engineering</p>
           <div className="mobile-highlights">
             {[
-              "Wrote query planner internals at KùzuDB — youngest on the team",
+              "Wrote query planner internals at KuzuDB — youngest on the team",
               "One JSON file → 3,500 pharmacists save 15 min per patient",
               "Co-building an app that replaces aimless Yelp scrolling",
               "Elected rep for 100+ engineers at Waterloo",
@@ -143,7 +160,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Contact links */}
         <div className="mobile-contact">
           {contactLinks.map((link) => (
             <a key={link.label} href={link.href} target={link.href.startsWith("mailto") ? undefined : "_blank"}
@@ -158,7 +174,6 @@ export default function Home() {
           </a>
         </div>
 
-        {/* Project cards */}
         <div className="mobile-projects">
           <h2>Projects</h2>
           {Projects.map((p) => {
@@ -210,7 +225,29 @@ export default function Home() {
           })}
         </div>
 
-        {/* Dark mode toggle */}
+        {/* Notable Blogs */}
+        <div className="mobile-blogs">
+          <h2>Notable Blogs</h2>
+          <p className="blogs-subtext">blogs that may or may not be attributed to a building</p>
+          {notableBlogs.map((blog) => (
+            <div key={blog.id} className="blog-card">
+              <div className="blog-card-header">
+                <span className="blog-tag">{blog.tag}</span>
+                <span className="blog-date">{blog.date}</span>
+              </div>
+              <h3 className="blog-title">{blog.title}</h3>
+              <p className="blog-description">{blog.description}</p>
+              {blog.live ? (
+                <Link href={blog.href} className="blog-read-link">
+                  Read &rarr;
+                </Link>
+              ) : (
+                <span className="blog-coming-soon">Coming soon</span>
+              )}
+            </div>
+          ))}
+        </div>
+
         <div className="fixed z-40 bottom-safe right-safe">
           <button className="theme-toggle" onClick={toggleDark}
             aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>
@@ -221,7 +258,6 @@ export default function Home() {
     );
   }
 
-  /* ═══════ DESKTOP LAYOUT ═══════ */
   return (
     <div className="viewport-fill overflow-hidden">
       <div className="city-svg-wrapper">
@@ -247,7 +283,6 @@ export default function Home() {
         }}
       />
 
-      {/* Contact bar — top-right */}
       <nav className="contact-bar">
         {contactLinks.map((link) => (
           <a key={link.label} href={link.href} target={link.href.startsWith("mailto") ? undefined : "_blank"}
@@ -257,13 +292,11 @@ export default function Home() {
         ))}
       </nav>
 
-      {/* Bottom-left classic link */}
       <Link href="/classic" className="cmdk-hint bottom-safe left-safe"
         style={{ textDecoration: "none", position: "fixed", zIndex: 40 }}>
         CLASSIC
       </Link>
 
-      {/* Bottom-right controls */}
       <div className="fixed z-40 flex items-center gap-2 bottom-safe right-safe">
         <button className="theme-toggle" onClick={toggleDark}
           aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>
