@@ -5,9 +5,7 @@ description: "What it's like to work on database internals at 16 — query plann
 tags: ["internship", "databases", "c++", "graph-database"]
 ---
 
-# Kùzu DB: The High School Internship
-
-My high school was very competitive. Everyone was getting an internship in their final years, and it was deemed the necessary step to get into UWaterloo. So when I got the chance to join Kùzu DB's core team, I took it — even though I had no idea what a query planner was.
+My high school was competitive in the way that quietly raises the stakes on everything. By the time you hit junior year, everyone was getting an internship, and it had become the unspoken prerequisite for a shot at Waterloo. So when the chance came up to join Kùzu DB's core team, I said yes — even though I had no idea what a query planner was, and even less of an idea what I was getting into.
 
 <figure>
   <img
@@ -18,35 +16,27 @@ My high school was very competitive. Everyone was getting an internship in their
   <figcaption>The desk. Many operators were printed here.</figcaption>
 </figure>
 
-## The Challenge
+Kùzu is an embedded graph database — the kind of system that lives inside your application rather than running as a separate server. It's fast, really fast, and the team was serious about keeping it that way. My first few weeks were mostly orientation: reading through the C++ codebase, understanding how data flows through the query engine, and slowly building a mental model of what a query plan actually is. A query plan is the internal representation of how a database decides to execute your query — which operators run in what order, where data gets filtered, where joins happen. It's the hidden machinery behind every `MATCH` or `RETURN` statement.
 
-Databases are often black boxes. During my time at Kùzu, I realized that if a developer can't see the query plan, they can't optimize it. The query planner was producing complex execution plans, but developers had no way to visualize or understand what was happening under the hood.
+The problem I was handed was that developers couldn't see any of it. The query planner was generating complex execution trees, but there was no way to inspect them — no visualization, no readable output, just an opaque execution that either worked or didn't. If something was slow or wrong, you were debugging blind. My job was to change that.
 
-## Diving Into C++ Core
-
-I dove into the C++ core to build a visualization layer for the query planner. The goal was simple: turn abstract metadata into actionable performance insights. This meant understanding how operators connect, how data flows through the plan, and where bottlenecks might occur.
-
-Most days looked like this:
+I spent most of my time in the C++ core, building a printing engine for the query plan operators. There were over 40 of them — scan operators, filter operators, hash joins, aggregations, projections, intersections — and each one needed its own serialization logic to produce something a developer could actually read. The challenge wasn't just making them print; it was making the output meaningful. A plan with a dozen nested operators could produce a wall of text that was just as unreadable as nothing. So I thought carefully about indentation, about which properties mattered, about how to show the shape of the tree rather than just its nodes.
 
 <figure>
   <video
     src="/images/kuzu/rainy-day-workspace.mp4"
-    autoPlay
+    autoplay
     muted
     loop
-    playsInline
+    playsinline
     style="width:100%;border-radius:4px;"
-  />
+  ></video>
   <figcaption>Rain outside, C++ inside. A typical afternoon debugging operator trees.</figcaption>
 </figure>
 
-## Building the Printing Engine
+Most afternoons looked like that — headphones in, rain against the window, working through one operator at a time. There's something meditative about it once you get into the rhythm. You read the operator's internal state, figure out what's semantically meaningful to surface, write the print logic, test it against a real query, adjust. Repeat forty times. By the end, running `EXPLAIN` on a query would produce a clean, indented tree showing exactly how Kùzu planned to execute it — which operators were being used, how they were chained, where the data was expected to be filtered down. The core team could now look at a slow query and immediately understand why.
 
-I built the printing engine for 40+ operators, cutting query debugging time for the core team significantly. Each operator needed its own visualization logic — some were simple transformations, others were complex joins or aggregations. The challenge was making each one readable while maintaining consistency across the entire plan.
-
-## Refining the Explorer UI
-
-Using Chroma.js, I refined the Explorer UI to make complex graph schemas visually intuitive. The query plans weren't just linear sequences — they were graphs with branches, merges, and parallel execution paths.
+Alongside the printing engine, I worked on the Explorer UI — the visual interface for Kùzu's graph schema browser. Using Chroma.js, I refined the color system to make complex graph schemas visually intuitive. Graph schemas aren't like relational schemas — they have node types, edge types, properties hanging off both, and relationships that can be recursive or polymorphic. Getting a visualization that didn't look like a bowl of spaghetti required careful use of color and layout. The goal was that a developer could open the Explorer, glance at their schema, and immediately understand its structure without reading documentation.
 
 <figure>
   <img
@@ -57,12 +47,6 @@ Using Chroma.js, I refined the Explorer UI to make complex graph schemas visuall
   <figcaption>Youngest on the team. Upside down because that's how the office felt for the first week.</figcaption>
 </figure>
 
-## Impact
+I was sixteen and the youngest person on the team by a significant margin. That's a strange thing to sit with. Everyone else had PhDs or years of systems programming experience, and I was there figuring out C++ memory semantics and graph database internals in real time. It was uncomfortable in a productive way. The work had to speak for itself, so I made sure it did.
 
-The visualization layer directly supported benchmarking of the fastest embedded graph database. Developers could now see exactly how queries were being executed, identify optimization opportunities, and understand performance characteristics at a glance.
-
-## Lessons Learned
-
-Working on database internals taught me the importance of making complex systems understandable. A powerful engine is useless if developers can't understand how to use it effectively. Visualization isn't just about pretty graphics — it's about bridging the gap between abstract concepts and practical understanding.
-
-Kùzu eventually got acquired by Apple in late 2025. The work speaks for itself.
+What I came away with wasn't just the technical skills — though those were real and hard-won. It was a clearer sense of what it means to make a complex system understandable. A fast database is impressive. A fast database that developers can actually reason about, debug, and optimize is genuinely useful. The printing engine and the Explorer improvements were both versions of the same idea: powerful tools need legible interfaces, or the power goes to waste. Kùzu was acquired by Apple in late 2025. I like to think the work held up.
