@@ -246,6 +246,7 @@ export default function ClassicPortfolio() {
       </section>
 
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a
           href="/?city"
           style={{ fontSize: '13px', color: '#6b7280', textDecoration: 'none', borderBottom: '1px solid #374151', paddingBottom: '2px' }}
