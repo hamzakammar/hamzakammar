@@ -245,6 +245,15 @@ export default function ClassicPortfolio() {
         </div>
       </section>
 
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <a
+          href="/?city"
+          style={{ fontSize: '13px', color: '#6b7280', textDecoration: 'none', borderBottom: '1px solid #374151', paddingBottom: '2px' }}
+        >
+          View interactive city version →
+        </a>
+      </div>
+
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
         <a href={`https://se30webring.com?from=${currentUrl}&dir=prev`} style={{ textDecoration: 'none', color: '#FFCE1A', fontSize: '1.5rem', lineHeight: 1, display: 'flex', alignItems: 'center' }}>&larr;</a>
         <a href="https://se30webring.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
