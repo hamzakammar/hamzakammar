@@ -66,6 +66,7 @@ export const Projects: Project[] = [
     stack: ["Python", "MCP", "Vector Search", "React Native", "Supabase"],
     status: "ongoing",
     story: getStoryById("horizon"),
+    links: { demo: "https://horizon.hamzaammar.ca/onboard" },
   },
   {
     id: "unimap",
