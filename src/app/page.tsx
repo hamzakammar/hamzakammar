@@ -36,36 +36,6 @@ const XIcon = () => (
   </svg>
 );
 
-const notableBlogs = [
-  {
-    id: "kuzu-internship",
-    title: "Kuzu DB: The High School Internship",
-    description: "Database internals at 16. Query planners, C++ cores, and graph schemas. Kuzu got acquired by Apple in 2025.",
-    date: "2024",
-    href: "/blog/kuzu-internship",
-    tag: "Internship",
-    live: true,
-  },
-  {
-    id: "neodev",
-    title: "Building NeoDev League From Scratch",
-    description: "How I founded a competitive programming league that raised $12,000 and ran three seasons while still in high school.",
-    date: "2024",
-    href: "/blog/neodev",
-    tag: "Founding",
-    live: false,
-  },
-  {
-    id: "horizon",
-    title: "Horizon: The Academic OS I Wish Existed",
-    description: "Building a unified academic intelligence layer with MCP, vector search, and Brightspace integrations.",
-    date: "2025",
-    href: "/blog/horizon",
-    tag: "Building",
-    live: false,
-  },
-];
-
 export default function Home() {
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [cmdkOpen, setCmdkOpen] = useState(false);
@@ -225,28 +195,7 @@ export default function Home() {
           })}
         </div>
 
-        {/* Notable Blogs */}
-        <div className="mobile-blogs">
-          <h2>Notable Blogs</h2>
-          <p className="blogs-subtext">blogs that may or may not be attributed to a building</p>
-          {notableBlogs.map((blog) => (
-            <div key={blog.id} className="blog-card">
-              <div className="blog-card-header">
-                <span className="blog-tag">{blog.tag}</span>
-                <span className="blog-date">{blog.date}</span>
-              </div>
-              <h3 className="blog-title">{blog.title}</h3>
-              <p className="blog-description">{blog.description}</p>
-              {blog.live ? (
-                <Link href={blog.href} className="blog-read-link">
-                  Read &rarr;
-                </Link>
-              ) : (
-                <span className="blog-coming-soon">Coming soon</span>
-              )}
-            </div>
-          ))}
-        </div>
+        
 
         <div className="fixed z-40 bottom-safe right-safe">
           <button className="theme-toggle" onClick={toggleDark}
