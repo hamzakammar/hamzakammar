@@ -32,13 +32,13 @@ const projects = [
   },
   {
     name: "Godseye",
-    url: null,
+    url: "https://github.com/sxnnywu/godseye",
     description:
       "Multi-agent prediction market tool using AI-driven simulations on Polymarket bets. Placed 2nd in the Polymarket track at YHack (Yale).",
   },
   {
     name: "Chess Engine",
-    url: null,
+    url: "https://github.com/j3rry1iu/ChessHacks-Training",
     description:
       "Deep CNN chess engine trained on millions of grandmaster games using a residual architecture with policy and value heads in PyTorch.",
   },
@@ -56,7 +56,7 @@ const projects = [
   },
   {
     name: "UniMap",
-    url: null,
+    url: "https://github.com/hamzakammar/UniMap",
     description:
       "Campus navigation tool applying Dijkstra's algorithm via NetworkX, with a React frontend for route visualisation.",
   },
