@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Hamza Ammar — About",
@@ -160,7 +161,7 @@ export default function About() {
       `}</style>
 
       <main className="page">
-        <a href="/" className="back">← hamzaammar.ca</a>
+        <Link href="/" className="back">← hamzaammar.ca</Link>
 
         <h1>Hamza Ammar</h1>
         <p className="subtitle">
