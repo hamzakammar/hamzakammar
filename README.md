@@ -4,9 +4,9 @@ SWE intern @ Shopify. Building [Horizon](https://horizon.hamzaammar.ca) — an M
 that gives UWaterloo students AI access to their D2L courses.
 
 Previously shipped production C++ and Go to [Kùzu](https://kuzudb.com) (acquired by Apple).
-Co-founded [Dealish](https://dealish.io). 2nd place @ YHack.
+Co-founded [Dealish](https://dealish.io).
 
-SE '30 @ UWaterloo · hamzaammar.ca
+SE @ UWaterloo · hamzaammar.ca
 
 # 📊 GitHub Stats:
 ![](https://github-readme-streak-stats.herokuapp.com/?user=hamzakammar&theme=dark&hide_border=true)<br/>
