@@ -23,6 +23,8 @@ export default function CitySvg({
   const DESIGN_H = BB.h - 2 * BBD; // 239
 
   const svgRef = useRef<SVGSVGElement>(null);
+  const uwRingRef = useRef<HTMLDivElement>(null);
+  const [uwRingRendered, setUwRingRendered] = useState(false);
   const [overlayRect, setOverlayRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
 
   // Billboard overlay rect from SVG (viewBox 1200x700 starting at y=0, meet)
@@ -62,6 +64,43 @@ export default function CitySvg({
       window.removeEventListener("resize", update);
     };
   }, [BB.x, BB.y, BB.w, BB.h]);
+
+  // Inject uwaterloo.network embed on idle billboard
+  useEffect(() => {
+    if (activeProject || showResume) return;
+    const host = uwRingRef.current;
+    if (!host) return;
+    setUwRingRendered(false);
+    if (host.querySelector('script[src="https://uwaterloo.network/embed.js"]')) {
+      // If it's already there, just detect whether it actually rendered.
+      const t0 = performance.now();
+      const check = () => {
+        const nodes = Array.from(host.childNodes);
+        const hasRenderedNode = nodes.some((n) => !(n instanceof HTMLScriptElement));
+        if (hasRenderedNode) setUwRingRendered(true);
+        if (!hasRenderedNode && performance.now() - t0 < 2000) requestAnimationFrame(check);
+      };
+      requestAnimationFrame(check);
+      return;
+    }
+
+    host.innerHTML = "";
+    const s = document.createElement("script");
+    s.src = "https://uwaterloo.network/embed.js";
+    s.async = true;
+    s.setAttribute("data-webring", "");
+    s.setAttribute("data-user", "casper-dong");
+    host.appendChild(s);
+
+    const t0 = performance.now();
+    const check = () => {
+      const nodes = Array.from(host.childNodes);
+      const hasRenderedNode = nodes.some((n) => !(n instanceof HTMLScriptElement));
+      if (hasRenderedNode) setUwRingRendered(true);
+      if (!hasRenderedNode && performance.now() - t0 < 2000) requestAnimationFrame(check);
+    };
+    requestAnimationFrame(check);
+  }, [activeProject, showResume]);
     const [hoverId, setHoverId] = useState<string | null>(null);
   const activeProjectId = activeProject?.id ?? null;
   const D = 8;
@@ -259,6 +298,10 @@ export default function CitySvg({
         <rect x={cx-s*.6} y={cy-s*.2} width={s*1.2} height={s*.95} rx={s*.18} className="facade-icon" />
         <path d={`M${cx-s*.35},${cy-s*.2} C${cx-s*.35},${cy-s*.85} ${cx+s*.35},${cy-s*.85} ${cx+s*.35},${cy-s*.2}`} className="facade-icon" fill="none" />
       </>),
+      godseye: (cx, cy, s) => (<>
+        <path d={`M${cx-s*.9},${cy} Q${cx},${cy-s*.75} ${cx+s*.9},${cy} Q${cx},${cy+s*.75} ${cx-s*.9},${cy}Z`} className="facade-icon" fill="none" />
+        <circle cx={cx} cy={cy} r={s*.3} className="facade-icon" />
+      </>),
     };
 
     return (
@@ -327,6 +370,7 @@ export default function CitySvg({
                 neodev: '#EC4899',
                 uw: '#14B8A6',
                 shopify: '#7AB55C',
+                godseye: '#A855F7',
               } as Record<string, string>)[id] || 'var(--accent)' : 'var(--accent)'
             }} />
         )}
@@ -429,7 +473,7 @@ export default function CitySvg({
             color: "var(--accent)", textTransform: "uppercase" as const, marginBottom: "6px" }}>{activeProject.role}</div>
         )}
 
-        {/* Narrative — the story, not bullet points */}
+        {/* Narrative */}
         <div style={{ fontSize: "10px", color: "var(--foreground)", lineHeight: 1.8,
           opacity: 0.85, marginBottom: "10px" }}>
           {activeProject.narrative}
@@ -582,7 +626,6 @@ export default function CitySvg({
         {[
           { label: "se30webring", href: "https://www.se30webring.com", logo: "https://www.se30webring.com/assets/icon-yellow.svg" },
           { label: "se-webring", href: "https://se-webring.xyz", logo: "https://raw.githubusercontent.com/simcard0000/se-webring/main/assets/logo/logo_w.svg" },
-          { label: "uwaterloo.network", href: "https://www.uwaterloo.network", logo: "https://www.uwaterloo.network/favicon.svg" },
         ].map((ring) => (
           <a key={ring.href} href={ring.href} target="_blank" rel="noopener noreferrer" title={ring.label}
             onClick={(e) => e.stopPropagation()}
@@ -594,6 +637,43 @@ export default function CitySvg({
             <img src={ring.logo} alt={ring.label} style={{ width: "16px", height: "16px", objectFit: "contain" }} />
           </a>
         ))}
+
+        <div
+          ref={uwRingRef}
+          onClick={(e) => e.stopPropagation()}
+          title="uwaterloo.network"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            opacity: 0.85,
+            minWidth: "16px",
+            minHeight: "16px",
+          }}
+        >
+          {!uwRingRendered && (
+            <a
+              href="https://www.uwaterloo.network"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: 0.7,
+                transition: "opacity 0.15s",
+                textDecoration: "none",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
+              title="uwaterloo.network"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/UW.png" alt="uwaterloo.network" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+            </a>
+          )}
+        </div>
       </div>
     </div>
     </div>
@@ -859,8 +939,7 @@ export default function CitySvg({
         {bldg("mapflow", 35, 393, 85, 192)}
         {bldg("cc", 130, 393, 72, 190)}
         {bldg("shopify", 215, 395, 65, 188)}
-        {bldg(null, 290, 400, 28, 175)}
-        {bldg(null, 326, 398, 26, 180)}
+        {bldg("godseye", 290, 400, 54, 176)}
         {bldg(null, 360, 393, 28, 190)}
         {bldg(null, 396, 400, 24, 175)}
         {bldg(null, 428, 395, 26, 185)}
@@ -960,6 +1039,7 @@ export default function CitySvg({
         {projectLabel("mapflow", "MapFLOW", 35, 393, 85, 192, "/mapflow.png")}
         {projectLabel("cc", "CC", 130, 393, 72, 190)}
         {projectLabel("shopify", "Shopify", 215, 395, 65, 188, "/shopify.png")}
+        {projectLabel("godseye", "Godseye", 290, 400, 54, 176)}
       </g>
 
     </svg>

@@ -13,11 +13,12 @@ export interface Project {
   };
   videoUrl?: string;   // YouTube/Loom embed URL for demo video
   status?: "shipped" | "ongoing" | "experimental";
-  story?: string;
-  storyPreview?: string;
+  // Classic-view (timeline) metadata — single source of truth shared with /classic.
+  // `role` present ⇒ rendered as Experience; absent ⇒ rendered as Project.
+  date?: string;
+  image?: string;            // logo shown in the classic experience card
+  backgroundImage?: string;  // hover background in the classic experience card
 }
-
-import { getStoryById } from '../stories';
 
 export const Projects: Project[] = [
   {
@@ -26,7 +27,7 @@ export const Projects: Project[] = [
     role: "Software Intern",
     tagline: "Database internals at the query planner level.",
     narrative:
-      "Joined as the youngest intern on KuzuDB's core team. Built operator printing for the query planner in C++, improving plan visualization and cutting debugging time. Also worked on the explorer design for the visual node display.",
+      "Joined KùzuDB's core team as its youngest engineer, working deep in the C++ query-planner internals. I built the operator-printing engine for 40+ operators — turning opaque execution plans into something the team could actually read — and cut query-debugging time across the board. Kùzu was later acquired by Apple.",
     highlights: [
       "Built the printing engine for 40+ operators, cutting query debugging time for the core team.",
       "Refined the Explorer UI using Chroma.js to make complex graph schemas visually intuitive.",
@@ -34,7 +35,9 @@ export const Projects: Project[] = [
     ],
     stack: ["C++", "Database Internals", "Query Optimization", "Chroma.js"],
     status: "shipped",
-    story: getStoryById("kuzu"),
+    date: "Summer 2024",
+    image: "/kuzu.png",
+    backgroundImage: "/kuzu-bg.png",
     links: { demo: "https://kuzudb.github.io/" },
   },
   {
@@ -42,7 +45,7 @@ export const Projects: Project[] = [
     title: "Chess Engine",
     tagline: "Deep learning meets classical strategy.",
     narrative:
-      "Developed a deep CNN-based chess engine trained end-to-end on millions of grandmaster games with a residual convolutional architecture, as my first real project in CNNs and Machine Learning. I built this model with 2 other friends in 24 hours at ChessHacks 2025.",
+      "Built a deep CNN chess engine with two friends in 24 hours at ChessHacks 2025 — a residual architecture with policy and value heads, trained end-to-end on millions of grandmaster games and optimized on NVIDIA H100s with mixed precision. My first real dive into deep learning, and we went all in.",
     highlights: [
       "Implemented a residual convolutional architecture with policy and value heads using PyTorch.",
       "Trained end-to-end on millions of grandmaster games for move prediction and board evaluation.",
@@ -50,37 +53,54 @@ export const Projects: Project[] = [
     ],
     stack: ["Python", "PyTorch", "Deep Learning", "CUDA"],
     status: "shipped",
-    story: getStoryById("chess"),
+    date: "November 2025",
+  },
+  {
+    id: "godseye",
+    title: "Godseye",
+    tagline: "Multi-agent prediction markets.",
+    narrative:
+      "Built a multi-agent trading system that simulates Polymarket bets: specialized agents each take a stance, debate one another, and converge on a single consensus signal. Took 2nd in the Polymarket track at YHack (Yale).",
+    highlights: [
+      "Placed 2nd in the Polymarket track at YHack (Yale).",
+      "Designed an agent-orchestration pipeline where specialized agents debate and produce a consensus signal.",
+      "Ran AI-driven simulations over live Polymarket data to evaluate bets."
+    ],
+    stack: ["Python", "Multi-Agent", "LLMs", "Polymarket API"],
+    status: "shipped",
+    date: "March 2026",
+    links: { demo: "https://devpost.com/software/godseye-uwma5h" },
   },
   {
     id: "horizon",
     title: "Horizon MCP",
-    tagline: "Unified academic intelligence layer.",
+    tagline: "AI access to your university, through MCP.",
     narrative:
-      "Built Horizon (React Native + MCP server): unified D2L Brightspace, Piazza, and personal notes into a mobile-first academic assistant with semantic search.",
+      "Built Horizon, a multi-tenant MCP server on AWS that gives students AI access to their own university accounts. It connects D2L and Piazza behind per-user authenticated logins (Duo 2FA included) and runs pgvector semantic search over course files and posts — so Claude or ChatGPT can answer anything about your courses, grades, and deadlines.",
     highlights: [
-      "Implemented a semantic retrieval pipeline using PDF embeddings and vector search for quick notes access.",
-      "Integrated D2L/Brightspace and Piazza with asynchronous, fault-tolerant syncing.",
-      "Unified course content, notes, and discussions into a single searchable interface."
+      "Built a multi-tenant MCP server on AWS ECS Fargate serving live course data to students.",
+      "Implemented pgvector semantic search over notes and Piazza posts using HNSW-indexed embeddings.",
+      "Integrated D2L and Piazza with per-user authenticated sessions, including Duo 2FA."
     ],
-    stack: ["Python", "MCP", "Vector Search", "React Native", "Supabase"],
+    stack: ["TypeScript", "MCP", "AWS ECS", "pgvector", "Postgres"],
     status: "ongoing",
-    story: getStoryById("horizon"),
-    links: { demo: "https://horizon.hamzaammar.ca/onboard" },
+    date: "January 2026 – Present",
+    links: { demo: "https://horizon.hamzaammar.ca/onboard", github: "https://github.com/hamzakammar/mcp-workspace" },
   },
   {
     id: "unimap",
     title: "UniMap",
     tagline: "Graph algorithms applied to physical space.",
     narrative:
-      "Built a Python + NetworkX navigation tool applying Dijkstra's algorithm to map campus routes, with a React frontend for path visualization. This was one of ym first big projects, and while it's no longe very technically impressive, it holds a special place in my portfolio.",
+      "Built a campus navigation tool in Python + NetworkX, running Dijkstra's over a graph of Waterloo's buildings with a React frontend to visualize routes. One of my first real projects — not the most sophisticated thing I've built, but it's where a lot of this started.",
     highlights: [
       "Applied Dijkstra's algorithm via NetworkX to compute optimal campus routes.",
       "Developed a React-based website to host UniMap and visualize paths between university buildings."
     ],
     stack: ["Python", "NetworkX", "React", "Algorithms"],
     status: "shipped",
-    story: getStoryById("unimap"),
+    date: "Summer 2022",
+    links: { github: "https://github.com/hamzakammar/UniMap" },
   },
   {
     id: "mapflow",
@@ -88,7 +108,7 @@ export const Projects: Project[] = [
     role: "Data Manager",
     tagline: "Data infrastructure trusted by 3,500+ pharmacists.",
     narrative:
-      "Built JSON-structured medical datasets powering MapFLOW's symptom-to-pharmacy app (reduced consultation time ~15 min, drove 10x pharmacy revenue growth).",
+      "Turned static medical research into structured JSON engines powering MapFLOW's symptom-to-pharmacy app — trusted by 3,500+ pharmacists, shaving ~15 minutes off each consultation and driving a 10x jump in pharmacy revenue. I also shipped a Python + OpenAI CLI that scaled it to 500+ French-speaking pharmacies.",
     highlights: [
       "Transformed static research into dynamic JSON engines, saving pharmacists ~15 minutes per patient.",
       "Directly contributed to a 10x revenue increase by streamlining the consultation workflow.",
@@ -96,7 +116,9 @@ export const Projects: Project[] = [
     ],
     stack: ["Python", "OpenAI API", "Data Engineering", "JSON"],
     status: "shipped",
-    story: getStoryById("mapflow"),
+    date: "Nov 2022 – Mar 2024",
+    image: "/mapflow.png",
+    backgroundImage: "/mapflow-bg.png",
     links: { demo: "https://mapflow.ca" },
   },
   {
@@ -104,7 +126,7 @@ export const Projects: Project[] = [
     title: "CourseConnect",
     tagline: "Structured course data for degree validation.",
     narrative:
-      "Built a Python + Playwright scraper to collect and normalize 1,000+ courses into a structured dataset, enabling SE students to see their degree plan requirements in a simpler way. Built because I didn't understnad the university's website the first time around.",
+      "Built a Python + Playwright scraper that normalized 1,000+ Waterloo courses into a queryable dataset, then modeled the prerequisite graph so SE students can validate their degree plans in seconds. Built it because I couldn't make sense of the university's own website the first time around.",
     highlights: [
       "Scraped and normalized 1,000+ courses into a structured, queryable dataset.",
       "Modeled degree requirements and dependencies for automated plan validation.",
@@ -112,25 +134,27 @@ export const Projects: Project[] = [
     ],
     stack: ["Python", "Playwright", "React Native", "Supabase"],
     status: "shipped",
-    links: { demo: "https://cc.hamzaammar.ca" },
-    story: getStoryById("cc"),
+    date: "Sep 2025 – Dec 2025",
+    links: { demo: "https://cc.hamzaammar.ca", github: "https://github.com/hamzakammar/course-connect" },
   },
   {
     id: "dealish",
     title: "Dealish",
-    role: "Co-Founder",
+    role: "Founding Engineer",
     tagline: "Real-time food discovery, founded from scratch.",
     narrative:
-"Building Dealish in React Native: map-first deal discovery app with Supabase backend, geospatial search, and restaurant-side inventory management for time-sensitive stock. Building part time during school, launching soon 👀",
-   highlights: [
+      "Founding engineer on Dealish: a map-first app for discovering real-time food and drink deals around you. Geospatial search over a Supabase + PostGIS backend, live location filtering with zero lag, and restaurant-side tools to manage time-sensitive stock. Built part-time through school — launching soon 👀",
+    highlights: [
       "Architected a map-first UX handling live location-based filtering with zero lag.",
       "Engineered a secure Supabase backend with role-based access control for merchants and users.",
       "Integrated react-native-maps bridging digital discovery and physical navigation."
     ],
     stack: ["React Native", "Expo", "Supabase", "PostGIS"],
     status: "ongoing",
+    date: "Dec 2025 – Present",
+    image: "/dealish.png",
+    backgroundImage: "/dealish-bg.png",
     links: { demo: "https://dealish.io" },
-    story: getStoryById("dealish"),
   },
   {
     id: "neodev",
@@ -138,7 +162,7 @@ export const Projects: Project[] = [
     role: "Founder",
     tagline: "Competitive programming, reinvented.",
     narrative:
-      "Founded a competitive programming league for highschoolers and raised 12,000$ in funding from sponsors. Started because I was bored of hackathons, and wanted to change it up a little bit.",
+      "Founded NeoDev League, a competitive-programming league for high schoolers — raised $12,000 from sponsors and ran it end to end, from the platform to the problem sets. Started it because I was bored of the usual hackathon format and wanted to build something better.",
     highlights: [
       "Founded and scaled a multi-event series from zero to a recognized community staple.",
       "Led full-cycle event ops: sponsorships, platform architecture, and competition design.",
@@ -146,8 +170,10 @@ export const Projects: Project[] = [
     ],
     stack: ["Leadership", "Community Architecture", "Product Strategy"],
     status: "ongoing",
+    date: "May 2024 – Present",
+    image: "/neodev.png",
+    backgroundImage: "/neodev-bg.png",
     links: { demo: "https://neoleague.dev" },
-    story: getStoryById("neodev"),
   },
   {
     id: "uw",
@@ -155,7 +181,7 @@ export const Projects: Project[] = [
     role: "SE Rep",
     tagline: "Elected liaison for Software Engineering 2030.",
     narrative:
-      "Elected academic representative translating student needs into faculty action for the SE 2030 cohort at University of Waterloo.",
+      "Elected by my cohort as academic representative for Waterloo Software Engineering 2030 — the bridge between 100+ engineers and the faculty. I take what students actually need and turn it into action on curriculum and resources.",
     highlights: [
       "Elected as the primary academic liaison for the SE 2030 cohort.",
       "Advocating for curriculum improvements and student resource allocation.",
@@ -163,19 +189,22 @@ export const Projects: Project[] = [
     ],
     stack: ["Strategy", "Advocacy", "Communication"],
     status: "ongoing",
-    story: getStoryById("uw"),
+    date: "Sep 2025 – Present",
+    image: "/UW.png",
   },
   {
     id: "shopify",
     title: "Shopify",
-    role: "Incoming SWE Intern",
-    tagline: "Incoming Software Engineering intern — Summer 2026.",
+    role: "SWE Intern",
+    tagline: "Software Engineering intern, 2026.",
     narrative:
-      "Joining Shopify as a Software Engineering intern for Summer 2026.",
+      "Software Engineering intern at Shopify, building internal developer tooling for merchant-facing workflows.",
     highlights: [
-      "Incoming Software Engineering Intern — Summer 2026."
+      "Software Engineering Intern building internal tooling for merchant-facing workflows."
     ],
-    stack: ["Ruby", "React", "TypeScript"],
+    stack: ["Ruby", "Rails", "React", "TypeScript"],
     status: "ongoing",
+    date: "2026",
+    image: "/shopify.png",
   },
 ];

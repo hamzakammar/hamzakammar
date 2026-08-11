@@ -2,86 +2,25 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Projects } from '../data/projects';
 
-const experiences = [
-  {
-    title: 'Founding Engineer',
-    company: 'Dealish',
-    date: 'Dec 2025 – Present',
-    skills: ['React Native', 'Supabase', 'Mobile Development', 'TypeScript'],
-    image: '/dealish.png',
-    backgroundImage: '/dealish-bg.png',
-    link: 'https://www.dealish.io',
-  },
-  {
-    title: 'Software Developer',
-    company: 'Kùzu Inc.',
-    date: 'Summer 2024',
-    description: 'Worked on graph database tooling and backend infrastructure.',
-    skills: ['C++', 'Graph Databases', 'Backend'],
-    image: '/kuzu.png',
-    backgroundImage: '/kuzu-bg.png',
-    link: 'https://kuzudb.github.io/',
-  },
-  {
-    title: 'Founder, Chair',
-    company: 'NeoDev League',
-    date: 'May 2024 – Present',
-    description: 'Built and led a developer community focused on peer learning, mentorship, and hands-on projects.',
-    skills: ['Leadership', 'Event Planning', 'Community Building'],
-    image: '/neodev.png',
-    backgroundImage: '/neodev-bg.png',
-    link: 'https://neoleague.dev',
-  },
-  {
-    title: 'Data Manager',
-    company: 'Mapflow Inc.',
-    date: 'Nov 2022 – Oct 2024',
-    description: 'Consolidated medical research into structured datasets, saving 2000+ pharmacists ~15 minutes per patient.',
-    skills: ['Data Modeling', 'JSON', 'Healthcare'],
-    image: '/mapflow.png',
-    backgroundImage: '/mapflow-bg.png',
-    link: 'https://mapflow.ca',
-  },
-];
+// Single source of truth: derive the classic timeline from the same Projects data
+// that drives the city view. Items with a `role` are experiences; the rest are projects.
+const experiences = Projects.filter((p) => p.role).map((p) => ({
+  title: p.role as string,   // job title / role
+  company: p.title,          // organization name
+  date: p.date ?? '',
+  skills: p.stack,
+  image: p.image,
+  backgroundImage: p.backgroundImage,
+  link: p.links?.demo ?? p.links?.github ?? '',
+}));
 
-const projects = [
-  {
-    title: 'Academic MCP',
-    date: 'January 2026',
-    link: 'https://github.com/hamzakammar/mcp-workspace',
-  },
-  {
-    title: 'ChessBot',
-    date: 'November 2025',
-    link: 'https://github.com/j3rry1iu/ChessHacks-Training',
-  },
-  {
-    title: 'Course Connect',
-    date: 'September 2025 - Present',
-    link: 'https://cc.hamzaammar.ca',
-  },
-  {
-    title: 'Flourishing Realty Website',
-    date: 'August 2025',
-    link: 'https://flourishing.homes',
-  },
-  {
-    title: 'Sahil Go',
-    date: 'July 2025 - Present',
-    link: '',
-  },
-  {
-    title: 'MentAI',
-    date: 'April 2023',
-    link: 'https://devpost.com/software/therealbaymax',
-  },
-  {
-    title: 'UniMap',
-    date: 'Summer 2022',
-    link: 'https://github.com/hamzakammar/UniMap',
-  },
-];
+const projects = Projects.filter((p) => !p.role).map((p) => ({
+  title: p.title,
+  date: p.date ?? '',
+  link: p.links?.demo ?? p.links?.github ?? '',
+}));
 
 export default function ClassicPortfolio() {
   const [hoveredExp, setHoveredExp] = useState<number | null>(null);
@@ -146,19 +85,21 @@ export default function ClassicPortfolio() {
               className="rounded-lg overflow-hidden transition-all duration-300 hover:bg-gray-900"
             >
               <a
-                href={exp.link}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={exp.link || undefined}
+                target={exp.link ? '_blank' : undefined}
+                rel={exp.link ? 'noopener noreferrer' : undefined}
                 className="flex items-center gap-4 p-4 cursor-pointer block"
               >
                 <div className="w-12 h-12 bg-gray-800 rounded-lg flex-shrink-0 overflow-hidden">
-                  <Image
-                    src={exp.image}
-                    alt={exp.company}
-                    width={48}
-                    height={48}
-                    className="w-full h-full object-cover"
-                  />
+                  {exp.image && (
+                    <Image
+                      src={exp.image}
+                      alt={exp.company}
+                      width={48}
+                      height={48}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold">{exp.company}</h3>
@@ -183,17 +124,19 @@ export default function ClassicPortfolio() {
                       ))}
                     </div>
                   </div>
-                  <div className="absolute right-0 top-0 bottom-0 w-1/2">
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={exp.backgroundImage}
-                        alt={exp.company}
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent"></div>
+                  {exp.backgroundImage && (
+                    <div className="absolute right-0 top-0 bottom-0 w-1/2">
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={exp.backgroundImage}
+                          alt={exp.company}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent"></div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
