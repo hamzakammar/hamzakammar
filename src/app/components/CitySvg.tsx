@@ -16,7 +16,7 @@ export default function CitySvg({
   onClose,
   showResume,
 }: CitySvgProps) {
-  // Billboard dimensions — defined first so useEffect can reference them
+  // Billboard dimensions - defined first so useEffect can reference them
   const BB = { x: 595, y: 395, w: 490, h: 255 };
   const BBD = 8;
   const DESIGN_W = BB.w - 2 * BBD; // 474
@@ -306,7 +306,7 @@ export default function CitySvg({
 
     return (
       <g key={`label-${id}`} style={{ pointerEvents: "none" }}>
-        {/* Dark band — flush with building edges, part of the structure */}
+        {/* Dark band - flush with building edges, part of the structure */}
         <rect className="facade-band"
           x={bx} y={bandY} width={bw} height={bandH} />
 
@@ -321,7 +321,7 @@ export default function CitySvg({
           shapes[id]?.(cx, iconY + iconSize/2, iconSize/2)
         )}
 
-        {/* Name below band — small, tight, white */}
+        {/* Name below band - small, tight, white */}
         <text className="facade-name-text"
           x={cx} y={nameY}
           textAnchor="middle">{name.toUpperCase()}</text>
@@ -445,7 +445,7 @@ export default function CitySvg({
   const mono = "var(--font-geist-mono), 'Geist Mono', ui-monospace, monospace";
   const headshotSrc = "/me.png";
 
-  // Project detail — rendered in fixed overlay (needs scroll, complex layout)
+  // Project detail - rendered in fixed overlay (needs scroll, complex layout)
   const projectContent = activeProject ? (
     <div
       className="billboard-content billboard-project"
@@ -465,7 +465,7 @@ export default function CitySvg({
             cursor: "pointer", fontSize: "12px", color: "var(--muted)", lineHeight: 1, padding: "2px 4px" }}
           aria-label="Close">&#x2715;</button>
 
-        {/* Title — big, bold, the hero */}
+        {/* Title - big, bold, the hero */}
         <div style={{ fontSize: "22px", fontWeight: 800, letterSpacing: "0.04em",
           color: "var(--foreground)", marginBottom: activeProject.role ? "2px" : "6px" }}>{activeProject.title}</div>
         {activeProject.role && (
@@ -479,7 +479,7 @@ export default function CitySvg({
           {activeProject.narrative}
         </div>
 
-        {/* Stack — inline subtle text, not noisy pills */}
+        {/* Stack - inline subtle text, not noisy pills */}
         <div style={{ fontSize: "9px", color: "var(--muted)", marginBottom: "10px",
           letterSpacing: "0.03em" }}>
           {activeProject.stack.join(" \u00B7 ")}
@@ -493,7 +493,7 @@ export default function CitySvg({
           </div>
         )}
 
-        {/* Links — prominent, accent-colored */}
+        {/* Links - prominent, accent-colored */}
         {activeProject.links && Object.keys(activeProject.links).length > 0 && (
           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "10px" }}>
                     {activeProject.links.demo && (
@@ -524,7 +524,7 @@ export default function CitySvg({
     </div>
   ) : null;
 
-  // Default billboard — render at fixed design size, then CSS-scale to fill overlay
+  // Default billboard - render at fixed design size, then CSS-scale to fill overlay
   const overlayScale = overlayRect ? overlayRect.width / DESIGN_W : 1;
   const defaultContent = !activeProject && !showResume ? (
     <div style={{
@@ -570,7 +570,7 @@ export default function CitySvg({
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "8px" }} />
       <div style={{ width: "100%", maxWidth: "360px", textAlign: "left" as const, marginBottom: "8px" }}>
         {[
-          { bullet: "→", text: "Worked on internal query planners at Kùzu — youngest intern on the team", projectId: "kuzu" },
+          { bullet: "→", text: "Worked on internal query planners at Kùzu, youngest intern on the team", projectId: "kuzu" },
           { bullet: "→", text: "Wrote JSON datasets helping 3,500 pharmacists save ~15 min/patient", projectId: "mapflow" },
           { bullet: "→", text: "Building an app helping restaurants cut waste + customers save money", projectId: "dealish" },
           { bullet: "→", text: "Elected Software Engineering rep for 150 Waterloo students", projectId: "uw" },
@@ -785,18 +785,18 @@ export default function CitySvg({
         {[700,880,1060].map(x => <rect key={`xb${x}`} className="street" x={x} y="358" width="6" height="34" rx={1} opacity="0.6" />)}
 
         {/* Lamp posts */}
-        {/* Lamp posts — vertical road */}
+        {/* Lamp posts - vertical road */}
         {lampPosts([[556,120],[556,250],[556,460],[556,590],[582,160],[582,320],[582,500],[582,650]])}
-        {/* Lamp posts — horizontal road */}
+        {/* Lamp posts - horizontal road */}
         {lampPosts([[120,366],[280,366],[440,366],[700,366],[880,366],[1060,366]])}
 
-        {/* Street trees — along horizontal road, both sides */}
+        {/* Street trees - along horizontal road, both sides */}
         {trees([60, 150, 240, 340, 430, 490], 362)}
         {trees([640, 730, 820, 910, 1010, 1100], 362)}
         {trees([60, 150, 240, 340, 430, 490], 393)}
         {trees([640, 730, 820, 910, 1010, 1100], 393)}
 
-        {/* Street trees — along vertical road (only at intersection corners, not inside building zones) */}
+        {/* Street trees - along vertical road (only at intersection corners, not inside building zones) */}
         {trees([553, 584], 345)}
         {trees([553, 584], 395)}
 
@@ -813,7 +813,7 @@ export default function CitySvg({
         {vehicle(900,372,"h","#6B7280")}
         {vehicle(1100,374,"h","#7A8493")}
 
-        {/* Pedestrians — on sidewalks, not roads */}
+        {/* Pedestrians - on sidewalks, not roads */}
         {pedestrian(548,362)}
         {pedestrian(590,394)}
         {pedestrian(555,400)}
@@ -823,13 +823,13 @@ export default function CitySvg({
         {pedestrian(720,392)}
         {pedestrian(1000,391)}
 
-        {/* Benches — in front of parks, off the road */}
+        {/* Benches - in front of parks, off the road */}
         {bench(210, 356)}
         {bench(820, 356)}
         {bench(210, 396)}
         {bench(820, 396)}
 
-        {/* Bushes — near roundabout and sidewalk edges */}
+        {/* Bushes - near roundabout and sidewalk edges */}
         {bush(536, 358)}
         {bush(598, 358)}
         {bush(536, 398)}
@@ -837,7 +837,7 @@ export default function CitySvg({
         {bush(536, 378)}
         {bush(600, 378)}
 
-        {/* Bus stops — on sidewalk edges */}
+        {/* Bus stops - on sidewalk edges */}
         {busStop(538, 180)}
         {busStop(538, 510)}
         {busStop(596, 300)}
@@ -846,7 +846,7 @@ export default function CitySvg({
 
       {/* ═══════ TOP-LEFT (x:5-545, y:0-365) ═══════ */}
       <g id="tl">
-        {/* BACK ROW — project buildings ~1.2x wide, original heights, fillers between */}
+        {/* BACK ROW - project buildings ~1.2x wide, original heights, fillers between */}
         {bldg(null, 5, 65, 22, 208)}
         {bldg("kuzu", 38, 48, 95, 230)}
         {bldg(null, 138, 62, 14, 210)}
@@ -889,7 +889,7 @@ export default function CitySvg({
 
       {/* ═══════ TOP-RIGHT (x:585-1185, y:0-365) ═══════ */}
       <g id="tr">
-        {/* BACK ROW — 3 project buildings + fillers */}
+        {/* BACK ROW - 3 project buildings + fillers */}
         {bldg(null, 585, 68, 24, 202)}
         {bldg("dealish", 614, 48, 100, 230)}
         {bldg(null, 718, 62, 16, 210)}
@@ -934,7 +934,7 @@ export default function CitySvg({
 
       {/* ═══════ BOTTOM-LEFT (x:5-545, y:395-695) ═══════ */}
       <g id="bl">
-        {/* BACK ROW — mapflow, cc, shopify + fillers */}
+        {/* BACK ROW - mapflow, cc, shopify + fillers */}
         {bldg(null, 5, 395, 18, 185)}
         {bldg("mapflow", 35, 393, 85, 192)}
         {bldg("cc", 130, 393, 72, 190)}
@@ -980,7 +980,7 @@ export default function CitySvg({
         {pedestrian(130,555)}
       </g>
 
-      {/* ═══════ BOTTOM-RIGHT — Billboard area (x:585-1190, y:395-695) ═══════ */}
+      {/* ═══════ BOTTOM-RIGHT - Billboard area (x:585-1190, y:395-695) ═══════ */}
       <g id="br">
         {/* Left strip */}
         {F([

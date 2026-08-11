@@ -6,7 +6,11 @@ import { Projects } from '../data/projects';
 
 // Single source of truth: derive the classic timeline from the same Projects data
 // that drives the city view. Items with a `role` are experiences; the rest are projects.
-const experiences = Projects.filter((p) => p.role).map((p) => ({
+// Both lists render most-recent-first via the `start` (YYYYMM) sort key.
+const byRecency = (a: (typeof Projects)[number], b: (typeof Projects)[number]) =>
+  (b.start ?? 0) - (a.start ?? 0);
+
+const experiences = Projects.filter((p) => p.role).sort(byRecency).map((p) => ({
   title: p.role as string,   // job title / role
   company: p.title,          // organization name
   date: p.date ?? '',
@@ -16,7 +20,7 @@ const experiences = Projects.filter((p) => p.role).map((p) => ({
   link: p.links?.demo ?? p.links?.github ?? '',
 }));
 
-const projects = Projects.filter((p) => !p.role).map((p) => ({
+const projects = Projects.filter((p) => !p.role).sort(byRecency).map((p) => ({
   title: p.title,
   date: p.date ?? '',
   link: p.links?.demo ?? p.links?.github ?? '',

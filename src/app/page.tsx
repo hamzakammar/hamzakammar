@@ -120,7 +120,7 @@ export default function Home() {
           <p className="school">University of Waterloo &middot; Software Engineering</p>
           <div className="mobile-highlights">
             {[
-              "Wrote query planner internals at KuzuDB — youngest on the team",
+              "Wrote query planner internals at KùzuDB, youngest on the team",
               "One JSON file → 3,500 pharmacists save 15 min per patient",
               "Co-building an app that replaces aimless Yelp scrolling",
               "Elected rep for 100+ engineers at Waterloo",

@@ -19,14 +19,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://hamzaammar.ca"),
   title: "Hamza Ammar",
-  description: "Resume, projects and experience — Hamza Ammar",
+  description: "Resume, projects and experience by Hamza Ammar",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
   },
   openGraph: {
     title: "Hamza Ammar",
-    description: "Resume, projects and experience — Hamza Ammar",
+    description: "Resume, projects and experience by Hamza Ammar",
     url: "/",
     siteName: "Hamza Ammar",
     images: [

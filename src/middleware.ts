@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Mobile UA patterns — covers iOS Safari, Android Chrome/Firefox, Samsung, Opera Mini, etc.
+// Mobile UA patterns - covers iOS Safari, Android Chrome/Firefox, Samsung, Opera Mini, etc.
 const MOBILE_UA_RE = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|silk/i;
 
 export function middleware(req: NextRequest) {

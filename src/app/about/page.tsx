@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Projects } from "../data/projects";
 
 export const metadata: Metadata = {
-  title: "Hamza Ammar — About",
+  title: "Hamza Ammar · About",
   description:
     "Hamza Ammar is a Software Engineering student at the University of Waterloo and Software Engineering Intern at Shopify. He builds full-stack products, ML systems, and developer tools.",
   openGraph: {
-    title: "Hamza Ammar — About",
+    title: "Hamza Ammar · About",
     description:
       "Software Engineering student at Waterloo. SWE Intern at Shopify. Builds full-stack products, ML systems, and developer tools.",
     url: "https://hamzaammar.ca/about",
@@ -17,73 +18,12 @@ export const metadata: Metadata = {
   },
 };
 
-const experience = [
-  {
-    company: "Shopify",
-    role: "Software Engineering Intern",
-    period: "May 2026 – Present",
-    description: "Building internal developer tooling for merchant-facing workflows.",
-  },
-  {
-    company: "Kùzu",
-    role: "Software Intern",
-    period: "Jun 2024 – Aug 2024",
-    description:
-      "Built operator printing for KuzuDB's query planner, adding metadata for 40+ operators, and refined the Explorer UI to make graph schemas easier to read.",
-  },
-  {
-    company: "MapFLOW",
-    role: "Data Manager",
-    period: "Nov 2022 – Mar 2024",
-    description:
-      "Structured medical research into JSON datasets used by 3,500+ pharmacists, and built a Python + OpenAI CLI that expanded reach to 500+ French-speaking pharmacies.",
-  },
-];
-
-const projects = [
-  {
-    name: "Horizon MCP",
-    url: "https://horizon.hamzaammar.ca/onboard",
-    description:
-      "A multi-tenant MCP server on AWS that gives students AI access to their university accounts — D2L, Piazza, and course files, with semantic search.",
-  },
-  {
-    name: "Dealish",
-    url: "https://dealish.io",
-    description:
-      "Founding engineer on a React Native app for real-time food and drink deal discovery, backed by a Supabase + PostGIS backend.",
-  },
-  {
-    name: "Godseye",
-    url: "https://devpost.com/software/godseye-uwma5h",
-    description:
-      "A multi-agent prediction-market tool that simulates Polymarket bets. Placed 2nd in the Polymarket track at YHack (Yale).",
-  },
-  {
-    name: "Chess Engine",
-    url: "",
-    description:
-      "A deep CNN chess engine trained on millions of grandmaster games — a residual architecture with policy and value heads in PyTorch.",
-  },
-  {
-    name: "CourseConnect",
-    url: "https://cc.hamzaammar.ca",
-    description:
-      "A Python + Playwright scraper that normalized 1,000+ Waterloo courses into a prerequisite graph for degree-path validation.",
-  },
-  {
-    name: "NeoDev League",
-    url: "https://neoleague.dev",
-    description:
-      "Founded a competitive programming league for high schoolers, raising $12,000 in sponsorships.",
-  },
-  {
-    name: "UniMap",
-    url: "https://github.com/hamzakammar/UniMap",
-    description:
-      "A campus navigation tool applying Dijkstra's algorithm via NetworkX, with a React frontend for route visualization.",
-  },
-];
+// Single source of truth: /about, /classic, and the city all read from Projects.
+const byRecency = (a: (typeof Projects)[number], b: (typeof Projects)[number]) =>
+  (b.start ?? 0) - (a.start ?? 0);
+const linkOf = (p: (typeof Projects)[number]) => p.links?.demo ?? p.links?.github ?? "";
+const experience = Projects.filter((p) => p.role).sort(byRecency);
+const projects = Projects.filter((p) => !p.role).sort(byRecency);
 
 const stack = [
   { label: "Languages", items: "Python, C++, C, Go, Rust, TypeScript, JavaScript, Swift, SQL, Ruby" },
@@ -166,31 +106,34 @@ export default function About() {
         </p>
 
         <h2>Experience</h2>
-        {experience.map((e) => (
-          <div key={e.company} className="row">
+        {experience.map((p) => (
+          <div key={p.id} className="row">
             <div className="row-head">
-              <span className="row-title">{e.company} — {e.role}</span>
-              <span className="row-meta">{e.period}</span>
+              <span className="row-title">{p.title} · {p.role}</span>
+              <span className="row-meta">{p.date}</span>
             </div>
-            <p className="row-desc">{e.description}</p>
+            <p className="row-desc">{p.blurb ?? p.narrative}</p>
           </div>
         ))}
 
         <h2>Projects</h2>
-        {projects.map((p) => (
-          <div key={p.name} className="row">
-            <div className="row-head">
-              <span className="row-title">
-                {p.url ? (
-                  <a href={p.url} target="_blank" rel="noopener noreferrer">{p.name}</a>
-                ) : (
-                  p.name
-                )}
-              </span>
+        {projects.map((p) => {
+          const url = linkOf(p);
+          return (
+            <div key={p.id} className="row">
+              <div className="row-head">
+                <span className="row-title">
+                  {url ? (
+                    <a href={url} target="_blank" rel="noopener noreferrer">{p.title}</a>
+                  ) : (
+                    p.title
+                  )}
+                </span>
+              </div>
+              <p className="row-desc">{p.blurb ?? p.narrative}</p>
             </div>
-            <p className="row-desc">{p.description}</p>
-          </div>
-        ))}
+          );
+        })}
 
         <h2>Stack</h2>
         <div className="stack">
@@ -205,8 +148,8 @@ export default function About() {
         <h2>Education</h2>
         <div className="row">
           <div className="row-head">
-            <span className="row-title">University of Waterloo — BSE</span>
-            <span className="row-meta">2025 – 2030</span>
+            <span className="row-title">University of Waterloo · BSE</span>
+            <span className="row-meta">2025 - 2030</span>
           </div>
           <p className="row-desc">Elected Class Academic Representative for the SE 2030 cohort.</p>
         </div>
