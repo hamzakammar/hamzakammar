@@ -638,42 +638,45 @@ export default function CitySvg({
           </a>
         ))}
 
+        {/* Fallback lives OUTSIDE the embed host so React never reconciles a node
+            the third-party embed.js script has moved/removed (avoids removeChild crash). */}
+        {!uwRingRendered && (
+          <a
+            href="https://www.uwaterloo.network"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: 0.7,
+              transition: "opacity 0.15s",
+              textDecoration: "none",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
+            title="uwaterloo.network"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/UW.png" alt="uwaterloo.network" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+          </a>
+        )}
+        {/* Embed host: React renders it empty and never gives it children, so the
+            script owns its contents exclusively. */}
         <div
           ref={uwRingRef}
           onClick={(e) => e.stopPropagation()}
           title="uwaterloo.network"
           style={{
-            display: "flex",
+            display: uwRingRendered ? "flex" : "none",
             alignItems: "center",
             justifyContent: "center",
             opacity: 0.85,
-            minWidth: "16px",
+            minWidth: uwRingRendered ? "16px" : 0,
             minHeight: "16px",
           }}
-        >
-          {!uwRingRendered && (
-            <a
-              href="https://www.uwaterloo.network"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                opacity: 0.7,
-                transition: "opacity 0.15s",
-                textDecoration: "none",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
-              title="uwaterloo.network"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/UW.png" alt="uwaterloo.network" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-            </a>
-          )}
-        </div>
+        />
       </div>
     </div>
     </div>
