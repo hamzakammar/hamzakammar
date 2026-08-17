@@ -5,7 +5,7 @@
    Never touches the city's React/SVG tree, so it can't break render.
      • Konami code (up up down down left right left right B A) -> UFO abduction
      • Click the billboard headshot x5 (data-egg="face")       -> avatar swarm
-     • Press R                                                 -> rave mode
+     • Type "rave"                                             -> rave mode
      • Type "matrix"                                           -> Matrix rain
    ═══════════════════════════════════════════════════════ */
 
@@ -17,12 +17,13 @@ const KONAMI = [
 ];
 
 export default function EasterEggs() {
-  const [ufo, setUfo] = useState(false);
+  const [ufo, setUfo] = useState<{ x: number; y: number } | null>(null);
   const [rave, setRave] = useState(false);
   const [matrix, setMatrix] = useState(false);
   const [swarm, setSwarm] = useState(false);
+  const abducteeRef = useRef<SVGElement | null>(null);
 
-  /* ── Keyboard: konami, "matrix", and R ── */
+  /* ── Keyboard: konami (abduct a real building) + typed words (matrix, rave) ── */
   useEffect(() => {
     let konamiIdx = 0;
     let typed = "";
@@ -30,6 +31,40 @@ export default function EasterEggs() {
       const el = document.activeElement as HTMLElement | null;
       return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
     };
+
+    // Pick a real city building, park the UFO above it, and lift it into the beam.
+    const triggerUfo = () => {
+      if (abducteeRef.current) return; // one abduction at a time
+      const buildings = Array.from(
+        document.querySelectorAll<SVGElement>(".citySvg [data-project]")
+      );
+      const el = buildings[Math.floor(Math.random() * buildings.length)];
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      setUfo({ x: rect.left + rect.width / 2, y: Math.max(64, rect.top) });
+      abducteeRef.current = el;
+      const s = el.style;
+      s.transition = "transform 1.5s cubic-bezier(.4,0,.2,1), opacity 1.5s ease";
+      s.transformBox = "fill-box";
+      s.transformOrigin = "center";
+      window.setTimeout(() => { s.transform = "translateY(-260px) scale(.3)"; s.opacity = "0"; }, 850);
+      window.setTimeout(() => {
+        const el2 = abducteeRef.current;
+        if (el2) {
+          el2.style.transition = "transform .8s ease, opacity .8s ease";
+          el2.style.transform = "";
+          el2.style.opacity = "";
+          window.setTimeout(() => {
+            el2.style.transition = "";
+            el2.style.transformBox = "";
+            el2.style.transformOrigin = "";
+          }, 850);
+        }
+        abducteeRef.current = null;
+        setUfo(null);
+      }, 6500);
+    };
+
     const onKey = (e: KeyboardEvent) => {
       if (isTyping() || e.metaKey || e.ctrlKey || e.altKey) return;
       const k = e.key.toLowerCase();
@@ -37,25 +72,20 @@ export default function EasterEggs() {
       // Konami sequence
       if (k === KONAMI[konamiIdx]) {
         konamiIdx++;
-        if (konamiIdx === KONAMI.length) {
-          konamiIdx = 0;
-          setUfo(true);
-          window.setTimeout(() => setUfo(false), 7200);
-        }
+        if (konamiIdx === KONAMI.length) { konamiIdx = 0; triggerUfo(); }
       } else {
         konamiIdx = k === KONAMI[0] ? 1 : 0;
       }
 
-      // Typed words
+      // Typed words (rave and matrix never overlap)
       if (k.length === 1 && k >= "a" && k <= "z") {
-        typed = (typed + k).slice(-6);
-        if (typed === "matrix") { typed = ""; setMatrix(true); }
+        typed = (typed + k).slice(-8);
+        if (typed.endsWith("matrix")) setMatrix(true);
+        else if (typed.endsWith("rave")) setRave((r) => !r);
       }
 
-      // R toggles rave
-      if (k === "r") setRave((r) => !r);
-      // Escape closes the dismissable ones
-      if (k === "escape") { setMatrix(false); }
+      // Escape closes the dismissable overlay
+      if (k === "escape") setMatrix(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -92,7 +122,7 @@ export default function EasterEggs() {
   /* ── Friendly console hint for the curious ── */
   useEffect(() => {
     console.log(
-      "%c psst... this city has secrets. try the konami code, press R, type 'matrix', or click my face 5x.",
+      "%c psst... this city has secrets. try the konami code, type 'rave', type 'matrix', or click my face 5x.",
       "color:#22d3ee;font-family:monospace;font-size:12px;"
     );
   }, []);
@@ -110,35 +140,17 @@ export default function EasterEggs() {
         }
         @keyframes eggFall { to { transform: translateY(105vh); opacity:0; } }
 
-        /* UFO */
+        /* UFO abduction (parks over a real building and beams it up) */
         .egg-ufo-wrap { position:fixed; inset:0; z-index:9998; pointer-events:none; overflow:hidden; }
-        .egg-ufo { position:absolute; top:14%; left:-220px; font-size:88px; line-height:1;
-          filter: drop-shadow(0 0 18px rgba(80,200,255,.7));
-          animation: eggUfoIn 7.2s cubic-bezier(.5,0,.5,1) forwards; }
-        @keyframes eggUfoIn {
-          0%   { left:-220px; top:14%; }
-          28%  { left:calc(50% - 60px); top:14%; }
-          62%  { left:calc(50% - 60px); top:14%; }
-          100% { left:calc(50% - 60px); top:-220px; }
-        }
-        .egg-beam { position:absolute; top:20%; left:calc(50% - 55px); width:110px; height:0;
+        .egg-ufo-col { position:absolute; top:0; display:flex; flex-direction:column; align-items:center;
+          transform:translateX(-50%); animation: eggDrop .7s cubic-bezier(.2,.8,.2,1) both; }
+        @keyframes eggDrop { from{opacity:0; transform:translate(-50%,-28px);} to{opacity:1; transform:translate(-50%,0);} }
+        .egg-ufo { font-size:60px; line-height:1; filter:drop-shadow(0 0 16px rgba(90,200,255,.85)); }
+        .egg-beam { width:78px; flex:1; margin-top:-6px;
           background:linear-gradient(rgba(120,220,255,.55), rgba(120,220,255,0));
-          clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
-          animation: eggBeam 7.2s ease forwards; opacity:0; }
-        @keyframes eggBeam {
-          0%,26% { height:0; opacity:0; }
-          34%    { height:230px; opacity:1; }
-          58%    { height:230px; opacity:1; }
-          70%,100% { height:0; opacity:0; }
-        }
-        .egg-abductee { position:absolute; top:52%; left:calc(50% - 16px); font-size:34px;
-          animation: eggLift 7.2s ease forwards; opacity:0; }
-        @keyframes eggLift {
-          0%,30% { top:52%; opacity:0; }
-          40%    { top:48%; opacity:1; }
-          60%    { top:22%; opacity:1; }
-          72%,100% { top:15%; opacity:0; }
-        }
+          clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+          animation: eggBeamPulse 1.1s ease-in-out infinite alternate; }
+        @keyframes eggBeamPulse { from{opacity:.45} to{opacity:.9} }
 
         /* Matrix */
         .egg-matrix { position:fixed; inset:0; z-index:9999; background:#000; cursor:pointer; }
@@ -158,9 +170,10 @@ export default function EasterEggs() {
       {rave && <RaveStars />}
       {ufo && (
         <div className="egg-ufo-wrap" aria-hidden>
-          <div className="egg-beam" />
-          <div className="egg-abductee">🏢</div>
-          <div className="egg-ufo">🛸</div>
+          <div className="egg-ufo-col" style={{ left: ufo.x, height: ufo.y }}>
+            <div className="egg-ufo">🛸</div>
+            <div className="egg-beam" />
+          </div>
         </div>
       )}
       {matrix && <MatrixRain onClose={() => setMatrix(false)} />}

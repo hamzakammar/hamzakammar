@@ -218,17 +218,20 @@ export const Projects: Project[] = [
     id: "shopify",
     title: "Shopify",
     role: "SWE Intern",
-    tagline: "Software Engineering intern, 2026.",
+    tagline: "MCP agent tooling and infra for merchants.",
     narrative:
-      "Software Engineering intern at Shopify, building internal developer tooling for merchant-facing workflows.",
+      "Software Engineering intern at Shopify, building MCP agent tools and notification infrastructure for merchant-facing workflows. Shipped 25+ agent tools on Rails/OAuth APIs for AI-assisted marketing ops, safety gates for high-risk mutating actions, and BigTable-backed push pacing that serves 500K+ merchants a day.",
     highlights: [
-      "Software Engineering Intern building internal tooling for merchant-facing workflows."
+      "Built 25+ MCP agent tools on Rails/OAuth APIs for AI-assisted marketing operations.",
+      "Designed write-preview safety gates for high-risk mutating agent workflows before edits execute.",
+      "Engineered BigTable-backed push pacing for notifications serving 500K+ daily merchant recipients.",
+      "Hardened resumable 4-stage recipient-list imports to recover failed backfills without full restarts."
     ],
-    stack: ["Ruby", "Rails", "React", "TypeScript"],
+    stack: ["Ruby", "Rails", "MCP", "BigTable", "TypeScript"],
     status: "ongoing",
     date: "May 2026 - Present",
     start: 202605,
-    blurb: "Building internal developer tooling for merchant-facing workflows.",
+    blurb: "Building MCP agent tools and notification infra for merchant-facing workflows (25+ tools, 500K+ daily merchants).",
     image: "/shopify.png",
   },
 ];
