@@ -582,30 +582,8 @@ export default function CitySvg({
         ))}
       </div>
       <div className="billboard-cta" style={{ fontSize: "7px", color: "var(--accent)", letterSpacing: "0.12em",
-        textTransform: "uppercase" as const, marginBottom: "6px" }}>
+        textTransform: "uppercase" as const }}>
         Click a building · press &#x2318;K to explore
-      </div>
-      <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "6px" }} />
-      <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "center" }}>
-        {/* Static uwaterloo.network badge: always the same visible icon.
-            The live embed rendered inconsistently (a near-invisible black icon
-            that only appeared after its async fetch finished). */}
-        <a
-          href="https://www.uwaterloo.network"
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
-          style={{
-            display: "flex", alignItems: "center", justifyContent: "center",
-            opacity: 0.7, transition: "opacity 0.15s", textDecoration: "none",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
-          title="uwaterloo.network"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/UW.png" alt="uwaterloo.network" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-        </a>
       </div>
     </div>
     </div>
