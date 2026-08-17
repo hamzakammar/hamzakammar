@@ -23,8 +23,6 @@ export default function CitySvg({
   const DESIGN_H = BB.h - 2 * BBD; // 239
 
   const svgRef = useRef<SVGSVGElement>(null);
-  const uwRingRef = useRef<HTMLDivElement>(null);
-  const [uwRingRendered, setUwRingRendered] = useState(false);
   const [overlayRect, setOverlayRect] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
 
   // Billboard overlay rect from SVG (viewBox 1200x700 starting at y=0, meet)
@@ -65,43 +63,7 @@ export default function CitySvg({
     };
   }, [BB.x, BB.y, BB.w, BB.h]);
 
-  // Inject uwaterloo.network embed on idle billboard
-  useEffect(() => {
-    if (activeProject || showResume) return;
-    const host = uwRingRef.current;
-    if (!host) return;
-    setUwRingRendered(false);
-    if (host.querySelector('script[src="https://uwaterloo.network/embed.js"]')) {
-      // If it's already there, just detect whether it actually rendered.
-      const t0 = performance.now();
-      const check = () => {
-        const nodes = Array.from(host.childNodes);
-        const hasRenderedNode = nodes.some((n) => !(n instanceof HTMLScriptElement));
-        if (hasRenderedNode) setUwRingRendered(true);
-        if (!hasRenderedNode && performance.now() - t0 < 2000) requestAnimationFrame(check);
-      };
-      requestAnimationFrame(check);
-      return;
-    }
-
-    host.innerHTML = "";
-    const s = document.createElement("script");
-    s.src = "https://uwaterloo.network/embed.js";
-    s.async = true;
-    s.setAttribute("data-webring", "");
-    s.setAttribute("data-user", "casper-dong");
-    host.appendChild(s);
-
-    const t0 = performance.now();
-    const check = () => {
-      const nodes = Array.from(host.childNodes);
-      const hasRenderedNode = nodes.some((n) => !(n instanceof HTMLScriptElement));
-      if (hasRenderedNode) setUwRingRendered(true);
-      if (!hasRenderedNode && performance.now() - t0 < 2000) requestAnimationFrame(check);
-    };
-    requestAnimationFrame(check);
-  }, [activeProject, showResume]);
-    const [hoverId, setHoverId] = useState<string | null>(null);
+  const [hoverId, setHoverId] = useState<string | null>(null);
   const activeProjectId = activeProject?.id ?? null;
   const D = 8;
 
@@ -625,54 +587,25 @@ export default function CitySvg({
       </div>
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "6px" }} />
       <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "center" }}>
-        {/* Only the uwaterloo.network webring is shown.
-            Fallback lives OUTSIDE the embed host so React never reconciles a node
-            the third-party embed.js script has moved/removed (avoids removeChild crash). */}
-        {!uwRingRendered && (
-          <a
-            href="https://www.uwaterloo.network"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: 0.7,
-              transition: "opacity 0.15s",
-              textDecoration: "none",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
-            title="uwaterloo.network"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/UW.png" alt="uwaterloo.network" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-          </a>
-        )}
-        {/* The embed renders a 56px icon + nav arrows; clip + scale it down to fit
-            the billboard. React owns an empty host; the script fills it exclusively. */}
-        <div style={{
-          display: uwRingRendered ? "flex" : "none",
-          alignItems: "center", justifyContent: "center",
-          width: "78px", height: "24px", overflow: "hidden",
-        }}>
-          <div
-            ref={uwRingRef}
-            onClick={(e) => e.stopPropagation()}
-            title="uwaterloo.network"
-            style={{
-              transform: "scale(0.38)",
-              transformOrigin: "center",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-              whiteSpace: "nowrap",
-              opacity: 0.9,
-            }}
-          />
-        </div>
+        {/* Static uwaterloo.network badge: always the same visible icon.
+            The live embed rendered inconsistently (a near-invisible black icon
+            that only appeared after its async fetch finished). */}
+        <a
+          href="https://www.uwaterloo.network"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "center",
+            opacity: 0.7, transition: "opacity 0.15s", textDecoration: "none",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+          onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
+          title="uwaterloo.network"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/UW.png" alt="uwaterloo.network" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
+        </a>
       </div>
     </div>
     </div>
