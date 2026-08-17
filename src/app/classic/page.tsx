@@ -28,11 +28,6 @@ const projects = Projects.filter((p) => !p.role).sort(byRecency).map((p) => ({
 
 export default function ClassicPortfolio() {
   const [hoveredExp, setHoveredExp] = useState<number | null>(null);
-  const [currentUrl, setCurrentUrl] = useState('');
-
-  useEffect(() => {
-    setCurrentUrl(window.location.origin);
-  }, []);
 
   // Force black body background for classic view, restore on unmount
   useEffect(() => {
@@ -200,19 +195,6 @@ export default function ClassicPortfolio() {
         >
           View interactive city version →
         </a>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
-        <a href={`https://se30webring.com?from=${currentUrl}&dir=prev`} style={{ textDecoration: 'none', color: '#FFCE1A', fontSize: '1.5rem', lineHeight: 1, display: 'flex', alignItems: 'center' }}>&larr;</a>
-        <a href="https://se30webring.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://se30webring.com/assets/icon-yellow.svg"
-            alt="SE '30 Webring"
-            style={{ width: '32px', height: '32px' }}
-          />
-        </a>
-        <a href={`https://se30webring.com?from=${currentUrl}&dir=next`} style={{ textDecoration: 'none', color: '#FFCE1A', fontSize: '1.5rem', lineHeight: 1, display: 'flex', alignItems: 'center' }}>&rarr;</a>
       </div>
 
     </main>

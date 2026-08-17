@@ -563,17 +563,18 @@ export default function CitySvg({
           </div>
           <div style={{ fontSize: "9px", fontWeight: 500, letterSpacing: "0.14em",
             color: "var(--accent)", textTransform: "uppercase" as const }}>
-            Software Engineering · UWaterloo
+            SWE Intern @ Shopify · UWaterloo
           </div>
         </div>
       </div>
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "8px" }} />
       <div style={{ width: "100%", maxWidth: "360px", textAlign: "left" as const, marginBottom: "8px" }}>
         {[
-          { bullet: "→", text: "Worked on internal query planners at Kùzu, youngest intern on the team", projectId: "kuzu" },
-          { bullet: "→", text: "Wrote JSON datasets helping 3,500 pharmacists save ~15 min/patient", projectId: "mapflow" },
-          { bullet: "→", text: "Building an app helping restaurants cut waste + customers save money", projectId: "dealish" },
-          { bullet: "→", text: "Elected Software Engineering rep for 150 Waterloo students", projectId: "uw" },
+          { bullet: "→", text: "Shipped 25+ MCP agent tools on Rails APIs at Shopify", projectId: "shopify" },
+          { bullet: "→", text: "Wrote C++ query-planner internals at Kùzu as youngest intern", projectId: "kuzu" },
+          { bullet: "→", text: "Built Horizon, an MCP server for AI access to your courses", projectId: "horizon" },
+          { bullet: "→", text: "Took 2nd at YHack (Yale) with a multi-agent trading system", projectId: "godseye" },
+          { bullet: "→", text: "Founding engineer on Dealish, a real-time deals app", projectId: "dealish" },
         ].map((item, i) => (
           <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start",
             fontSize: "8px", color: "var(--foreground)", lineHeight: 1.6,
@@ -623,22 +624,8 @@ export default function CitySvg({
       </div>
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "6px" }} />
       <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "center" }}>
-        {[
-          { label: "se30webring", href: "https://www.se30webring.com", logo: "https://www.se30webring.com/assets/icon-yellow.svg" },
-          { label: "se-webring", href: "https://se-webring.xyz", logo: "https://raw.githubusercontent.com/simcard0000/se-webring/main/assets/logo/logo_w.svg" },
-        ].map((ring) => (
-          <a key={ring.href} href={ring.href} target="_blank" rel="noopener noreferrer" title={ring.label}
-            onClick={(e) => e.stopPropagation()}
-            style={{ display: "flex", alignItems: "center", justifyContent: "center", opacity: 0.7, transition: "opacity 0.15s", textDecoration: "none" }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={ring.logo} alt={ring.label} style={{ width: "16px", height: "16px", objectFit: "contain" }} />
-          </a>
-        ))}
-
-        {/* Fallback lives OUTSIDE the embed host so React never reconciles a node
+        {/* Only the uwaterloo.network webring is shown.
+            Fallback lives OUTSIDE the embed host so React never reconciles a node
             the third-party embed.js script has moved/removed (avoids removeChild crash). */}
         {!uwRingRendered && (
           <a
@@ -662,21 +649,29 @@ export default function CitySvg({
             <img src="/UW.png" alt="uwaterloo.network" style={{ width: "16px", height: "16px", objectFit: "contain" }} />
           </a>
         )}
-        {/* Embed host: React renders it empty and never gives it children, so the
-            script owns its contents exclusively. */}
-        <div
-          ref={uwRingRef}
-          onClick={(e) => e.stopPropagation()}
-          title="uwaterloo.network"
-          style={{
-            display: uwRingRendered ? "flex" : "none",
-            alignItems: "center",
-            justifyContent: "center",
-            opacity: 0.85,
-            minWidth: uwRingRendered ? "16px" : 0,
-            minHeight: "16px",
-          }}
-        />
+        {/* The embed renders a 56px icon + nav arrows; clip + scale it down to fit
+            the billboard. React owns an empty host; the script fills it exclusively. */}
+        <div style={{
+          display: uwRingRendered ? "flex" : "none",
+          alignItems: "center", justifyContent: "center",
+          width: "78px", height: "24px", overflow: "hidden",
+        }}>
+          <div
+            ref={uwRingRef}
+            onClick={(e) => e.stopPropagation()}
+            title="uwaterloo.network"
+            style={{
+              transform: "scale(0.38)",
+              transformOrigin: "center",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              whiteSpace: "nowrap",
+              opacity: 0.9,
+            }}
+          />
+        </div>
       </div>
     </div>
     </div>
