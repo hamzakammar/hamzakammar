@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import CitySvg from "./components/CitySvg";
 import CommandPalette from "./components/CommandPalette";
+import EasterEggs from "./components/EasterEggs";
 import { Projects } from "./data/projects";
 
 const statusLabels: Record<string, string> = {
@@ -209,6 +210,7 @@ export default function Home() {
 
   return (
     <div className="viewport-fill overflow-hidden">
+      <EasterEggs />
       <div className="city-svg-wrapper">
         <CitySvg
         onBuildingClick={(id) => {

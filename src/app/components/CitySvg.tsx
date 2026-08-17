@@ -553,7 +553,8 @@ export default function CitySvg({
           <img
             src={headshotSrc}
             alt="Hamza Ammar"
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            data-egg="face"
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", cursor: "pointer" }}
           />
         </div>
         <div style={{ textAlign: "left", lineHeight: 1.4 }}>
