@@ -18,6 +18,8 @@ const KONAMI = [
 
 export default function EasterEggs() {
   const [ufo, setUfo] = useState<{ x: number; y: number } | null>(null);
+  const [ufoTop, setUfoTop] = useState(-170); // UFO vertical position (px); animated via CSS transition
+  const [beam, setBeam] = useState(false);
   const [rave, setRave] = useState(false);
   const [matrix, setMatrix] = useState(false);
   const [swarm, setSwarm] = useState(false);
@@ -32,7 +34,8 @@ export default function EasterEggs() {
       return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
     };
 
-    // Pick a real city building, park the UFO above it, and lift it into the beam.
+    // Pick a real city building. The UFO descends to it, beams it up, carries it
+    // out of frame, then returns a couple seconds later and drops it back off.
     const triggerUfo = () => {
       if (abducteeRef.current) return; // one abduction at a time
       const buildings = Array.from(
@@ -41,28 +44,44 @@ export default function EasterEggs() {
       const el = buildings[Math.floor(Math.random() * buildings.length)];
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      setUfo({ x: rect.left + rect.width / 2, y: Math.max(64, rect.top) });
+      const hoverTop = Math.max(6, rect.top - 152); // so the beam tip reaches the roof
       abducteeRef.current = el;
-      const s = el.style;
-      s.transition = "transform 1.5s cubic-bezier(.4,0,.2,1), opacity 1.5s ease";
-      s.transformBox = "fill-box";
-      s.transformOrigin = "center";
-      window.setTimeout(() => { s.transform = "translateY(-260px) scale(.3)"; s.opacity = "0"; }, 850);
-      window.setTimeout(() => {
-        const el2 = abducteeRef.current;
-        if (el2) {
-          el2.style.transition = "transform .8s ease, opacity .8s ease";
-          el2.style.transform = "";
-          el2.style.opacity = "";
-          window.setTimeout(() => {
-            el2.style.transition = "";
-            el2.style.transformBox = "";
-            el2.style.transformOrigin = "";
-          }, 850);
-        }
+      el.style.transformBox = "fill-box";
+      el.style.transformOrigin = "center";
+
+      setUfo({ x: rect.left + rect.width / 2, y: rect.top });
+      setBeam(false);
+      setUfoTop(-170); // start above the frame
+
+      const T = window.setTimeout;
+      // 1. descend to the building
+      T(() => { setUfoTop(hoverTop); setBeam(true); }, 40);
+      // 2. suck the building up into the beam
+      T(() => {
+        el.style.transition = "transform .9s ease, opacity .9s ease";
+        el.style.transform = "translateY(-130px) scale(.2)";
+        el.style.opacity = "0";
+      }, 1250);
+      // 3. fly up and out of frame, carrying it away
+      T(() => { setBeam(false); setUfoTop(-230); }, 2350);
+      // 4. ...gone for a couple seconds... then return and descend
+      T(() => { setUfoTop(hoverTop); setBeam(true); }, 4700);
+      // 5. drop the building back into place
+      T(() => {
+        el.style.transition = "transform .8s ease, opacity .8s ease";
+        el.style.transform = "";
+        el.style.opacity = "";
+      }, 5650);
+      // 6. UFO leaves for good
+      T(() => { setBeam(false); setUfoTop(-230); }, 6750);
+      // 7. clean up
+      T(() => {
+        el.style.transition = "";
+        el.style.transformBox = "";
+        el.style.transformOrigin = "";
         abducteeRef.current = null;
         setUfo(null);
-      }, 6500);
+      }, 7700);
     };
 
     const onKey = (e: KeyboardEvent) => {
@@ -140,17 +159,18 @@ export default function EasterEggs() {
         }
         @keyframes eggFall { to { transform: translateY(105vh); opacity:0; } }
 
-        /* UFO abduction (parks over a real building and beams it up) */
+        /* UFO abduction: descends to a real building, carries it off, brings it back */
         .egg-ufo-wrap { position:fixed; inset:0; z-index:9998; pointer-events:none; overflow:hidden; }
-        .egg-ufo-col { position:absolute; top:0; display:flex; flex-direction:column; align-items:center;
-          transform:translateX(-50%); animation: eggDrop .7s cubic-bezier(.2,.8,.2,1) both; }
-        @keyframes eggDrop { from{opacity:0; transform:translate(-50%,-28px);} to{opacity:1; transform:translate(-50%,0);} }
-        .egg-ufo { font-size:60px; line-height:1; filter:drop-shadow(0 0 16px rgba(90,200,255,.85)); }
-        .egg-beam { width:78px; flex:1; margin-top:-6px;
+        .egg-ufo-col { position:absolute; display:flex; flex-direction:column; align-items:center;
+          transform:translateX(-50%); transition: top 1.15s cubic-bezier(.45,0,.25,1); }
+        .egg-ufo { font-size:52px; line-height:1; filter:drop-shadow(0 0 16px rgba(90,200,255,.85));
+          animation: eggWobble 1.4s ease-in-out infinite; }
+        @keyframes eggWobble { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+        .egg-beam { width:66px; height:100px; margin-top:-6px; opacity:0;
           background:linear-gradient(rgba(120,220,255,.55), rgba(120,220,255,0));
           clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
-          animation: eggBeamPulse 1.1s ease-in-out infinite alternate; }
-        @keyframes eggBeamPulse { from{opacity:.45} to{opacity:.9} }
+          transition: opacity .35s ease; }
+        .egg-beam.on { opacity:.85; }
 
         /* Matrix */
         .egg-matrix { position:fixed; inset:0; z-index:9999; background:#000; cursor:pointer; }
@@ -170,9 +190,9 @@ export default function EasterEggs() {
       {rave && <RaveStars />}
       {ufo && (
         <div className="egg-ufo-wrap" aria-hidden>
-          <div className="egg-ufo-col" style={{ left: ufo.x, height: ufo.y }}>
+          <div className="egg-ufo-col" style={{ left: ufo.x, top: ufoTop }}>
             <div className="egg-ufo">🛸</div>
-            <div className="egg-beam" />
+            <div className={`egg-beam${beam ? " on" : ""}`} />
           </div>
         </div>
       )}
@@ -190,7 +210,7 @@ function CtaBanner() {
     <div style={{ position: "fixed", left: 0, right: 0, bottom: "24px", zIndex: 10000,
       display: "flex", justifyContent: "center", pointerEvents: "none", padding: "0 12px" }}>
       <a
-        href="mailto:hamza.k.ammar@gmail.com?subject=I%20found%20a%20secret%20on%20your%20site"
+        href="/surprise"
         style={{ pointerEvents: "auto", display: "inline-flex", gap: "8px", alignItems: "center",
           maxWidth: "92vw", textAlign: "center",
           background: "rgba(10,15,25,.85)", color: "#e5e7eb", textDecoration: "none",
@@ -198,7 +218,7 @@ function CtaBanner() {
           padding: "9px 18px", fontFamily: "ui-monospace, monospace", fontSize: "12.5px",
           boxShadow: "0 6px 24px rgba(0,0,0,.45)", backdropFilter: "blur(4px)" }}>
         <span>you found this. </span>
-        <span style={{ color: "#22d3ee", fontWeight: 700 }}>email me for another surprise →</span>
+        <span style={{ color: "#22d3ee", fontWeight: 700 }}>there is another surprise →</span>
       </a>
     </div>
   );
