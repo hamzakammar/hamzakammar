@@ -72,6 +72,19 @@ export default function CommandPalette({ open, onOpenChange, onSelect, onAction 
               ))}
             </Command.Group>
           </Command.List>
+          <div
+            style={{
+              borderTop: "1px solid var(--panel-border, rgba(148,163,184,.18))",
+              padding: "8px 12px",
+              fontFamily: "var(--font-geist-mono), ui-monospace, monospace",
+              fontSize: "10.5px",
+              color: "var(--muted, #94a3b8)",
+              opacity: 0.75,
+              letterSpacing: "0.02em",
+            }}
+          >
+            tip: this city keeps secrets. try <b style={{ color: "var(--accent, #22d3ee)" }}>&uarr;&uarr;&darr;&darr;&larr;&rarr;&larr;&rarr; B A</b>, or type &lsquo;matrix&rsquo;
+          </div>
         </Command>
       </div>
     </div>

@@ -23,7 +23,9 @@ export default function EasterEggs() {
   const [rave, setRave] = useState(false);
   const [matrix, setMatrix] = useState(false);
   const [swarm, setSwarm] = useState(false);
+  const [hint, setHint] = useState(false);
   const abducteeRef = useRef<SVGElement | null>(null);
+  const eggActiveRef = useRef(false);
 
   /* ── Keyboard: konami (abduct a real building) + typed words (matrix, rave) ── */
   useEffect(() => {
@@ -146,6 +148,40 @@ export default function EasterEggs() {
     );
   }, []);
 
+  // Keep a live flag of whether any egg is playing (so the idle nudge stays out of the way).
+  useEffect(() => {
+    eggActiveRef.current = !!ufo || rave || matrix || swarm;
+  }, [ufo, rave, matrix, swarm]);
+
+  /* ── Idle nudge: only surfaces for visitors who linger, then fades out ── */
+  useEffect(() => {
+    let last = Date.now();
+    let shown = false;
+    let shownAt = 0;
+    const IDLE = 15000, SHOW = 6000;
+    const bump = () => { last = Date.now(); if (shown) { shown = false; setHint(false); } };
+    const iv = window.setInterval(() => {
+      const now = Date.now();
+      if (!shown && !eggActiveRef.current && now - last > IDLE) {
+        shown = true; shownAt = now; setHint(true);
+      } else if (shown && now - shownAt > SHOW) {
+        shown = false; last = now; setHint(false); // rearm; waits for another idle stretch
+      }
+    }, 1000);
+    const opts: AddEventListenerOptions = { passive: true };
+    window.addEventListener("mousemove", bump, opts);
+    window.addEventListener("keydown", bump);
+    window.addEventListener("pointerdown", bump, opts);
+    window.addEventListener("scroll", bump, opts);
+    return () => {
+      window.clearInterval(iv);
+      window.removeEventListener("mousemove", bump);
+      window.removeEventListener("keydown", bump);
+      window.removeEventListener("pointerdown", bump);
+      window.removeEventListener("scroll", bump);
+    };
+  }, []);
+
   return (
     <>
       <style>{`
@@ -185,7 +221,22 @@ export default function EasterEggs() {
           color:#fde047; text-shadow:0 0 10px rgba(253,224,71,.8); pointer-events:none;
           animation: eggPerfect .9s ease forwards; }
         @keyframes eggPerfect { 0%{transform:scale(.6);opacity:0} 20%{transform:scale(1.1);opacity:1} 100%{transform:scale(1);opacity:0} }
+
+        /* Idle nudge: subtle, low-key, self-fading */
+        .egg-hint { position:fixed; left:16px; bottom:60px; z-index:9995; pointer-events:none;
+          font-family:ui-monospace,monospace; font-size:11px; letter-spacing:.03em; color:#93c5fd;
+          background:rgba(10,15,25,.6); border:1px solid rgba(148,163,184,.22); border-radius:9999px;
+          padding:6px 12px; backdrop-filter:blur(3px); opacity:0;
+          animation: eggHintFade 6s ease forwards; }
+        .egg-hint b { color:#22d3ee; font-weight:700; }
+        @keyframes eggHintFade { 0%{opacity:0; transform:translateY(6px)} 14%{opacity:.9; transform:none} 80%{opacity:.9} 100%{opacity:0; transform:translateY(-2px)} }
       `}</style>
+
+      {hint && (
+        <div className="egg-hint" aria-hidden>
+          <b>psst</b> &nbsp;this city keeps a few secrets 🛸
+        </div>
+      )}
 
       {rave && <RaveStars />}
       {ufo && (
