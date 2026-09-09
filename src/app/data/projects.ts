@@ -29,7 +29,7 @@ export const Projects: Project[] = [
     role: "Incoming SWE Intern",
     tagline: "Building at the frontier of enterprise AI.",
     narrative:
-      "Joining Cohere as a Software Engineering intern for Winter 2027. Cohere builds frontier LLMs (Command, Embed, Rerank) for the enterprise, and I'll be working alongside their team to ship AI infrastructure at scale. Easily the role I'm most excited about, and a huge one for me.",
+      "Joining Cohere as a Software Engineering intern for Winter 2027.",
     highlights: [
       "Incoming SWE intern at Cohere for Winter 2027, one of the leading enterprise AI labs.",
       "Working on production AI infrastructure powering Command, Embed, and Rerank models.",
