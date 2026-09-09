@@ -322,6 +322,7 @@ export default function CitySvg({
             style={{
               pointerEvents: "none",
               fill: id ? ({
+                cohere: '#FF7759',
                 kuzu: '#6366F1',
                 chess: '#8B5CF6',
                 horizon: '#06B6D4',
@@ -533,11 +534,11 @@ export default function CitySvg({
       <div style={{ width: "40px", height: "1px", background: "var(--panel-divider)", marginBottom: "8px" }} />
       <div style={{ width: "100%", maxWidth: "360px", textAlign: "left" as const, marginBottom: "8px" }}>
         {[
+          { bullet: "→", text: "Incoming SWE intern at Cohere for Winter 2027", projectId: "cohere" },
           { bullet: "→", text: "Shipped 25+ MCP agent tools on Rails APIs at Shopify", projectId: "shopify" },
           { bullet: "→", text: "Wrote C++ query-planner internals at Kùzu as youngest intern", projectId: "kuzu" },
           { bullet: "→", text: "Built Horizon, an MCP server for AI access to your courses", projectId: "horizon" },
           { bullet: "→", text: "Took 2nd at YHack (Yale) with a multi-agent trading system", projectId: "godseye" },
-          { bullet: "→", text: "Founding engineer on Dealish, a real-time deals app", projectId: "dealish" },
         ].map((item, i) => (
           <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start",
             fontSize: "8px", color: "var(--foreground)", lineHeight: 1.6,
@@ -804,10 +805,7 @@ export default function CitySvg({
         {bldg("dealish", 614, 48, 100, 230)}
         {bldg(null, 718, 62, 16, 210)}
         {bldg("neodev", 740, 52, 82, 225)}
-        {bldg(null, 826, 66, 16, 206)}
-        {bldg(null, 848, 62, 28, 210)}
-        {bldg(null, 882, 68, 24, 204)}
-        {bldg(null, 912, 64, 26, 208)}
+        {bldg("cohere", 832, 24, 104, 256)}
         {bldg("uw", 945, 58, 62, 218)}
         {bldg(null, 1012, 68, 28, 198)}
         {bldgStepped(1048, 62, 36, 210, 0.55)}
@@ -945,6 +943,7 @@ export default function CitySvg({
         {projectLabel("unimap", "UniMap", 350, 62, 60, 212)}
         {projectLabel("dealish", "Dealish", 614, 48, 100, 230, "/dealish.png")}
         {projectLabel("neodev", "NeoDev", 740, 52, 82, 225, "/neodev.png")}
+        {projectLabel("cohere", "Cohere", 832, 24, 104, 256, "/cohere.svg")}
         {projectLabel("uw", "UW", 945, 58, 62, 218, "/UW.png")}
         {projectLabel("mapflow", "MapFLOW", 35, 393, 85, 192, "/mapflow.png")}
         {projectLabel("cc", "CC", 130, 393, 72, 190)}

@@ -24,6 +24,26 @@ export interface Project {
 
 export const Projects: Project[] = [
   {
+    id: "cohere",
+    title: "Cohere",
+    role: "Incoming SWE Intern",
+    tagline: "Building at the frontier of enterprise AI.",
+    narrative:
+      "Joining Cohere as a Software Engineering intern for Winter 2027. Cohere builds frontier LLMs (Command, Embed, Rerank) for the enterprise, and I'll be working alongside their team to ship AI infrastructure at scale. Easily the role I'm most excited about, and a huge one for me.",
+    highlights: [
+      "Incoming SWE intern at Cohere for Winter 2027, one of the leading enterprise AI labs.",
+      "Working on production AI infrastructure powering Command, Embed, and Rerank models.",
+      "Joining a team building frontier LLMs used by enterprises worldwide.",
+    ],
+    stack: ["AI Infrastructure", "LLMs", "Distributed Systems", "Python"],
+    status: "ongoing",
+    date: "Winter 2027 (Incoming)",
+    start: 202701,
+    blurb: "Incoming Software Engineering intern at Cohere for Winter 2027, working on production infrastructure behind frontier enterprise LLMs.",
+    image: "/cohere.svg",
+    links: { demo: "https://cohere.com" },
+  },
+  {
     id: "kuzu",
     title: "Kùzu DB",
     role: "Software Intern",
