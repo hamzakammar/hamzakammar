@@ -1,6 +1,6 @@
 # Hamza Ammar
 
-Software Engineering @ Waterloo · Prev SWE @ Shopify
+Software Engineering @ Waterloo · Inc. MTS @ Cohere · Prev SWE @ Shopify
 
 I build full-stack products, ML systems, and developer tooling. Previously shipped
 production C++ and Go to [Kùzu](https://github.com/kuzudb/kuzu), acquired by Apple.
