@@ -143,6 +143,11 @@ export default function Home() {
               width: "auto", padding: "0 12px", fontFamily: "var(--font-geist-mono), monospace" }}>
             CV
           </a>
+          <Link href="/context" aria-label="Context (writing)"
+            style={{ fontSize: "11px", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center",
+              width: "auto", padding: "0 12px", fontFamily: "var(--font-geist-mono), monospace" }}>
+            CONTEXT
+          </Link>
         </div>
 
         <div className="mobile-projects">
@@ -243,10 +248,14 @@ export default function Home() {
         ))}
       </nav>
 
-      <Link href="/classic" className="cmdk-hint bottom-safe left-safe"
-        style={{ textDecoration: "none", position: "fixed", zIndex: 40 }}>
-        CLASSIC
-      </Link>
+      <div className="fixed z-40 flex items-center gap-2 bottom-safe left-safe">
+        <Link href="/classic" className="cmdk-hint" style={{ textDecoration: "none" }}>
+          CLASSIC
+        </Link>
+        <Link href="/context" className="cmdk-hint" style={{ textDecoration: "none" }}>
+          CONTEXT
+        </Link>
+      </div>
 
       <div className="fixed z-40 flex items-center gap-2 bottom-safe right-safe">
         <button className="theme-toggle" onClick={toggleDark}

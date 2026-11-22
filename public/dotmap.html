@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>see what the agent sees</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #16181d;
+      --ink: rgba(234, 238, 245, 0.88);
+      --dim: rgba(234, 238, 245, 0.45);
+      --faint: rgba(234, 238, 245, 0.28);
+      --gold: #86b7ff;
+      --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      color-scheme: dark;
+    }
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 64px 28px 96px;
+    }
+    .title-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 0 0 14px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border: 1px solid rgba(134, 183, 255, 0.45);
+      border-radius: 99px;
+      color: var(--gold);
+      background: rgba(134, 183, 255, 0.14);
+      font-size: 10.5px;
+      letter-spacing: 0.06em;
+      position: relative;
+      top: -1px;
+    }
+    .prompt {
+      border-left: 2px solid rgba(134, 183, 255, 0.6);
+      padding: 1px 0 1px 12px;
+      margin: 0 0 32px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(234, 238, 245, 0.8);
+    }
+    .prompt-label {
+      display: block;
+      font-size: 11.5px;
+      color: rgba(234, 238, 245, 0.4);
+      margin-bottom: 2px;
+    }
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px 40px;
+      align-items: start;
+    }
+    figure { margin: 0; }
+    figcaption {
+      font-size: 11.5px;
+      color: var(--dim);
+      margin: 0 0 10px;
+    }
+    .frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 0.92;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .stats {
+      display: flex;
+      gap: 18px;
+      margin-top: 10px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink);
+    }
+    .stats span { color: var(--faint); font-family: var(--sans); font-size: 11px; margin-right: 6px; }
+    .caption {
+      margin: 28px 0 0;
+      min-height: 1.4em;
+      text-align: center;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      color: var(--gold);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: none;
+    }
+    .foot {
+      margin: 28px 0 0;
+      font-size: 11.5px;
+      line-height: 1.6;
+      color: var(--faint);
+    }
+    @media (max-width: 720px) {
+      main { padding: 40px 16px 72px; }
+      .panels { grid-template-columns: 1fr; gap: 28px; }
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="title-row">
+      <h1>see what the agent sees</h1>
+      <span class="pill" title="Fictional names and previews, not a real run.">example data</span>
+    </div>
+    <p class="prompt">
+      <span class="prompt-label">question</span>
+      when is my co-op work term report due, and what did my supervisor say about it?
+    </p>
+    <div class="sim" id="sim">
+      <div class="panels">
+        <figure>
+          <figcaption id="cap-short">short previews</figcaption>
+          <div class="frame"><canvas id="c-short" aria-label="illustrative agent path with short previews"></canvas></div>
+          <div class="stats" id="stats-short"></div>
+        </figure>
+        <figure>
+          <figcaption id="cap-w500">500-char previews (w500)</figcaption>
+          <div class="frame"><canvas id="c-w500" aria-label="illustrative agent path with 500-character previews"></canvas></div>
+          <div class="stats" id="stats-w500"></div>
+        </figure>
+      </div>
+      <p class="caption" id="caption">same answer. less waste getting there.</p>
+    </div>
+    <p class="foot">example data and illustrative paths. wasted-open gap reflects the study: 1,680 runs, 7 preview styles.</p>
+  </main>
+  <script>
+  /* =====================================================================
+     CONFIG — tunable illustration (not a real run)
+
+     Paths are fictional. Both sides always find the answer.
+     Defaults are chosen so this single illustrative comparison
+     reflects the study averages: w500 has ~24% fewer wasted opens
+     and about one fewer turn. Do not claim faster or more accurate.
+     ===================================================================== */
+  const CONFIG = {
+    example: true,
+    bg: "#16181d",
+    gold: "#86b7ff",
+    goldRgb: [134, 183, 255],
+    inkRgb: [234, 238, 245],
+    wastedRgb: [196, 198, 204],
+    dotCount: 3200,
+    dprMax: 2,
+    trail: 140,
+    /* study-tuned illustration (one run, not a mean of 1,680) */
+    short: { id: "short", label: "short previews", searches: 3, wasted: 8, turns: 9 },
+    w500:  { id: "w500",  label: "500-char previews (w500)", searches: 3, wasted: 6, turns: 8 },
+    /* 8 vs 6 wasted = 25% fewer; 9 vs 8 turns = 1 fewer. */
+    timings: {
+      searchMs: 880,
+      openMs: 760,
+      goldMs: 1080,
+      gapMs: 80,
+      holdMs: 2400,
+      fadeMs: 1000,
+      captionMs: 480
+    },
+    clusters: [
+      { id: "email",    label: "email",    x: 0.20, y: 0.28, sigma: 0.085, weight: 0.21, lx: 0.20, ly: 0.12 },
+      { id: "notes",    label: "notes",    x: 0.50, y: 0.22, sigma: 0.075, weight: 0.16, lx: 0.50, ly: 0.08 },
+      { id: "docs",     label: "docs",     x: 0.80, y: 0.30, sigma: 0.085, weight: 0.17, lx: 0.80, ly: 0.13 },
+      { id: "code",     label: "code",     x: 0.22, y: 0.74, sigma: 0.090, weight: 0.18, lx: 0.22, ly: 0.92 },
+      { id: "calendar", label: "calendar", x: 0.50, y: 0.70, sigma: 0.075, weight: 0.13, lx: 0.50, ly: 0.90 },
+      { id: "photos",   label: "photos",   x: 0.80, y: 0.76, sigma: 0.080, weight: 0.15, lx: 0.80, ly: 0.92 }
+    ],
+    corpusSeed: 20261120,
+    /* EXAMPLE DATA — fictional student files. Not from the study corpus. */
+    question: "when is my co-op work term report due, and what did my supervisor say about it?",
+    answer: "due April 25. supervisor said the design was strong, but the testing writeup was thin.",
+    files: {
+      email: [
+        { path: "email/coop/supervisor-feedback.eml", gold: true, short: "Re: work term report — thanks for sending the draft. A few notes…", long: "Re: work term report — thanks for sending the draft. A few notes below. Faculty due date is April 25. Please tighten the testing section before then. Your supervisor said the system design was strong, but the evaluation writeup was thin.", answer: "due April 25. supervisor said the design was strong, but the testing writeup was thin." },
+        { path: "email/coop/offer-letter.eml", short: "Congratulations on your co-op offer — start date and contacts inside.", long: "Congratulations on your co-op offer. Start date is January 6. This is the offer letter only; it does not mention the work term report or a due date." },
+        { path: "email/coop/jobmine-confirmation.eml", short: "Your co-op placement has been confirmed. Please read the attached checklist.", long: "Your co-op placement has been confirmed. The checklist covers safety training, timesheets, and a midterm evaluation. No final report due date is listed here." },
+        { path: "email/coop/timesheet-reminder.eml", short: "Reminder: please submit last week’s hours by Friday at noon.", long: "Reminder: please submit last week’s hours by Friday at noon. This is a recurring timesheet note from the co-op office, not comments on your report." },
+        { path: "email/advisor/advising-hours.eml", short: "Drop-in advising hours this week, plus a note about report workshops.", long: "Drop-in advising hours this week. A work-term report workshop is mentioned, but this email only has the room and time — no due date, no supervisor comments." },
+        { path: "email/lectures/wkrpt-info-session.eml", short: "Info session tomorrow. They said deadlines are on the slides.", long: "Reminder: work term report info session tomorrow at 5pm. The message says deadlines are on the slides, which are not attached here. No supervisor feedback." },
+        { path: "email/housing/lease-renewal.eml", short: "Lease renewal window opens next month — reply if you plan to stay.", long: "Lease renewal window opens next month. This is a housing email. It has nothing to do with the co-op report." }
+      ],
+      notes: [
+        { path: "notes/coop/wkrpt-checklist.md", gold: true, short: "wkrpt checklist — due date, supervisor comments, leftover sections…", long: "Work term report checklist. Due April 25 (faculty deadline, not the employer’s). Supervisor comments from the review meeting: system design was strong, but the evaluation / testing writeup was thin. Still need to paste the hours log.", answer: "due April 25. supervisor said the design was strong, but the testing writeup was thin." },
+        { path: "notes/wkrpt-ideas.md", short: "brainstorm for the report: intro, work overview, what I learned…", long: "Brainstorm for the work term report: intro, work overview, what I learned, a diagram of the stack. No due date yet. Supervisor meeting is listed as ‘TBD’." },
+        { path: "notes/todo.md", short: "write wkrpt, also tax forms, also email the advisor back.", long: "Todo: write wkrpt, finish tax forms, email the advisor back, buy a new intern badge lanyard. This list does not have the due date or any supervisor comments." },
+        { path: "notes/meetings/standup.md", short: "Standup 3/12 — blocked on tests, will demo the design doc Friday.", long: "Standup 3/12 — blocked on tests, will demo the design doc Friday. These are daily work notes, not a review of the work term report." },
+        { path: "notes/coop/supervisor-contact.md", short: "Supervisor name, email, and the Friday 1:1 slot.", long: "Supervisor contact card: email, Slack handle, Friday 1:1 slot. No written feedback and no report deadline in this note." },
+        { path: "notes/courses/se-380.md", short: "SE 380 midterm topics and a reminder to start the report soon.", long: "SE 380 midterm topics. A one-line reminder to ‘start the report soon’ but no faculty due date and no supervisor notes." },
+        { path: "notes/job-hunt/interview-prep.md", short: "Co-op interview prep — common questions, a note about reports.", long: "Interview prep from last term. Mentions that some employers ask about past work term reports. Not this term’s due date or feedback." }
+      ],
+      docs: [
+        { path: "docs/coop/wkrpt-draft-comments.pdf", gold: true, short: "Comments on your draft — please read before the next meeting.", long: "Comments on the work term report draft, from the March 18 review. Report is due April 25. Supervisor notes: the design section is strong; testing and evaluation are thin and need a rewrite before submission.", answer: "due April 25. supervisor said the design was strong, but the testing writeup was thin." },
+        { path: "docs/ceab-report-template.pdf", short: "Work term report template — section headings, length limits.", long: "Official work term report template: title page, sections, length limits, formatting rules. It does not contain your due date or any supervisor comments." },
+        { path: "docs/coop/work-term-guidelines.pdf", short: "Guidelines for the report. It says ‘see the faculty site for dates’.", long: "Work term report guidelines. Under deadlines it only says ‘see the faculty site for the current term’s dates.’ No supervisor comments in this PDF." },
+        { path: "docs/resume-winter.pdf", short: "Resume draft, winter term — co-op bullets still in progress.", long: "Winter resume draft. Co-op bullets are in progress. This is not the report, and it has no due date or supervisor feedback." },
+        { path: "docs/transcript-unofficial.pdf", short: "Unofficial transcript, downloaded for the co-op package.", long: "Unofficial transcript, downloaded for the co-op package. Grades only. No report information." },
+        { path: "docs/watcard-form.pdf", short: "WatCard photo and form — needed before the first day on site.", long: "WatCard form and photo crop. Needed before the first day on site. Unrelated to the work term report." },
+        { path: "docs/coop/safety-training.pdf", short: "Safety training certificate, signed in the first week.", long: "Safety training certificate from the first week. Required for the placement, not for the report deadline." }
+      ],
+      calendar: [
+        { path: "calendar/winter-term.ics", short: "Winter term calendar. One block titled ‘wkrpt?’ with no time.", long: "Winter term calendar. A tentative block titled ‘wkrpt?’ has no date or time filled in. No supervisor meeting notes." },
+        { path: "calendar/wkrpt-reminder.ics", short: "Reminder: ‘write report’ — recurring Friday, no due date.", long: "A recurring Friday reminder titled ‘write report’. It is a personal nudge, not the faculty deadline, and it has no supervisor comments." },
+        { path: "calendar/exam-period.ics", short: "Exam period holds. One overlaps a possible report weekend.", long: "Exam period holds for the term. One weekend is free, which you had marked ‘maybe report?’ — still not a due date." },
+        { path: "calendar/reading-week.ics", short: "Reading week plans, plus a note to catch up on the report.", long: "Reading week plans and a loose note to catch up on the report. No official deadline, no supervisor feedback." },
+        { path: "calendar/team-standup.ics", short: "Daily standup, 9:30am. Title mentions the demo, not the report.", long: "Daily standup, 9:30am, on-site. Agenda is the product demo. This calendar has nothing about the work term report." },
+        { path: "calendar/career-fair.ics", short: "Career fair next week — bring copies of the report?", long: "Career fair next week. You wrote ‘bring copies of the report?’ as a maybe. No due date is listed here." }
+      ],
+      code: [
+        { path: "code/scripts/hours-log.py", short: "Script that totals co-op hours for the report appendix.", long: "A small script that totals co-op hours from a CSV for the report appendix. It prints hours only — no due date, no supervisor comments." },
+        { path: "code/coop/tools/ticket-export.js", short: "Export closed tickets. You were going to put a chart in the report.", long: "Exports closed tickets to JSON for a chart you wanted in the report. Tooling only; nothing about deadlines or feedback." },
+        { path: "code/projects/term-project/README.md", short: "School term project readme. Mentions a final report, different class.", long: "README for a school term project. It mentions a final report, but that is a different class, not the co-op work term report." },
+        { path: "code/scripts/rename-screenshots.sh", short: "Rename screenshots so they are easier to drop into the report.", long: "A shell script that renames screenshots for the report figures folder. No dates or supervisor notes in the comments." },
+        { path: "code/labs/se350-notes.py", short: "Lab notes and a TODO: ‘reuse this figure in wkrpt maybe’.", long: "Lab notes with a TODO that says ‘reuse this figure in wkrpt maybe’. Not the due date, not supervisor feedback." },
+        { path: "code/dotfiles/bashrc", short: "Dotfiles. An alias named wkrpt that just opens a folder.", long: "Dotfiles. An alias `wkrpt` simply opens the local report folder. No deadline information lives here." }
+      ],
+      photos: [
+        { path: "photos/whiteboard-arch.jpg", short: "Whiteboard photo — system design, maybe a report figure.", long: "Photo of a whiteboard system-design sketch. Useful as a report figure, but it is just a picture. No due date, no written feedback." },
+        { path: "photos/team-lunch.jpg", short: "Team lunch in the second month. Filename has ‘review week’.", long: "Team lunch photo from the second month. The filename says ‘review week’ but the image has no report comments or dates." },
+        { path: "photos/badge-photo.jpg", short: "Badge photo crop, used on the report title page last draft.", long: "Badge photo crop, the one you used on a title page in an earlier draft. A photo only — no supervisor comments." },
+        { path: "photos/office-desk.jpg", short: "Desk setup. Sticky note in the corner might say a date?", long: "Desk photo. A sticky note is in the frame but is out of focus; you cannot read a date. Not a source for the due date or feedback." },
+        { path: "photos/building-entrance.jpg", short: "First-day photo at the office entrance.", long: "First-day photo at the office entrance. Unrelated to the work term report deadline." },
+        { path: "photos/id-scan.png", short: "Scan of the intern ID, stored with the co-op paperwork.", long: "Scan of the intern ID, stored with other paperwork. No report due date, no supervisor remarks." }
+      ]
+    }
+  };
+
+  const TAU = Math.PI * 2;
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = (id) => document.getElementById(id);
+
+  /* ---------- math ---------- */
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  const randn = (rng) => {
+    let u = 0, v = 0;
+    while (u === 0) u = rng();
+    while (v === 0) v = rng();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * v);
+  };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = (t) => {
+    t = clamp(t, 0, 1);
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  };
+  const rgba = (rgb, a) => `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`;
+  const hexToRgb = (h) => {
+    const n = h.replace("#", "");
+    return [parseInt(n.slice(0, 2), 16), parseInt(n.slice(2, 4), 16), parseInt(n.slice(4, 6), 16)];
+  };
+
+  /* ---------- corpus ---------- */
+  function makeCorpus(w, h) {
+    const rng = mulberry32(CONFIG.corpusSeed);
+    const clusters = CONFIG.clusters;
+    const dots = [];
+    const byCluster = Object.fromEntries(clusters.map((c) => [c.id, []]));
+    const loose = Math.round(CONFIG.dotCount * 0.04);
+    const placed = CONFIG.dotCount - loose;
+    let remain = placed;
+    clusters.forEach((c, i) => {
+      const n = i === clusters.length - 1 ? remain : Math.round(placed * c.weight);
+      remain -= n;
+      for (let k = 0; k < n; k++) {
+        const outlier = rng() < 0.08;
+        const sx = c.sigma * (outlier ? 1.85 : 1) * w;
+        const sy = c.sigma * (outlier ? 1.85 : 1) * h * 0.95;
+        let x = c.x * w + randn(rng) * sx;
+        let y = c.y * h + randn(rng) * sy;
+        x = clamp(x, 10, w - 10);
+        y = clamp(y, 14, h - 10);
+        const d = {
+          i: dots.length, cx: c.id,
+          x, y, nx: x / w, ny: y / h,
+          s: 0.85 + rng() * 1.05,
+          a: 0.09 + rng() * 0.13
+        };
+        dots.push(d);
+        byCluster[c.id].push(d);
+      }
+    });
+    for (let k = 0; k < loose; k++) {
+      const d = {
+        i: dots.length, cx: "_",
+        x: 10 + rng() * (w - 20),
+        y: 14 + rng() * (h - 24),
+        s: 0.8 + rng() * 0.9,
+        a: 0.06 + rng() * 0.08
+      };
+      d.nx = d.x / w; d.ny = d.y / h;
+      dots.push(d);
+    }
+    return { dots, byCluster, w, h, clusters };
+  }
+
+  function drawStatic(corpus, w, h, dpr) {
+    const c = document.createElement("canvas");
+    c.width = Math.round(w * dpr);
+    c.height = Math.round(h * dpr);
+    const ctx = c.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = CONFIG.bg;
+    ctx.fillRect(0, 0, w, h);
+    for (const d of corpus.dots) {
+      ctx.fillStyle = rgba(CONFIG.inkRgb, d.a);
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.s, 0, TAU);
+      ctx.fill();
+    }
+    ctx.font = "11.5px Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = rgba(CONFIG.inkRgb, 0.38);
+    for (const cl of corpus.clusters) {
+      const lx = (cl.lx ?? cl.x) * w;
+      const ly = (cl.ly ?? Math.max(0.06, cl.y - cl.sigma * 1.8)) * h;
+      ctx.fillText(cl.label, lx, ly);
+    }
+    return c;
+  }
+
+  /* ---------- path (illustrative) ---------- */
+  /*
+    Packing chosen so displayed totals match the study-shaped illustration:
+      short: 3 searches, 8 wasted, 9 turns
+      w500:  3 searches, 6 wasted, 8 turns
+    Some turns contain two opens, so turn count is not 1:1 with every open.
+    Both share the same search order and the same gold file.
+  */
+  function packOpens(wastedCount, turnsBeforeGold, rng) {
+    /* distribute `wastedCount` opens across the mid turns, allowing 1–2 per turn */
+    const slots = turnsBeforeGold; /* number of open-turns between searches is handled outside */
+    return wastedCount;
+  }
+
+  function shuffle(arr, rng) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function filesIn(clusterId) {
+    return (CONFIG.files[clusterId] || []).slice();
+  }
+
+  function buildSharedPlan(corpus, rng) {
+    /* pick a gold file first, then search that cluster last so both panels find the same answer */
+    const goldOptions = [];
+    for (const [cluster, list] of Object.entries(CONFIG.files)) {
+      for (const f of list) if (f.gold) goldOptions.push({ ...f, cluster });
+    }
+    const goldFile = goldOptions[Math.floor(rng() * goldOptions.length)];
+    const others = shuffle(CONFIG.clusters.map((c) => c.id).filter((id) => id !== goldFile.cluster), rng);
+    const searched = [others[0], others[1], goldFile.cluster];
+    const goldCluster = goldFile.cluster;
+    const cl = corpus.clusters.find((c) => c.id === goldCluster);
+    const core = corpus.byCluster[goldCluster].filter((d) => Math.hypot(d.nx - cl.x, d.ny - cl.y) < cl.sigma * 1.4);
+    const goldPool = core.length ? core : corpus.byCluster[goldCluster];
+    const gold = goldPool[Math.floor(rng() * goldPool.length)];
+
+    const usedDots = new Set([gold.i]);
+    const wastedAll = [];
+    const alloc = [3, 5]; /* short panel; w500 will skip two from phase 1 */
+    for (let s = 0; s < 2; s++) {
+      const id = searched[s];
+      const cinfo = corpus.clusters.find((c) => c.id === id);
+      const bag = shuffle(
+        corpus.byCluster[id].filter((d) => Math.hypot(d.nx - cinfo.x, d.ny - cinfo.y) < cinfo.sigma * 1.6),
+        rng
+      );
+      const fileBag = shuffle(filesIn(id).filter((f) => !f.gold), rng);
+      let got = 0, di = 0, fi = 0;
+      while (got < alloc[s] && di < bag.length && fi < fileBag.length) {
+        const d = bag[di++];
+        if (!d || usedDots.has(d.i)) continue;
+        usedDots.add(d.i);
+        wastedAll.push({ dot: d, file: fileBag[fi++], afterSearch: s });
+        got++;
+      }
+    }
+    /* w500 skips two later dead ends — longer previews make them obviously wrong */
+    const phase1 = wastedAll.filter((w) => w.afterSearch === 1);
+    const skipIds = new Set(phase1.slice(-2).map((w) => w.dot.i));
+    wastedAll.forEach((w) => { w.skipForW500 = skipIds.has(w.dot.i); });
+    return { searched, gold, goldFile, wastedAll };
+  }
+
+  function pickWasted(plan, kind) {
+    if (kind === "w500") return plan.wastedAll.filter((w) => !w.skipForW500);
+    return plan.wastedAll;
+  }
+
+  function groupForTurns(items, pattern) {
+    /* pattern e.g. [2,1,2,1,2] sums to items.length */
+    const groups = [];
+    let i = 0;
+    for (const n of pattern) {
+      groups.push(items.slice(i, i + n));
+      i += n;
+    }
+    return groups;
+  }
+
+  function buildEvents(kind, corpus, plan, rng) {
+    const spec = CONFIG[kind];
+    const { searched, gold, goldFile } = plan;
+    /* exact phase counts so turn totals land on the study-shaped illustration */
+    const pat0 = kind === "short" ? [2, 1] : [1, 2];
+    const pat1 = kind === "short" ? [2, 1, 2] : [1, 2];
+    const wasted = pickWasted(plan, kind);
+    const tcfg = CONFIG.timings;
+    const events = [];
+    let t = 200; /* small lead-in */
+    let turn = 0;
+
+    const phase0 = wasted.filter((w) => w.afterSearch === 0);
+    const phase1 = wasted.filter((w) => w.afterSearch === 1);
+    const g0 = groupForTurns(phase0, pat0);
+    const g1 = groupForTurns(phase1, pat1);
+
+    function addSearch(clusterId) {
+      turn += 1;
+      events.push({ type: "search", clusterId, turn, start: t, dur: tcfg.searchMs });
+      t += tcfg.searchMs + tcfg.gapMs;
+    }
+    function addOpenGroup(group) {
+      turn += 1;
+      group.forEach((item, i) => {
+        events.push({
+          type: "open",
+          dot: item.dot,
+          file: item.file,
+          wasted: true,
+          gold: false,
+          turn,
+          start: t,
+          dur: tcfg.openMs
+        });
+        t += tcfg.openMs + (i === group.length - 1 ? tcfg.gapMs : 40);
+      });
+    }
+
+    addSearch(searched[0]);
+    g0.forEach(addOpenGroup);
+    addSearch(searched[1]);
+    g1.forEach(addOpenGroup);
+    addSearch(searched[2]);
+    turn += 1;
+    events.push({
+      type: "open",
+      dot: gold,
+      file: goldFile,
+      wasted: false,
+      gold: true,
+      turn,
+      start: t,
+      dur: tcfg.goldMs
+    });
+    t += tcfg.goldMs;
+
+    const last = events[events.length - 1];
+    return {
+      kind, events, gold, searched,
+      duration: t,
+      finalTurn: last.turn,
+      finalWasted: spec.wasted,
+      finalOpens: spec.wasted + 1
+    };
+  }
+
+  /* ---------- run state ---------- */
+  function glow(ctx, x, y, r, rgb, a) {
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, rgba(rgb, a));
+    g.addColorStop(0.25, rgba(rgb, a * 0.45));
+    g.addColorStop(1, rgba(rgb, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, TAU);
+    ctx.fill();
+  }
+
+  function eventAt(run, time) {
+    let current = null;
+    for (const e of run.events) {
+      if (time >= e.start) current = e;
+      else break;
+    }
+    return current;
+  }
+
+  function openedBefore(run, time) {
+    return run.events.filter((e) => e.type === "open" && time >= e.start + e.dur * 0.78);
+  }
+
+  function countersAt(run, time) {
+    if (time < 0) return { turns: 0, opens: 0, wasted: 0 };
+    let turns = 0, opens = 0, wasted = 0;
+    for (const e of run.events) {
+      if (time < e.start) break;
+      turns = e.turn;
+      if (e.type === "open" && time >= e.start + e.dur * 0.78) {
+        opens += 1;
+        if (e.wasted) wasted += 1;
+      }
+    }
+    return { turns, opens, wasted };
+  }
+
+  function cursorPos(run, corpus, time) {
+    const evs = run.events;
+    if (!evs.length) return { x: corpus.w * 0.5, y: corpus.h * 0.5, on: false };
+    if (time < evs[0].start) {
+      return { x: corpus.w * 0.5, y: corpus.h * 0.42, on: true, phase: "idle" };
+    }
+    /* walk events to interpolate */
+    let x = corpus.w * 0.5, y = corpus.h * 0.42;
+    let trailFrom = { x, y };
+    for (let i = 0; i < evs.length; i++) {
+      const e = evs[i];
+      const nextStart = i + 1 < evs.length ? evs[i + 1].start : e.start + e.dur;
+      if (time < e.start) break;
+      const local = (time - e.start) / e.dur;
+      const cl = corpus.clusters.find((c) => c.id === (e.clusterId || (e.dot && e.dot.cx)));
+      if (e.type === "search") {
+        const tx = cl.x * corpus.w, ty = cl.y * corpus.h;
+        const u = ease(clamp(local / 0.45, 0, 1));
+        x = lerp(x, tx, u);
+        y = lerp(y, ty, u);
+        /* gentle hover once arrived */
+        if (local > 0.45) {
+          const hov = (local - 0.45) * 3.2;
+          x += Math.cos(hov) * 7;
+          y += Math.sin(hov * 0.9) * 5;
+        }
+      } else if (e.type === "open") {
+        const tx = e.dot.x, ty = e.dot.y;
+        /* slight arc */
+        const u = ease(clamp(local, 0, 1));
+        const mx = (x + tx) / 2, my = (y + ty) / 2;
+        const dx = tx - x, dy = ty - y;
+        const arc = 0.14 * Math.hypot(dx, dy);
+        const ox = mx + (-dy / (Math.hypot(dx, dy) || 1)) * arc;
+        const oy = my + (dx / (Math.hypot(dx, dy) || 1)) * arc;
+        const omu = 1 - u;
+        x = omu * omu * x + 2 * omu * u * ox + u * u * tx;
+        y = omu * omu * y + 2 * omu * u * oy + u * u * ty;
+      }
+      if (time <= nextStart || time <= e.start + e.dur) {
+        return { x, y, on: true, event: e, local: clamp(local, 0, 1) };
+      }
+      /* snap to event end */
+      if (e.type === "search" && cl) { x = cl.x * corpus.w; y = cl.y * corpus.h; }
+      if (e.type === "open") { x = e.dot.x; y = e.dot.y; }
+    }
+    /* after last event, rest on gold */
+    const g = run.gold;
+    return { x: g.x, y: g.y, on: true, event: evs[evs.length - 1], local: 1, done: true };
+  }
+
+  /* ---------- renderer ---------- */
+  const world = {
+    corpus: null,
+    static: null,
+    w: 0,
+    h: 0,
+    dpr: 1,
+    plan: null,
+    runs: { short: null, w500: null },
+    loop: 0,
+    seed: 1001,
+    time: 0,          /* ms into current loop's play+hold+fade */
+    playEnd: 0,
+    phase: "play",    /* play | hold | fade */
+    phaseT: 0,
+    visible: false,
+    raf: 0,
+    lastTs: 0,
+    traces: { short: [], w500: [] }
+  };
+
+  function fmtStats(s) {
+    return `<span>turns</span>${s.turns}<span style="margin-left:14px">opens</span>${s.opens}<span style="margin-left:14px">wasted</span>${s.wasted}`;
+  }
+
+  function newLoop(seed) {
+    world.seed = seed;
+    const rng = mulberry32(seed);
+    world.plan = buildSharedPlan(world.corpus, rng);
+    world.runs.short = buildEvents("short", world.corpus, world.plan, mulberry32(seed ^ 0x9e3779b9));
+    world.runs.w500 = buildEvents("w500", world.corpus, world.plan, mulberry32(seed ^ 0x85ebca6b));
+    world.playEnd = Math.max(world.runs.short.duration, world.runs.w500.duration);
+    world.time = 0;
+    world.phase = "play";
+    world.phaseT = 0;
+    world.traces.short = [];
+    world.traces.w500 = [];
+    world.loop += 1;
+  }
+
+  function fadeAlpha() {
+    if (world.phase === "fade") {
+      return 1 - ease(clamp(world.phaseT / CONFIG.timings.fadeMs, 0, 1));
+    }
+    return 1;
+  }
+
+  function captionAlpha() {
+    if (world.phase === "play") return 0;
+    const a = fadeAlpha();
+    if (world.phase === "hold") {
+      return ease(clamp((world.phaseT - 120) / CONFIG.timings.captionMs, 0, 1));
+    }
+    return a * 1;
+  }
+
+  function wrapText(ctx, text, maxWidth, maxLines) {
+    const words = String(text || "").split(/\s+/);
+    const lines = [];
+    let line = "";
+    for (const word of words) {
+      const test = line ? line + " " + word : word;
+      if (ctx.measureText(test).width > maxWidth && line) {
+        lines.push(line);
+        line = word;
+      } else line = test;
+    }
+    if (line) lines.push(line);
+    if (lines.length > maxLines) {
+      const cut = lines.slice(0, maxLines);
+      let last = cut[maxLines - 1];
+      while (ctx.measureText(last + "…").width > maxWidth && last.length > 4) last = last.slice(0, -1);
+      cut[maxLines - 1] = last.replace(/[.,;:\s]+$/, "") + "…";
+      return cut;
+    }
+    return lines;
+  }
+
+  function ellipsize(ctx, text, maxWidth) {
+    if (ctx.measureText(text).width <= maxWidth) return text;
+    let s = text;
+    while (s.length > 4 && ctx.measureText(s + "…").width > maxWidth) s = s.slice(0, -1);
+    return s + "…";
+  }
+
+  function rectsOverlap(a, b, pad) {
+    return !(a.x + a.w + pad < b.x || b.x + b.w + pad < a.x || a.y + a.h + pad < b.y || b.y + b.h + pad < a.y);
+  }
+
+  function drawCards(ctx, run, kind, t, w, h, fa) {
+    const long = kind === "w500";
+    const opened = run.events.filter((e) => e.type === "open" && e.file && t >= e.start + e.dur * 0.62);
+    if (!opened.length) return;
+
+    /* Only keep the gold card (once found) and the one or two most recent wasted cards.
+       Older visits stay as grey pins so the map does not fill up. */
+    const golds = opened.filter((e) => e.gold);
+    const wasted = opened.filter((e) => !e.gold);
+    const recent = wasted.slice(-1);
+    const visible = [...recent, ...golds];
+
+    ctx.font = "10px Inter, sans-serif";
+    const cards = visible.map((e) => {
+      const age = t - (e.start + e.dur * 0.62);
+      const appear = ease(clamp(age / 180, 0, 1));
+      const recency = recent.includes(e) ? recent.length - 1 - recent.indexOf(e) : 0;
+      let a = 1;
+      if (e.gold) {
+        a = 0.96 * appear;
+      } else {
+        const fadeStart = 2000, fadeEnd = 3600;
+        const fade = age <= fadeStart ? 1 : clamp(1 - (age - fadeStart) / (fadeEnd - fadeStart), 0, 1);
+        a = (recency === 0 ? 0.95 : 0.72) * appear * fade;
+      }
+      a *= fa;
+      const cardW = long || e.gold ? 236 : 204;
+      const preview = e.gold
+        ? (e.file.answer || CONFIG.answer)
+        : (long ? (e.file.long || e.file.short) : (e.file.short || e.file.long));
+      const maxLines = e.gold ? (long ? 4 : 3) : (long ? 4 : 2);
+      return { e, recency, cardW, preview, maxLines, appear, age, a };
+    }).filter((c) => c.a > 0.06);
+
+    for (const c of cards) {
+      ctx.font = "10px \"IBM Plex Mono\", ui-monospace, monospace";
+      c.path = ellipsize(ctx, c.e.file.path, c.cardW - 20);
+      ctx.font = "10.5px Inter, sans-serif";
+      c.lines = wrapText(ctx, c.preview, c.cardW - 20, c.maxLines);
+      c.tag = c.e.gold ? "answer found" : "not it";
+      c.cardH = 8 + 13 + 4 + c.lines.length * 13 + 13 + 8;
+    }
+
+    const obstacles = (world.corpus ? world.corpus.clusters : []).map((cl) => ({
+      x: (cl.lx ?? cl.x) * w - 40,
+      y: (cl.ly ?? cl.y) * h - 11,
+      w: 80,
+      h: 22
+    }));
+
+    function tryPlace(c, side) {
+      const d = c.e.dot;
+      const x = side === "left" ? d.x - c.cardW - 12 : d.x + 12;
+      /* keep cards in the lower field above their dots so they don't sit on the labels */
+      let y = d.y > h * 0.58 ? d.y - c.cardH - 12 : d.y - c.cardH * 0.28;
+      if (y < 8) y = 8;
+      if (y + c.cardH > h - 8) y = Math.max(8, h - c.cardH - 8);
+      const xx = clamp(x, 8, w - c.cardW - 8);
+      return { x: xx, y };
+    }
+
+    const placed = [];
+    const order = cards.slice().sort((a, b) => (b.e.gold ? 1 : 0) - (a.e.gold ? 1 : 0));
+    for (const c of order) {
+      const prefer = c.e.dot.x > w * 0.55 ? "left" : "right";
+      const sides = prefer === "left" ? ["left", "right"] : ["right", "left"];
+      let chosen = null;
+      for (const side of sides) {
+        const pos = tryPlace(c, side);
+        const box = { x: pos.x, y: pos.y, w: c.cardW, h: c.cardH };
+        const hits = (p) => rectsOverlap(box, { x: p.x, y: p.y, w: p.w ?? p.cardW, h: p.h ?? p.cardH }, 8);
+        if (!placed.some(hits) && !obstacles.some(hits)) {
+          chosen = pos;
+          break;
+        }
+      }
+      if (!chosen) {
+        /* nudge vertically on the preferred side rather than wandering across the map */
+        const pos = tryPlace(c, prefer);
+        for (let k = 1; k <= 8 && !chosen; k++) {
+          for (const dir of [-1, 1]) {
+            const y = clamp(pos.y + dir * k * 16, 8, h - c.cardH - 8);
+            const box = { x: pos.x, y, w: c.cardW, h: c.cardH };
+            const hits = (p) => rectsOverlap(box, { x: p.x, y: p.y, w: p.w ?? p.cardW, h: p.h ?? p.cardH }, 8);
+            if (!placed.some(hits) && !obstacles.some(hits)) {
+              chosen = { x: pos.x, y };
+              break;
+            }
+          }
+        }
+      }
+      if (!chosen) continue; /* drop a wasted card rather than overlap */
+      c.x = chosen.x;
+      c.y = chosen.y;
+      placed.push(c);
+    }
+
+    for (const c of cards) {
+      if (c.x == null) continue;
+      const wastedLook = c.e.wasted;
+      const border = c.e.gold ? rgba(CONFIG.goldRgb, 0.85) : rgba(CONFIG.wastedRgb, 0.5);
+      const fill = c.e.gold ? "rgba(28, 38, 56, 0.95)" : "rgba(26, 29, 36, 0.92)";
+      ctx.save();
+      ctx.globalAlpha = c.a;
+      if (c.e.gold) glow(ctx, c.x + c.cardW / 2, c.y + c.cardH / 2, Math.max(c.cardW, c.cardH) * 0.55, CONFIG.goldRgb, 0.2);
+      ctx.beginPath();
+      ctx.roundRect(c.x, c.y, c.cardW, c.cardH, 8);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.strokeStyle = border;
+      ctx.lineWidth = c.e.gold ? 1.35 : 1;
+      ctx.stroke();
+
+      let ty = c.y + 9;
+      ctx.font = "10px \"IBM Plex Mono\", ui-monospace, monospace";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = c.e.gold ? rgba(CONFIG.goldRgb, 0.95) : rgba(CONFIG.wastedRgb, 0.88);
+      ctx.fillText(c.path, c.x + 10, ty);
+      ty += 16;
+      ctx.font = "10.5px Inter, sans-serif";
+      ctx.fillStyle = c.e.gold ? rgba(CONFIG.inkRgb, 0.92) : rgba(CONFIG.wastedRgb, 0.78);
+      for (const line of c.lines) {
+        ctx.fillText(line, c.x + 10, ty);
+        ty += 13;
+      }
+      ctx.font = "9.5px Inter, sans-serif";
+      ctx.fillStyle = c.e.gold ? rgba(CONFIG.goldRgb, 0.95) : rgba(CONFIG.wastedRgb, 0.8);
+      ctx.fillText(c.tag, c.x + 10, ty + 2);
+      ctx.restore();
+    }
+  }
+
+  function drawPanel(canvas, kind, time, fa) {
+    const ctx = canvas.getContext("2d");
+    const { w, h, dpr, corpus } = world;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    if (world.static) ctx.drawImage(world.static, 0, 0, w, h);
+    else { ctx.fillStyle = CONFIG.bg; ctx.fillRect(0, 0, w, h); }
+
+    const run = world.runs[kind];
+    if (!run) return;
+    const tAnim = world.time;
+    const t = Math.min(world.phase === "play" ? world.time : run.duration, run.duration);
+    const tPlay = tAnim;
+
+    /* search pulses */
+    for (const e of run.events) {
+      if (e.type !== "search") continue;
+      const age = tPlay - e.start;
+      if (age < 0 || age > e.dur + 200) continue;
+      const cl = corpus.clusters.find((c) => c.id === e.clusterId);
+      const cx = cl.x * w, cy = cl.y * h;
+      const p = clamp(age / e.dur, 0, 1);
+      /* illuminate cluster dots */
+      const wave = Math.sin(Math.min(p, 1) * Math.PI) * fa;
+      const rad = cl.sigma * Math.min(w, h) * 1.55;
+      for (const d of corpus.byCluster[cl.id]) {
+        const dist = Math.hypot(d.x - cx, d.y - cy);
+        const fall = Math.max(0, 1 - dist / rad);
+        const a = wave * 0.72 * fall;
+        if (a < 0.02) continue;
+        ctx.fillStyle = rgba(CONFIG.goldRgb, a);
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.s + 0.4, 0, TAU);
+        ctx.fill();
+      }
+      /* expanding rings */
+      for (let k = 0; k < 2; k++) {
+        const rp = clamp((age - k * 180) / (e.dur * 0.95), 0, 1);
+        if (rp <= 0 || rp >= 1) continue;
+        ctx.beginPath();
+        ctx.arc(cx, cy, lerp(8, rad * 1.05, ease(rp)), 0, TAU);
+        ctx.strokeStyle = rgba(CONFIG.goldRgb, (1 - rp) * 0.5 * fa);
+        ctx.lineWidth = 1.35;
+        ctx.stroke();
+      }
+    }
+
+    /* faint journey through places the agent has already been */
+    {
+      const pts = [];
+      for (const e of run.events) {
+        if (t < e.start + Math.min(120, e.dur * 0.2)) break;
+        if (e.type === "search") {
+          const cl = corpus.clusters.find((c) => c.id === e.clusterId);
+          pts.push({ x: cl.x * w, y: cl.y * h });
+        } else {
+          pts.push({ x: e.dot.x, y: e.dot.y });
+        }
+      }
+      if (pts.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.strokeStyle = rgba(CONFIG.goldRgb, 0.10 * fa);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    /* wasted dead ends — must read clearly against the field */
+    const opened = openedBefore(run, t);
+    for (const e of opened) {
+      if (!e.wasted) continue;
+      const d = e.dot;
+      const born = e.start + e.dur * 0.78;
+      const age = tPlay - born;
+      const pop = 1 + 0.55 * Math.max(0, 1 - age / 200);
+      glow(ctx, d.x, d.y, 10 * pop, CONFIG.wastedRgb, 0.28 * fa);
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, 5.6 * pop, 0, TAU);
+      ctx.strokeStyle = rgba(CONFIG.wastedRgb, 0.4 * fa);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, 3.15 * pop, 0, TAU);
+      ctx.fillStyle = rgba(CONFIG.wastedRgb, 0.9 * fa);
+      ctx.fill();
+    }
+
+    /* gold file */
+    const goldEv = run.events.find((e) => e.gold);
+    const goldLit = goldEv && t >= goldEv.start + goldEv.dur * 0.7;
+    if (goldLit) {
+      const d = run.gold;
+      const pulse = reduced ? 1 : 0.62 + 0.38 * Math.sin((tAnim / 1000) * TAU * 0.7);
+      glow(ctx, d.x, d.y, 34 * pulse, CONFIG.goldRgb, 0.46 * fa);
+      glow(ctx, d.x, d.y, 14, CONFIG.goldRgb, 0.8 * fa);
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, 3.1, 0, TAU);
+      ctx.fillStyle = rgba(CONFIG.goldRgb, 0.95 * fa);
+      ctx.fill();
+    }
+
+    /* cursor + trail */
+    const cur = cursorPos(run, corpus, Math.min(t, run.duration));
+    const tr = world.traces[kind];
+    if (cur.on && fa > 0.05 && world.phase !== "fade") {
+      tr.push({ x: cur.x, y: cur.y });
+      if (tr.length > CONFIG.trail) tr.shift();
+    } else if (world.phase === "fade") {
+      /* shrink trail */
+      if (tr.length) tr.shift();
+    }
+    if (tr.length > 1) {
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      for (let i = 1; i < tr.length; i++) {
+        const p = i / tr.length;
+        ctx.beginPath();
+        ctx.moveTo(tr[i - 1].x, tr[i - 1].y);
+        ctx.lineTo(tr[i].x, tr[i].y);
+        ctx.strokeStyle = rgba(CONFIG.goldRgb, p * 0.62 * fa);
+        ctx.lineWidth = 2.25 * p;
+        ctx.stroke();
+      }
+    }
+    if (cur.on) {
+      const breathe = reduced ? 1 : 0.85 + 0.15 * Math.sin((tPlay / 1000) * TAU * 1.1);
+      glow(ctx, cur.x, cur.y, 34 * breathe, CONFIG.goldRgb, 0.72 * fa);
+      glow(ctx, cur.x, cur.y, 12, CONFIG.goldRgb, 0.95 * fa);
+      ctx.beginPath();
+      ctx.arc(cur.x, cur.y, 2.6, 0, TAU);
+      ctx.fillStyle = rgba([236, 244, 255], 0.95 * fa);
+      ctx.fill();
+    }
+
+    drawCards(ctx, run, kind, t, w, h, fa);
+  }
+
+  function render() {
+    const t = world.phase === "play" ? world.time : (world.phase === "hold" || world.phase === "fade" ? world.playEnd : world.time);
+    /* during play each run uses world.time; hold uses finished */
+    const timeFor = (kind) => world.phase === "play" ? world.time : world.runs[kind].duration;
+    const fa = fadeAlpha();
+    drawPanel($("c-short"), "short", timeFor("short"), fa);
+    drawPanel($("c-w500"), "w500", timeFor("w500"), fa);
+    const ts = world.phase === "play" ? world.time : 1e12;
+    $("stats-short").innerHTML = fmtStats(countersAt(world.runs.short, world.phase === "play" ? world.time : 1e12));
+    $("stats-w500").innerHTML = fmtStats(countersAt(world.runs.w500, world.phase === "play" ? world.time : 1e12));
+    const cap = $("caption");
+    cap.style.opacity = String(captionAlpha());
+    cap.style.transform = captionAlpha() > 0.8 ? "none" : `translateY(${(1 - captionAlpha()) * 6}px)`;
+  }
+
+  function step(dt) {
+    if (reduced) return;
+    if (world.phase === "play") {
+      world.time += dt;
+      if (world.time >= world.playEnd &&
+          world.time >= world.runs.short.duration &&
+          world.time >= world.runs.w500.duration) {
+        world.phase = "hold";
+        world.phaseT = 0;
+      }
+    } else if (world.phase === "hold") {
+      world.phaseT += dt;
+      /* keep a tiny time tick so gold pulse lives */
+      world.time += dt;
+      if (world.phaseT >= CONFIG.timings.holdMs) {
+        world.phase = "fade";
+        world.phaseT = 0;
+      }
+    } else if (world.phase === "fade") {
+      world.phaseT += dt;
+      world.time += dt;
+      if (world.phaseT >= CONFIG.timings.fadeMs) {
+        newLoop(world.seed + 17);
+      }
+    }
+  }
+
+  function frame(ts) {
+    if (!world.visible && !world.force) {
+      world.raf = 0;
+      world.lastTs = 0;
+      return;
+    }
+    if (!world.lastTs) world.lastTs = ts;
+    const dt = Math.min(48, ts - world.lastTs);
+    world.lastTs = ts;
+    if (!reduced) step(dt);
+    render();
+    world.raf = requestAnimationFrame(frame);
+  }
+
+  function startRAF() {
+    if (world.raf) return;
+    world.lastTs = 0;
+    world.raf = requestAnimationFrame(frame);
+  }
+
+  function sizeCanvases() {
+    const short = $("c-short");
+    const box = short.parentElement.getBoundingClientRect();
+    const w = Math.max(280, Math.round(box.width));
+    const h = Math.max(240, Math.round(box.height));
+    const dpr = Math.min(CONFIG.dprMax, devicePixelRatio || 1);
+    if (w === world.w && h === world.h && dpr === world.dpr && world.static) {
+      return;
+    }
+    world.w = w; world.h = h; world.dpr = dpr;
+    for (const id of ["c-short", "c-w500"]) {
+      const c = $(id);
+      c.width = Math.round(w * dpr);
+      c.height = Math.round(h * dpr);
+    }
+    world.corpus = makeCorpus(w, h);
+    world.static = drawStatic(world.corpus, w, h, dpr);
+    /* rebuild paths against new coordinates, keep seed */
+    const keepTime = world.time, keepPhase = world.phase, keepPT = world.phaseT, seed = world.seed;
+    newLoop(seed);
+    world.time = keepTime;
+    world.phase = keepPhase;
+    world.phaseT = keepPT;
+    /* rebuild traces by sampling */
+    world.traces.short = [];
+    world.traces.w500 = [];
+    const sampleT = world.phase === "play" ? world.time : world.runs.short.duration;
+    for (const kind of ["short", "w500"]) {
+      const run = world.runs[kind];
+      const tt = world.phase === "play" ? Math.min(world.time, run.duration) : run.duration;
+      for (let s = 0; s <= tt; s += 40) {
+        const p = cursorPos(run, world.corpus, s);
+        world.traces[kind].push({ x: p.x, y: p.y });
+        if (world.traces[kind].length > CONFIG.trail) world.traces[kind].shift();
+      }
+    }
+    render();
+  }
+
+  function seekTo(kindShot) {
+    /* kindShot: 'early' | 'mid' | 'end' */
+    newLoop(CONFIG.corpusSeed ^ 0x51ed); /* stable illustrative seed for stills */
+    const end = world.playEnd;
+    let t = 0, phase = "play", pt = 0;
+    if (kindShot === "early") {
+      /* first search + a couple of wasted opens, difference just starting */
+      const ev = world.runs.short.events.filter((e) => e.type === "open")[1];
+      t = ev ? ev.start + ev.dur * 0.92 : 2600;
+    } else if (kindShot === "mid") {
+      /* w500 has just found the answer; short is still looking — the contrast frame */
+      t = world.runs.w500.duration + 380;
+      if (t >= world.runs.short.duration) t = world.runs.short.duration - 900;
+    } else {
+      t = end;
+      phase = "hold";
+      pt = CONFIG.timings.captionMs + 280;
+    }
+    world.time = t;
+    world.phase = phase;
+    world.phaseT = pt;
+    world.traces.short = [];
+    world.traces.w500 = [];
+    for (const kind of ["short", "w500"]) {
+      const run = world.runs[kind];
+      const tt = Math.min(t, run.duration);
+      for (let s = 0; s <= tt; s += 32) {
+        const p = cursorPos(run, world.corpus, s);
+        world.traces[kind].push({ x: p.x, y: p.y });
+        if (world.traces[kind].length > CONFIG.trail) world.traces[kind].shift();
+      }
+    }
+    render();
+  }
+
+  function showFinishedStatic() {
+    newLoop(CONFIG.corpusSeed ^ 0x51ed);
+    world.time = world.playEnd;
+    world.phase = "hold";
+    world.phaseT = CONFIG.timings.captionMs + 400;
+    for (const kind of ["short", "w500"]) {
+      const run = world.runs[kind];
+      world.traces[kind] = [];
+      for (let s = 0; s <= run.duration; s += 32) {
+        const p = cursorPos(run, world.corpus, s);
+        world.traces[kind].push({ x: p.x, y: p.y });
+        if (world.traces[kind].length > CONFIG.trail) world.traces[kind].shift();
+      }
+    }
+    render();
+  }
+
+  window.__dotmap = {
+    CONFIG,
+    seekTo,
+    restart(seed) {
+      newLoop(seed ?? (CONFIG.corpusSeed ^ 0x51ed));
+      world.visible = true;
+      world.force = true;
+      startRAF();
+    },
+    stop() {
+      if (world.raf) cancelAnimationFrame(world.raf);
+      world.raf = 0;
+      world.visible = false;
+      world.lastTs = 0;
+    },
+    seekMs(ms) {
+      const playEnd = world.playEnd;
+      const hold = CONFIG.timings.holdMs;
+      if (ms <= playEnd) {
+        world.phase = "play";
+        world.time = ms;
+        world.phaseT = 0;
+      } else if (ms <= playEnd + hold) {
+        world.phase = "hold";
+        world.time = ms;
+        world.phaseT = ms - playEnd;
+      } else {
+        world.phase = "fade";
+        world.time = ms;
+        world.phaseT = ms - playEnd - hold;
+      }
+      const pathT = Math.min(world.time, playEnd);
+      for (const kind of ["short", "w500"]) {
+        const run = world.runs[kind];
+        const tt = Math.min(pathT, run.duration);
+        const tr = [];
+        const step = 20;
+        const start = Math.max(0, tt - CONFIG.trail * step);
+        for (let s = start; s <= tt; s += step) {
+          const pos = cursorPos(run, world.corpus, s);
+          tr.push({ x: pos.x, y: pos.y });
+          if (tr.length > CONFIG.trail) tr.shift();
+        }
+        world.traces[kind] = tr;
+      }
+      render();
+    },
+    getWorld: () => world,
+    times() {
+      return {
+        playEnd: world.playEnd,
+        short: world.runs.short && world.runs.short.duration,
+        w500: world.runs.w500 && world.runs.w500.duration,
+        shortsTurns: world.runs.short && world.runs.short.finalTurn,
+        w500Turns: world.runs.w500 && world.runs.w500.finalTurn,
+        shortWasted: world.runs.short && world.runs.short.finalWasted,
+        w500Wasted: world.runs.w500 && world.runs.w500.finalWasted
+      };
+    }
+  };
+
+  async function boot() {
+    try { await document.fonts.ready; } catch (e) {}
+    sizeCanvases();
+    const shot = new URLSearchParams(location.search).get("shot");
+    if (reduced && !shot) {
+      showFinishedStatic();
+      world.visible = true;
+      return;
+    }
+    if (shot === "1" || shot === "early") { world.visible = true; world.force = true; seekTo("early"); return; }
+    if (shot === "2" || shot === "mid") { world.visible = true; world.force = true; seekTo("mid"); return; }
+    if (shot === "3" || shot === "end") { world.visible = true; world.force = true; seekTo("end"); return; }
+
+    const params = new URLSearchParams(location.search);
+    const demo = params.has("demo") || params.get("seed");
+    newLoop(demo ? (CONFIG.corpusSeed ^ 0x51ed) : (Date.now() % 100000));
+    const io = new IntersectionObserver((entries) => {
+      const vis = entries.some((e) => e.isIntersecting && e.intersectionRatio > 0.2);
+      world.visible = vis;
+      if (vis) startRAF();
+    }, { threshold: [0, 0.2, 0.4] });
+    io.observe($("sim"));
+    /* if already in view */
+    world.visible = true;
+    startRAF();
+    addEventListener("resize", () => { sizeCanvases(); });
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+  </script>
+</body>
+</html>
