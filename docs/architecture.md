@@ -32,6 +32,8 @@ Horizon is a Next.js 15 App Router site deployed on Vercel. The central design c
 |---|---|---|
 | `/` | `src/app/page.tsx` | Homepage — city SVG (desktop) or project cards (mobile) |
 | `/classic` | `src/app/classic/` | Alternate text-based portfolio layout |
+| `/context` | `src/app/context/page.tsx` | Writing index, listed from `src/app/context/posts.ts` |
+| `/context/agent-previews` | `src/app/context/agent-previews/page.tsx` | Post with inline SVG charts and the `public/dotmap.html` embed |
 
 ---
 
@@ -89,6 +91,8 @@ Browser polyfills loaded early in the app lifecycle.
 ## Theming
 
 Light/dark mode is implemented via a `data-theme="dark"` attribute on `<html>`, toggled in `page.tsx` and persisted to `localStorage`. All visual tokens are CSS custom properties in `globals.css`. No Tailwind dark variant is used — rely on `var(--...)` tokens only.
+
+Exception: `/context` is always dark and has its own tokens, fonts (Inter, IBM Plex Mono via `next/font`) and styles in `src/app/context/context.css`, scoped under `.ctx` by `src/app/context/layout.tsx`.
 
 ---
 

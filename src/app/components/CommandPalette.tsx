@@ -55,6 +55,10 @@ export default function CommandPalette({ open, onOpenChange, onSelect, onAction 
                 <span className="cmdk-item-title">Classic View</span>
                 <span className="cmdk-item-tagline">View the original dark portfolio</span>
               </Command.Item>
+              <Command.Item value="Context blog writing posts" onSelect={() => { router.push("/context"); onOpenChange(false); }}>
+                <span className="cmdk-item-title">Context</span>
+                <span className="cmdk-item-tagline">Read my writing</span>
+              </Command.Item>
             </Command.Group>
             <Command.Group heading="Projects">
               {Projects.map((p) => (

@@ -18,6 +18,7 @@ A `/classic` route provides an alternate text-based layout. Both desktop and mob
 |---|---|
 | `src/app/page.tsx` | Homepage — desktop city layout + mobile card layout |
 | `src/app/classic/` | Alternate classic (text-based) portfolio view |
+| `src/app/context/` | Writing section (`/context`): post list in `posts.ts`, one folder per post, dark theme in `context.css` |
 | `src/app/components/CitySvg.tsx` | The interactive SVG city — the core visual UI |
 | `src/app/components/CommandPalette.tsx` | ⌘K command palette for keyboard navigation |
 | `src/app/data/projects.ts` | Canonical project data — **this is the source of truth for all projects** |

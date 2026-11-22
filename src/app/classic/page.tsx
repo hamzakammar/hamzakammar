@@ -26,6 +26,17 @@ const projects = Projects.filter((p) => !p.role).sort(byRecency).map((p) => ({
   link: p.links?.demo ?? p.links?.github ?? '',
 }));
 
+const topLinkStyle: React.CSSProperties = {
+  display: 'inline-block',
+  fontSize: '12px',
+  fontWeight: 600,
+  letterSpacing: '0.1em',
+  color: '#9CA3AF',
+  textDecoration: 'none',
+  textTransform: 'uppercase',
+  fontFamily: 'var(--font-geist-mono), monospace',
+};
+
 export default function ClassicPortfolio() {
   const [hoveredExp, setHoveredExp] = useState<number | null>(null);
 
@@ -40,20 +51,14 @@ export default function ClassicPortfolio() {
    <div className="min-h-screen bg-black text-white" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
     <main className="max-w-3xl mx-auto px-6 py-20">
 
-      {/* Back to city link */}
-      <Link href="/" style={{
-        display: 'inline-block',
-        marginBottom: '32px',
-        fontSize: '12px',
-        fontWeight: 600,
-        letterSpacing: '0.1em',
-        color: '#9CA3AF',
-        textDecoration: 'none',
-        textTransform: 'uppercase',
-        fontFamily: 'var(--font-geist-mono), monospace',
-      }}>
-        &larr; VIEW CITY PORTFOLIO
-      </Link>
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginBottom: '32px' }}>
+        <Link href="/" style={topLinkStyle}>
+          &larr; VIEW CITY PORTFOLIO
+        </Link>
+        <Link href="/context" style={topLinkStyle}>
+          CONTEXT &rarr;
+        </Link>
+      </div>
 
       <section className="mb-20">
         <h1 className="text-4xl font-bold mb-4">Hey there!</h1>
