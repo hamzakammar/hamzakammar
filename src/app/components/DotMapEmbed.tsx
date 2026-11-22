@@ -15,7 +15,8 @@ export default function DotMapEmbed() {
       const doc = iframe.contentDocument;
       if (!doc?.body || doc.location.href === "about:blank") return;
       const fit = () => {
-        iframe.style.height = `${doc.documentElement.scrollHeight}px`;
+        // body, not documentElement: the root's scrollHeight never drops below the iframe's own height.
+        iframe.style.height = `${Math.ceil(doc.body.getBoundingClientRect().height)}px`;
       };
       observer?.disconnect();
       observer = new ResizeObserver(fit);

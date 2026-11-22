@@ -1,11 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import DotMapEmbed from "../../components/DotMapEmbed";
+import PostToc from "../../components/PostToc";
 import { CoverageDots, CoverageTimeScatter, OpenPrecisionBars } from "../../components/PreviewCharts";
 import { Posts } from "../posts";
 
 const post = Posts.find((p) => p.slug === "agent-previews")!;
 const url = `https://hamzaammar.ca/context/${post.slug}`;
+
+const toc = [
+  { id: "tldr", label: "tl;dr" },
+  { id: "definitions", label: "Definitions" },
+  { id: "predicting-the-agent", label: "Predicting the agent" },
+  { id: "search-vs-grep", label: "Search vs grep" },
+  { id: "picking-a-method", label: "Picking a method per question" },
+  { id: "the-preview-study", label: "The preview study" },
+  { id: "limitations", label: "Limitations" },
+  { id: "whats-next", label: "What’s next" },
+  { id: "how-i-tested", label: "How I tested" },
+];
 
 export const metadata: Metadata = {
   title: `${post.title} · Hamza Ammar`,
@@ -34,43 +47,36 @@ export const metadata: Metadata = {
 export default function AgentPreviewsPost() {
   return (
     <div className="ctx-page">
-      <div className="ctx-progress" aria-hidden />
-      <nav className="ctx-nav">
-        <Link href="/context">&larr; Context</Link>
-        <Link href="/" className="ctx-brand">hamzaammar.ca</Link>
-      </nav>
+      <PostToc items={toc} />
 
       <article>
-        <header>
-          <div className="ctx-kicker">
-            <span className="ctx-dot" aria-hidden />
-            <time dateTime={post.dateTime}>{post.date}</time>
-            <span className="ctx-sep" aria-hidden>/</span>
-            <span>Agents</span>
-          </div>
+        <header className="ctx-head">
+          <Link href="/context" className="ctx-crumb">&larr; context</Link>
           <h1 className="ctx-title">{post.title}</h1>
-          <p className="ctx-byline">Hamza Ammar</p>
+          <p className="ctx-meta">
+            <time dateTime={post.dateTime}>{post.date}</time> · 7 min read
+          </p>
         </header>
 
         <div className="ctx-prose">
           <section className="ctx-tldr">
-          <h2>tl;dr</h2>
-          <p>
-            I think personal agents are the future of interacting with AI. But the more they can do for you, the more of your life they need access to. Email, notes, docs, code, old chats. Once that pile gets big enough, the question stops being whether the agent can find the answer. It becomes how much it wastes getting there.
-          </p>
-          <p>
-            So I tested this on my own data, about 3 billion tokens across 119k files. Across what I tested, the search method didn’t change coverage much. The agents usually got to the answer eventually. The difference was how efficiently they got there.
-          </p>
-          <p>
-            <strong>In this setup, 500-character document previews cut wasted file opens by 24% and saved about 1 turn per question, for about 11% more cost.</strong>
-          </p>
+            <h2 id="tldr">tl;dr</h2>
+            <p>
+              I think personal agents are the future of interacting with AI. But the more they can do for you, the more of your life they need access to. Email, notes, docs, code, old chats. Once that pile gets big enough, the question stops being whether the agent can find the answer. It becomes how much it wastes getting there.
+            </p>
+            <p>
+              So I tested this on my own data, about 3 billion tokens across 119k files. Across what I tested, the search method didn’t change coverage much. The agents usually got to the answer eventually. The difference was how efficiently they got there.
+            </p>
+            <p>
+              In this setup, 500-character document previews <mark>cut wasted file opens by 24%</mark> and saved about 1 turn per question, for about 11% more cost.
+            </p>
           </section>
 
           <figure className="ctx-wide">
             <DotMapEmbed />
           </figure>
 
-          <h2>Definitions</h2>
+          <h2 id="definitions">Definitions</h2>
           <ul className="ctx-defs">
             <li><strong>Preview:</strong> the snippet the agent sees in search results before deciding whether to open a file.</li>
             <li><strong>Open:</strong> reading the whole file.</li>
@@ -81,7 +87,7 @@ export default function AgentPreviewsPost() {
             <li><strong>Grep:</strong> plain text search through files. This is how coding agents navigate currently.</li>
           </ul>
 
-          <h2><span className="ctx-num">01</span>Predicting the agent</h2>
+          <h2 id="predicting-the-agent">Predicting the agent</h2>
           <p>
             I started by trying to predict what the agent would do next, so I could give it the right tools without it spending too long deciding.
           </p>
@@ -92,7 +98,7 @@ export default function AgentPreviewsPost() {
             The problem is that models don’t agree with themselves. Give an agent the same question again and it’ll chase different leads and call different tools, then often end up with the same answer anyway. It repeated its path less than half the time. That makes the changing path hard to predict.
           </p>
 
-          <h2><span className="ctx-num">02</span>Search vs grep</h2>
+          <h2 id="search-vs-grep">Search vs grep</h2>
           <p>
             Next I looked at the search methods themselves. I compared 4 methods on 97 questions: plain grep, keyword search returning full chunks, keyword search returning 200-character previews, and those same previews with dates so the agent could see what was newest.
           </p>
@@ -112,7 +118,7 @@ export default function AgentPreviewsPost() {
             The main pattern was pretty simple. Time followed how many turns the agent took. Cost followed how much text piled up in its context.
           </p>
 
-          <h2><span className="ctx-num">03</span>Picking a method per question</h2>
+          <h2 id="picking-a-method">Picking a method per question</h2>
           <p>
             Since nothing won outright, I went back to prediction. What if I could pick the best method for each question before the agent started?
           </p>
@@ -123,7 +129,7 @@ export default function AgentPreviewsPost() {
             At that point I stopped trying to predict the agent. There was a best choice, but I couldn’t reliably pick it before the agent started searching. So instead of guessing where it would go, I looked at what it sees when it searches.
           </p>
 
-          <h2><span className="ctx-num">04</span>The preview study</h2>
+          <h2 id="the-preview-study">The preview study</h2>
           <p className="ctx-lead">What should an agent see before it opens a file?</p>
           <p>
             The earlier questions were too easy, so I built 80 new ones where keyword searching the question’s own words never put the answer in the top 10. They covered the kinds of things you’d ask a personal agent: what’s the latest on something, questions needing two or three sources, lists and counts, answers buried in long files, specific time windows, and questions with no answer at all.
@@ -167,7 +173,7 @@ export default function AgentPreviewsPost() {
             In this setup, 500-character previews reduced wasted opens by 24%, for about 11% more cost. Coverage stayed within 5 points of the baseline, and median time was about the same. That’s a useful tradeoff if you’re trying to cut unnecessary file reads, not evidence that 500 characters is best for every personal agent.
           </p>
 
-          <h2><span className="ctx-num">05</span>Limitations</h2>
+          <h2 id="limitations">Limitations</h2>
           <p>
             This is still just my data, one model and one harness. I want to try more data and more models before assuming it generalizes.
           </p>
@@ -175,7 +181,7 @@ export default function AgentPreviewsPost() {
             Speed was also a tie all around, and I ran these on my subscription rather than the API. Local file reads were almost free in terms of time. In a real personal agent, those reads would be much slower API calls.
           </p>
 
-          <h2><span className="ctx-num">06</span>What’s next</h2>
+          <h2 id="whats-next">What’s next</h2>
           <ul>
             <li><strong>Tiered previews.</strong> Longer ones for the top hits, shorter ones for the rest, to keep the savings at lower cost.</li>
             <li><strong>Corpus maps.</strong> Give the agent a summarized map of the files before it starts.</li>
@@ -183,13 +189,8 @@ export default function AgentPreviewsPost() {
             <li>A public benchmark other people can run.</li>
           </ul>
 
-          <details className="ctx-details">
-            <summary>
-              How I tested
-              <span className="ctx-chev" aria-hidden>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 4.5 6 8l3.5-3.5" /></svg>
-              </span>
-            </summary>
+          <details className="ctx-details" id="how-i-tested">
+            <summary>How I tested</summary>
             <ul>
               <li><strong>Corpus:</strong> my own data, frozen as a read-only snapshot. About 3B tokens and 119k files across code, email, Drive, Notion and AI chat logs. Secrets were redacted. Financial, medical and credential content was excluded. About 82% of the tokens came from two large third-party repos, kept as realistic clutter.</li>
               <li><strong>Agent:</strong> Claude Code running Opus 5.5 at high effort.</li>
@@ -203,8 +204,8 @@ export default function AgentPreviewsPost() {
       </article>
 
       <footer className="ctx-footer">
-        <Link href="/context">&larr; All posts</Link>
-        <Link href="/">hamzaammar.ca &rarr;</Link>
+        <Link href="/context">&larr; all writing</Link>
+        <Link href="/">hamzaammar.ca</Link>
       </footer>
     </div>
   );

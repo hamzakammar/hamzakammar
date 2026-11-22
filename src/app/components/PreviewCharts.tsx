@@ -107,7 +107,7 @@ export function CoverageTimeScatter() {
               <text className="chart-tick" x={x(t)} y={h - m.bottom + 18} textAnchor="middle">{t}</text>
             </g>
           ))}
-          <text className="chart-axis-label" x={m.left} y={12}>coverage</text>
+          <text className="chart-axis-label" x={0} y={12}>coverage</text>
           <text className="chart-axis-label" x={(m.left + w - m.right) / 2} y={h - 6} textAnchor="middle">
             mean wall time (s)
           </text>
@@ -150,7 +150,7 @@ interface RowDatum {
 // Wide containers put labels in a left column; narrow ones stack each label above its mark.
 function rowLayout(w: number, count: number) {
   const stacked = w < 520;
-  const m = { top: 30, right: 52, bottom: 30, left: stacked ? 8 : 196 };
+  const m = { top: 30, right: 52, bottom: 30, left: stacked ? 0 : 196 };
   const rowH = stacked ? 50 : 34;
   const markOffset = stacked ? 32 : rowH / 2;
   const h = m.top + rowH * count + m.bottom;
@@ -179,7 +179,7 @@ export function OpenPrecisionBars() {
   const [ref, w] = useWidth(640);
   const id = useId();
   const data = [...precisionData].sort((a, b) => b.value - a.value);
-  const { m, rowH, markOffset, h, labelPos, lanes } = rowLayout(w, data.length);
+  const { stacked, m, rowH, markOffset, h, labelPos, lanes } = rowLayout(w, data.length);
   const x = scale(0, 0.65, m.left, w - m.right);
   const barH = 16;
   const baseline = 0.514;
@@ -198,12 +198,12 @@ export function OpenPrecisionBars() {
             {data.map((d) => ` ${d.label}: ${d.value.toFixed(3)}.`).join("")} Dashed line marks the
             200-character baseline at 0.514.
           </desc>
-          {range(0, 0.6, 0.1).map((t) => (
+          {range(0, 0.6, 0.1).map((t, i) => (
             <g key={t}>
               {lanes.map((l) => (
                 <line key={l.y1} className="chart-grid" x1={x(t)} x2={x(t)} y1={l.y1} y2={l.y2} />
               ))}
-              <text className="chart-tick" x={x(t)} y={plotBottom + 18} textAnchor="middle">
+              <text className="chart-tick" x={x(t)} y={plotBottom + 18} textAnchor={stacked && i === 0 ? "start" : "middle"}>
                 {t === 0 ? "0" : t.toFixed(1)}
               </text>
             </g>
@@ -248,7 +248,7 @@ const coverageData: RowDatum[] = [
 export function CoverageDots() {
   const [ref, w] = useWidth(640);
   const id = useId();
-  const { m, rowH, markOffset, h, labelPos, lanes } = rowLayout(w, coverageData.length);
+  const { stacked, m, rowH, markOffset, h, labelPos, lanes } = rowLayout(w, coverageData.length);
   const x = scale(0.88, 1.0, m.left, w - m.right);
   const baseline = 0.945;
   const band = [0.895, 0.995];
@@ -270,12 +270,12 @@ export function CoverageDots() {
           {lanes.map((l) => (
             <rect key={l.y1} className="chart-band" x={x(band[0])} y={l.y1} width={x(band[1]) - x(band[0])} height={l.y2 - l.y1} rx={lanes.length > 1 ? 4 : 0} />
           ))}
-          {range(0.88, 1.0, 0.02).map((t) => (
+          {range(0.88, 1.0, 0.02).map((t, i) => (
             <g key={t}>
               {lanes.map((l) => (
                 <line key={l.y1} className="chart-grid" x1={x(t)} x2={x(t)} y1={l.y1} y2={l.y2} />
               ))}
-              <text className="chart-tick" x={x(t)} y={plotBottom + 18} textAnchor="middle">{t.toFixed(2)}</text>
+              <text className="chart-tick" x={x(t)} y={plotBottom + 18} textAnchor={stacked && i === 0 ? "start" : "middle"}>{t.toFixed(2)}</text>
             </g>
           ))}
           <line className="chart-ref" x1={x(baseline)} x2={x(baseline)} y1={m.top - 6} y2={m.top} />

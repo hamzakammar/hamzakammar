@@ -29,29 +29,21 @@ export const metadata: Metadata = {
 export default function ContextIndex() {
   return (
     <div className="ctx-page">
-      <nav className="ctx-nav">
-        <Link href="/">&larr; hamzaammar.ca</Link>
-      </nav>
-
-      <header>
-        <div className="ctx-kicker">
-          <span className="ctx-dot" aria-hidden />
-          <span>Writing</span>
-        </div>
-        <h1 className="ctx-title">Context</h1>
+      <header className="ctx-head">
+        <Link href="/" className="ctx-crumb">&larr; hamzaammar.ca</Link>
+        <h1 className="ctx-title">context</h1>
         <p className="ctx-index-intro">{description}.</p>
       </header>
 
-      {Posts.map((post) => (
-        <Link key={post.slug} href={`/context/${post.slug}`} className="ctx-post-card">
-          <div className="ctx-post-meta">
-            <time dateTime={post.dateTime}>{post.date}</time>
-          </div>
-          <h2 className="ctx-post-title">{post.title}</h2>
-          <p className="ctx-post-desc">{post.description}</p>
-          <span className="ctx-post-read">Read <span aria-hidden>&rarr;</span></span>
-        </Link>
-      ))}
+      <div className="ctx-list">
+        {Posts.map((post) => (
+          <Link key={post.slug} href={`/context/${post.slug}`} className="ctx-row">
+            <span className="ctx-row-title">{post.title}</span>
+            <time className="ctx-row-date" dateTime={post.dateTime}>{post.date}</time>
+            <span className="ctx-row-desc">{post.description}</span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

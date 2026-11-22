@@ -92,7 +92,7 @@ Browser polyfills loaded early in the app lifecycle.
 
 Light/dark mode is implemented via a `data-theme="dark"` attribute on `<html>`, toggled in `page.tsx` and persisted to `localStorage`. All visual tokens are CSS custom properties in `globals.css`. No Tailwind dark variant is used — rely on `var(--...)` tokens only.
 
-Exception: `/context` is always dark and has its own tokens, fonts (Inter, IBM Plex Mono via `next/font`) and styles in `src/app/context/context.css`, scoped under `.ctx` by `src/app/context/layout.tsx`.
+Exception: `/context` is always dark and has its own tokens, fonts (Inter, IBM Plex Mono via `next/font`) and styles in `src/app/context/context.css`, scoped under `.ctx` by `src/app/context/layout.tsx`. `public/dotmap.html` is a copy of the original sim with only its colors retinted to match that palette.
 
 ---
 

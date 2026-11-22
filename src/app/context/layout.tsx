@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--ctx-sans" });
 const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--ctx-mono" });
 
 export const viewport: Viewport = {
-  themeColor: "#131315",
+  themeColor: "#16181d",
   colorScheme: "dark",
 };
 
