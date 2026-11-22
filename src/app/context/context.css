@@ -135,37 +135,71 @@ body:has(.ctx) { background: #16181d; }
   color: var(--dim);
 }
 
-/* Definitions: compact two-column grid of term and gloss */
+/* Definitions: collapsible, one row per term */
+.ctx-details.ctx-defs-block { margin-top: 44px; }
+.ctx-details summary .ctx-summary-hint {
+  order: 2;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--faint);
+}
+.ctx-details summary::after { order: 1; flex-shrink: 0; }
+.ctx-details[open] summary .ctx-summary-hint { display: none; }
+
 .ctx-prose ul.ctx-defs {
   list-style: none;
   padding: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px 40px;
-  margin: 4px 0 8px;
+  margin: 0;
+  border-top: 1px solid var(--line);
 }
 .ctx-prose ul.ctx-defs li {
+  display: grid;
+  grid-template-columns: 124px 1fr;
+  gap: 16px;
+  align-items: baseline;
   margin: 0;
-  padding: 0;
-  font-size: 13.5px;
-  line-height: 1.65;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  line-height: 1.55;
   color: var(--dim);
 }
 .ctx-prose ul.ctx-defs strong {
-  display: block;
-  margin-bottom: 2px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13.5px;
+  font-weight: 500;
   color: var(--ink-hi);
 }
-@media (max-width: 600px) {
-  .ctx-prose ul.ctx-defs { grid-template-columns: 1fr; gap: 16px; }
+.ctx-prose ul.ctx-defs .ctx-colon { display: none; }
+/* One line per term; the full definition shows on hover, focus or tap. */
+.ctx-prose ul.ctx-defs li > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ctx-prose ul.ctx-defs li:hover > span,
+.ctx-prose ul.ctx-defs li:focus > span {
+  white-space: normal;
+  color: var(--ink);
+}
+.ctx-prose ul.ctx-defs li:focus { outline: none; }
+.ctx-prose ul.ctx-defs li:focus-visible strong { color: var(--accent); }
+@media (max-width: 560px) {
+  .ctx-details summary .ctx-summary-hint { display: none; }
+  .ctx-prose ul.ctx-defs li { grid-template-columns: 104px 1fr; gap: 12px; }
+  /* one line is too little at phone width, so let rows wrap here */
+  .ctx-prose ul.ctx-defs li > span { white-space: normal; }
 }
 
 /* "How I tested": a quiet heading that opens */
 .ctx-details { margin-top: 60px; scroll-margin-top: 32px; }
 .ctx-details summary {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 12px;
   cursor: pointer;

@@ -76,16 +76,21 @@ export default function AgentPreviewsPost() {
             <DotMapEmbed />
           </figure>
 
-          <h2 id="definitions">Definitions</h2>
-          <ul className="ctx-defs">
-            <li><strong>Preview:</strong> the snippet the agent sees in search results before deciding whether to open a file.</li>
-            <li><strong>Open:</strong> reading the whole file.</li>
-            <li><strong>Wasted open:</strong> opening a file that didn’t help answer the question.</li>
-            <li><strong>Open precision:</strong> the share of opened files that were relevant.</li>
-            <li><strong>Turn:</strong> one step where the agent thinks or calls a tool.</li>
-            <li><strong>Coverage:</strong> how many expected facts made it into the answer. This is what I used to measure accuracy, not a check that the entire answer was correct.</li>
-            <li><strong>Grep:</strong> plain text search through files. This is how coding agents navigate currently.</li>
-          </ul>
+          <details className="ctx-details ctx-defs-block" id="definitions">
+            <summary>
+              Definitions
+              <span className="ctx-summary-hint" aria-hidden>Preview, Open, Wasted open, Open precision, Turn, Coverage, Grep</span>
+            </summary>
+            <ul className="ctx-defs">
+              <li tabIndex={0}><strong>Preview<span className="ctx-colon">:</span></strong> <span>the snippet the agent sees in search results before deciding whether to open a file.</span></li>
+              <li tabIndex={0}><strong>Open<span className="ctx-colon">:</span></strong> <span>reading the whole file.</span></li>
+              <li tabIndex={0}><strong>Wasted open<span className="ctx-colon">:</span></strong> <span>opening a file that didn’t help answer the question.</span></li>
+              <li tabIndex={0}><strong>Open precision<span className="ctx-colon">:</span></strong> <span>the share of opened files that were relevant.</span></li>
+              <li tabIndex={0}><strong>Turn<span className="ctx-colon">:</span></strong> <span>one step where the agent thinks or calls a tool.</span></li>
+              <li tabIndex={0}><strong>Coverage<span className="ctx-colon">:</span></strong> <span>how many expected facts made it into the answer. This is what I used to measure accuracy, not a check that the entire answer was correct.</span></li>
+              <li tabIndex={0}><strong>Grep<span className="ctx-colon">:</span></strong> <span>plain text search through files. This is how coding agents navigate currently.</span></li>
+            </ul>
+          </details>
 
           <h2 id="predicting-the-agent">Predicting the agent</h2>
           <p>
