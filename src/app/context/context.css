@@ -177,7 +177,7 @@ body:has(.ctx) { background: #16181d; }
 }
 .ctx-prose ul.ctx-defs li {
   display: grid;
-  grid-template-columns: 124px 1fr;
+  grid-template-columns: 144px 1fr;
   gap: 16px;
   align-items: baseline;
   margin: 0;
@@ -209,7 +209,7 @@ body:has(.ctx) { background: #16181d; }
 .ctx-prose ul.ctx-defs li:focus-visible strong { color: var(--accent); }
 @media (max-width: 560px) {
   .ctx-details summary .ctx-summary-hint { display: none; }
-  .ctx-prose ul.ctx-defs li { grid-template-columns: 104px 1fr; gap: 12px; }
+  .ctx-prose ul.ctx-defs li { grid-template-columns: 116px 1fr; gap: 12px; }
   /* one line is too little at phone width, so let rows wrap here */
   .ctx-prose ul.ctx-defs li > span { white-space: normal; }
 }
@@ -351,7 +351,6 @@ body:has(.ctx) { background: #16181d; }
 .ctx-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .ctx-table table {
   width: 100%;
-  min-width: 500px;
   border-collapse: collapse;
   font-variant-numeric: tabular-nums;
 }
@@ -366,7 +365,7 @@ body:has(.ctx) { background: #16181d; }
 .ctx-table th { font-size: 12px; font-weight: 500; color: var(--dim); }
 /* Row labels stay pinned while the table scrolls sideways on narrow screens. */
 .ctx-table tbody th,
-.ctx-table thead tr:first-child th:first-child {
+.ctx-table thead th:first-child {
   position: sticky;
   left: 0;
   z-index: 1;
@@ -376,10 +375,13 @@ body:has(.ctx) { background: #16181d; }
   background: var(--bg);
 }
 .ctx-table tbody th { font-size: 13.5px; font-weight: 400; color: var(--ink); }
-.ctx-table thead tr:first-child th { color: var(--ink-hi); border-bottom: 0; padding-bottom: 0; }
-.ctx-table thead tr:first-child th[colspan] { text-align: center; }
-.ctx-table .col-w500 { color: var(--accent); }
-.ctx-table figcaption { margin-top: 10px; font-size: 12px; line-height: 1.6; color: var(--dim); }
+@media (max-width: 560px) {
+  .ctx-table th { white-space: normal; }
+  .ctx-table th,
+  .ctx-table td { padding-left: 10px; }
+  .ctx-table tbody th { font-size: 13px; }
+}
+
 .blog-chart .chart-band { fill: rgba(134, 183, 255, 0.11); }
 .blog-chart .chart-ref { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.5; }
 .blog-chart g:hover .chart-bar { fill: rgba(234, 238, 245, 0.28); }

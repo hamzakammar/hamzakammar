@@ -56,7 +56,7 @@ export default function AgentPreviewsPost() {
           <Link href="/context" className="ctx-crumb">&larr; context</Link>
           <h1 className="ctx-title">{post.title}</h1>
           <p className="ctx-meta">
-            <time dateTime={post.dateTime}>{post.date}</time> · 9 min read
+            <time dateTime={post.dateTime}>{post.date}</time> · 8 min read
           </p>
         </header>
 
@@ -77,7 +77,7 @@ export default function AgentPreviewsPost() {
           <details className="ctx-details ctx-defs-block" id="definitions">
             <summary>
               Definitions
-              <span className="ctx-summary-hint" aria-hidden>Preview, Open, Wasted open, Open precision, Turn, Coverage, Grep</span>
+              <span className="ctx-summary-hint" aria-hidden>Preview, Open, Wasted open, Open precision, Turn, Coverage, Grep, Measurable change</span>
             </summary>
             <ul className="ctx-defs">
               <li tabIndex={0}><strong>Preview<span className="ctx-colon">:</span></strong> <span>the snippet the agent sees in search results before deciding whether to open a file.</span></li>
@@ -87,6 +87,7 @@ export default function AgentPreviewsPost() {
               <li tabIndex={0}><strong>Turn<span className="ctx-colon">:</span></strong> <span>one step where the agent thinks or calls a tool.</span></li>
               <li tabIndex={0}><strong>Coverage<span className="ctx-colon">:</span></strong> <span>how many expected facts made it into the answer. This is what I used to measure accuracy, not a check that the entire answer was correct.</span></li>
               <li tabIndex={0}><strong>Grep<span className="ctx-colon">:</span></strong> <span>plain text search through files. This is how coding agents navigate currently.</span></li>
+              <li tabIndex={0}><strong>Measurable change<span className="ctx-colon">:</span></strong> <span>a difference whose 95% confidence interval doesn’t include 0, so the data can tell whether it went up or down.</span></li>
             </ul>
           </details>
 
@@ -98,7 +99,7 @@ export default function AgentPreviewsPost() {
           <ul>
             <li><strong>Corpus:</strong> my own data, frozen as a read-only snapshot. About 3B tokens and 119k files across code, email, Drive, Notion and AI chat logs. Secrets were redacted. Financial, medical and credential content was excluded. About 82% of the tokens came from two large third-party repos, kept as realistic clutter.</li>
             <li><strong>Agent:</strong> Claude Code running Opus 5.5 at high effort.</li>
-            <li><strong>Amuse:</strong> Replit’s open-source local assistant on localhost, with my patch adding MCP client support. gpt-6-luna on 3 methods × 80 questions × 2 runs, gpt-6.2-sol on 2 methods × 80 × 1. Fresh database every run, same blind grading. $9.45 total.</li>
+            <li><strong>Amuse:</strong> Replit’s open-source local assistant on localhost, with my patch adding MCP client support. gpt-6-luna on 3 methods × 80 questions × 2 runs, gpt-6.2-sol on 2 methods × 80 × 1. Fresh database every run, same blind grading.</li>
             <li>Rules for each test were written and committed to git before any run.</li>
             <li>Questions were checked independently. A fresh AI judge graded answers blind, without knowing the method. I also spot-checked the reference answers.</li>
             <li>Replaying the same agent on the same question produced the same tool path 36 to 48% of the time.</li>
@@ -156,61 +157,47 @@ export default function AgentPreviewsPost() {
 
           <h2 id="real-agent">Does it hold in a real personal agent?</h2>
           <p>
-            I reran the study inside Amuse, Replit’s open-source local assistant, on localhost. I added optional MCP client support so it could call the same search tools (<a href="https://github.com/hamzakammar/amuse/tree/mcp-support" target="_blank" rel="noopener noreferrer">fork</a>). Same 80 hard questions, same corpus, same tool code, and a fresh Amuse database every run. The tests were pre-registered and blind-graded the same way.
-          </p>
-          <p>
-            I ran gpt-6-luna, a cheaper and weaker model, on 200-character previews, 500-character previews and grep, with 2 runs per question (480 runs). I ran gpt-6.2-sol, Amuse’s default, on the two preview lengths with 1 run per question (160 runs). Total cost was $9.45.
+            I reran the study inside Amuse, Replit’s open-source local assistant, with a patch that lets it call the same search tools over MCP (<a href="https://github.com/hamzakammar/amuse/tree/mcp-support" target="_blank" rel="noopener noreferrer">fork</a>). Same 80 questions, corpus and tools, pre-registered and blind-graded the same way. I used two models: gpt-6-luna, a cheaper and weaker one, on both preview lengths and grep with 2 runs per question, and gpt-6.2-sol, Amuse’s default, on both preview lengths with 1 run. I didn’t run grep with sol.
           </p>
 
           <figure className="ctx-table">
-            <div className="blog-chart-title">Amuse results by model and method</div>
+            <div className="blog-chart-title">Amuse results, per run</div>
             <div className="ctx-table-scroll">
               <table>
                 <thead>
                   <tr>
-                    <th scope="col" rowSpan={2}></th>
-                    <th scope="colgroup" colSpan={3}>gpt-6-luna</th>
-                    <th scope="colgroup" colSpan={2}>gpt-6.2-sol</th>
-                  </tr>
-                  <tr>
-                    <th scope="col">200</th>
-                    <th scope="col" className="col-w500">500</th>
-                    <th scope="col">grep</th>
-                    <th scope="col">200</th>
-                    <th scope="col" className="col-w500">500</th>
+                    <th scope="col"></th>
+                    <th scope="col">Coverage</th>
+                    <th scope="col">Opens</th>
+                    <th scope="col">Wasted opens</th>
+                    <th scope="col">Turns</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><th scope="row">Coverage</th><td>0.390</td><td>0.402</td><td>0.212</td><td>0.710</td><td>0.729</td></tr>
-                  <tr><th scope="row">Open precision</th><td>0.393</td><td>0.312</td><td>0.302</td><td>0.624</td><td>0.561</td></tr>
-                  <tr><th scope="row">Wasted opens per run</th><td>0.67</td><td>0.38</td><td>0.73</td><td>0.47</td><td>0.30</td></tr>
-                  <tr><th scope="row">Turns (model calls)</th><td>12.37</td><td>11.20</td><td>10.08</td><td>10.29</td><td>9.14</td></tr>
-                  <tr><th scope="row">Tool calls</th><td>5.63</td><td>4.96</td><td>5.10</td><td>5.75</td><td>4.72</td></tr>
-                  <tr><th scope="row">Cost per run</th><td>$0.0026</td><td>$0.0036</td><td>$0.0028</td><td>$0.0466</td><td>$0.0458</td></tr>
-                  <tr><th scope="row">Median wall time</th><td>15.9 s</td><td>13.9 s</td><td>40.2 s</td><td>14.4 s</td><td>12.8 s</td></tr>
+                  <tr><th scope="row">luna, 200 characters</th><td>0.390</td><td>1.16</td><td>0.67</td><td>12.37</td></tr>
+                  <tr><th scope="row">luna, 500 characters</th><td>0.402</td><td>0.56</td><td>0.38</td><td>11.20</td></tr>
+                  <tr><th scope="row">luna, grep</th><td>0.212</td><td>1.23</td><td>0.73</td><td>10.08</td></tr>
+                  <tr><th scope="row">sol, 200 characters</th><td>0.710</td><td>1.30</td><td>0.47</td><td>10.29</td></tr>
+                  <tr><th scope="row">sol, 500 characters</th><td>0.729</td><td>0.70</td><td>0.30</td><td>9.14</td></tr>
                 </tbody>
               </table>
             </div>
-            <figcaption>Open precision only counts runs that opened a file. The differences in the text are paired over questions where both arms opened one, so they don’t equal these columns subtracted.</figcaption>
           </figure>
 
           <p>
-            Accuracy didn’t measurably move with preview length in any of the 3 setups: 500 characters vs 200 was +0.014 coverage in Claude Code, +0.013 with luna and +0.019 with sol. For luna, the 95% CI (-0.049 to +0.075) includes 0, but the 90% CI (-0.039 to +0.065) runs past the pre-registered 0.05 bound, so equivalence wasn’t shown either. Sol, with 1 run and descriptive only, had a 90% CI of -0.052 to +0.090. Luna scored about 0.40, far from the ceiling, so “the questions were too easy” can’t explain it.
+            Preview length didn’t measurably change accuracy here either. Going from 200 to 500 characters, coverage went from 0.390 to 0.402 with luna and from 0.710 to 0.729 with sol. For luna, the 95% CI of the difference runs from -0.049 to +0.075, so the true effect could be a small drop or a small gain, and 0 sits comfortably inside. I also can’t call the two equal: the pre-registered test needed the 90% CI to stay within ±0.05, and it reached +0.065. Luna scored about 0.40, far from the ceiling, so the questions being too easy can’t explain why preview length made no difference.
           </p>
           <p>
-            Two luna 500-character runs hit the 128,000-token output limit and scored 0. Without them, the luna difference is +0.025 (90% CI -0.029 to +0.081), still not shown.
+            Longer previews still saved work. With 500 characters, both models opened about 0.60 fewer files per run, wasted fewer opens and took fewer turns. What didn’t carry over was the open precision gain from Claude Code, where a bigger share of opened files were relevant. With luna that share changed by -0.031, but the 95% CI runs from -0.145 to +0.080, so it could have gone either way. The range is that wide because Amuse only opened 0.56 to 1.30 files per run, and one file more or less moves the share a lot.
           </p>
           <p>
-            The precision gain didn’t transfer. With luna, 500 characters vs 200 was -0.031 on open precision (95% CI -0.145 to +0.080, over the 45 questions where both arms opened a file), so the pre-registered improvement wasn’t confirmed. Sol was -0.039 (95% CI -0.150 to +0.064). With 0.56 to 1.30 opens per run in Amuse, the precision number is unstable. What did show up: with 500 characters, both Amuse models opened about 0.60 fewer files per run (luna 1.16 to 0.56, 95% CI -0.78 to -0.43; sol 1.30 to 0.70, 95% CI -0.85 to -0.35). They also more often got at least half the expected facts without opening a relevant file: 0.206 to 0.338 of runs with luna, 0.325 to 0.562 with sol.
-          </p>
-          <p>
-            Grep collapsed with luna: -0.177 coverage vs 200-character previews (90% CI -0.254 to -0.101), 0.000 on buried-answer questions, and about 40 s per run vs about 15 s. In Claude Code, grep tied (0.958 vs 0.945).
+            Grep collapsed with luna: coverage fell from 0.390 to 0.212 (90% CI of the difference -0.254 to -0.101), with 0.000 on buried-answer questions. In Claude Code it tied (0.958 vs 0.945).
           </p>
 
           <CoverageAcrossSetups />
 
           <p>
-            On the same questions and tools, coverage was about 0.95 in Claude Code, 0.72 with sol and 0.40 with luna. That comparison is descriptive, since the model and harness both differ.
+            Coverage was about 0.95 in Claude Code, 0.72 with sol and 0.40 with luna on the same questions. That comparison is descriptive, since the model and harness both differ.
           </p>
 
           <h2 id="limitations">Limitations</h2>
