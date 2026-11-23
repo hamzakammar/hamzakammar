@@ -11,13 +11,14 @@ const url = `https://hamzaammar.ca/context/${post.slug}`;
 const toc = [
   { id: "tldr", label: "tl;dr" },
   { id: "definitions", label: "Definitions" },
-  { id: "predicting-the-agent", label: "Predicting the agent" },
-  { id: "search-vs-grep", label: "Search vs grep" },
-  { id: "picking-a-method", label: "Picking a method per question" },
-  { id: "the-preview-study", label: "The preview study" },
+  { id: "methods", label: "Methods" },
+  { id: "results", label: "Results" },
   { id: "limitations", label: "Limitations" },
-  { id: "whats-next", label: "What’s next" },
-  { id: "how-i-tested", label: "How I tested" },
+  { id: "conclusion", label: "Conclusion and future work" },
+  { id: "appendix", label: "Appendix: How I got here" },
+  { id: "predicting-the-agent", label: "Predicting the agent", sub: true },
+  { id: "search-vs-grep", label: "Search vs grep", sub: true },
+  { id: "picking-a-method", label: "Picking a method per question", sub: true },
 ];
 
 export const metadata: Metadata = {
@@ -62,19 +63,15 @@ export default function AgentPreviewsPost() {
           <section className="ctx-tldr">
             <h2 id="tldr">tl;dr</h2>
             <p>
-              I think personal agents are the future of interacting with AI. But the more they can do for you, the more of your life they need access to. Email, notes, docs, code, old chats. Once that pile gets big enough, the question stops being whether the agent can find the answer. It becomes how much it wastes getting there.
+              Personal agents are the future of AI interactions. But the more they can do for you, the more of your life they need access to. Email, notes, docs, code, old chats. Once that pile gets big enough, the question stops being whether the agent can find the answer. It becomes how much it wastes getting there.
             </p>
             <p>
               So I tested this on my own data, about 3 billion tokens across 119k files. Across what I tested, the search method didn’t change coverage much. The agents usually got to the answer eventually. The difference was how efficiently they got there.
             </p>
             <p>
-              In this setup, 500-character document previews <mark>cut wasted file opens by 24%</mark> and saved about 1 turn per question, for about 11% more cost.
+              In this setup, 500-character document previews <mark>cut wasted file opens by 24%</mark> and saved about 1 turn per question, for about 11% more cost, with coverage within 5 points, across 1,680 runs.
             </p>
           </section>
-
-          <figure className="ctx-wide">
-            <DotMapEmbed />
-          </figure>
 
           <details className="ctx-details ctx-defs-block" id="definitions">
             <summary>
@@ -92,52 +89,24 @@ export default function AgentPreviewsPost() {
             </ul>
           </details>
 
-          <h2 id="predicting-the-agent">Predicting the agent</h2>
-          <p>
-            I started by trying to predict what the agent would do next, so I could give it the right tools without it spending too long deciding.
-          </p>
-          <p>
-            First I built tool bundles, basically groups of tools for a common task or intent. Then I added a small scout model to plan the main model’s first step. I also tried switching models between turns. All three failed the rules I’d written down before testing.
-          </p>
-          <p>
-            The problem is that models don’t agree with themselves. Give an agent the same question again and it’ll chase different leads and call different tools, then often end up with the same answer anyway. It repeated its path less than half the time. That makes the changing path hard to predict.
-          </p>
+          <figure className="ctx-wide">
+            <DotMapEmbed />
+          </figure>
 
-          <h2 id="search-vs-grep">Search vs grep</h2>
-          <p>
-            Next I looked at the search methods themselves. I compared 4 methods on 97 questions: plain grep, keyword search returning full chunks, keyword search returning 200-character previews, and those same previews with dates so the agent could see what was newest.
-          </p>
-          <p>
-            They all ended up around 97% coverage. Again, the agents were usually capable enough to get the expected facts regardless of the method. But the questions were also a bit too easy. For 42% of them, keyword searching the question’s own words put the right document first.
-          </p>
-          <p>
-            Time and cost were where things changed. Full chunks were fastest at 22.7 seconds, but dumping all that text into context made them cost around 50% more. Grep was slowest at around 37.8 seconds. The 200-character previews had the fewest errors.
-          </p>
-          <p>
-            For the fourth method, I thought dates would help the agent get to the right, most recent answer in fewer turns. My prediction was at least 15% faster than grep at the same coverage. It passed the coverage, cost and error checks, but missed the speed bar: 34.9 s against a 32.1 s target (15% under grep’s 37.8 s). So I reported it as a failure.
-          </p>
+          <h2 id="methods">Methods</h2>
+          <ul>
+            <li><strong>Corpus:</strong> my own data, frozen as a read-only snapshot. About 3B tokens and 119k files across code, email, Drive, Notion and AI chat logs. Secrets were redacted. Financial, medical and credential content was excluded. About 82% of the tokens came from two large third-party repos, kept as realistic clutter.</li>
+            <li><strong>Agent:</strong> Claude Code running Opus 5.5 at high effort.</li>
+            <li>Rules for each test were written and committed to git before any run.</li>
+            <li>Questions were checked independently. A fresh AI judge graded answers blind, without knowing the method. I also spot-checked the reference answers.</li>
+            <li>Replaying the same agent on the same question produced the same tool path 36 to 48% of the time.</li>
+            <li>Only question types are published. No real questions, answers, file names or transcripts.</li>
+          </ul>
 
-          <CoverageTimeScatter />
-
+          <h3>Preview study setup</h3>
+          <p>The goal was to find out what an agent should see before it opens a file.</p>
           <p>
-            The main pattern was pretty simple. Time followed how many turns the agent took. Cost followed how much text piled up in its context.
-          </p>
-
-          <h2 id="picking-a-method">Picking a method per question</h2>
-          <p>
-            Since nothing won outright, I went back to prediction. What if I could pick the best method for each question before the agent started?
-          </p>
-          <p>
-            A perfect picker would’ve saved about 21 to 24% of the cost. But the classifiers I built only saw the question, and they did worse than just sticking with one method.
-          </p>
-          <p>
-            At that point I stopped trying to predict the agent. There was a best choice, but I couldn’t reliably pick it before the agent started searching. So instead of guessing where it would go, I looked at what it sees when it searches.
-          </p>
-
-          <h2 id="the-preview-study">The preview study</h2>
-          <p className="ctx-lead">What should an agent see before it opens a file?</p>
-          <p>
-            The earlier questions were too easy, so I built 80 new ones where keyword searching the question’s own words never put the answer in the top 10. They covered the kinds of things you’d ask a personal agent: what’s the latest on something, questions needing two or three sources, lists and counts, answers buried in long files, specific time windows, and questions with no answer at all.
+            The questions in my first tests were too easy, so I built 80 new ones where keyword searching the question’s own words never put the answer in the top 10. They covered the kinds of things you’d ask a personal agent: what’s the latest on something, questions needing two or three sources, lists and counts, answers buried in long files, specific time windows, and questions with no answer at all.
           </p>
           <p>
             An independent check rejected 21 of the 104 questions the generator made. I used 80 of the 83 questions that were left, and I spot-checked 15 myself.
@@ -154,15 +123,17 @@ export default function AgentPreviewsPost() {
             <li>One-line summary</li>
             <li>200 characters plus dates for recency</li>
           </ul>
+
           <p>
-            Some methods overlapped with the previous experiment, which was already partly testing previews. But I needed to try them again on the harder questions. I ran each of the 80 questions on all 7 methods, with 3 runs per question-method pair to check for flukes. 1,680 runs total.
+            Some methods overlapped with the earlier experiment in the appendix, which was already partly testing previews. But I needed to try them again on the harder questions. I ran each of the 80 questions on all 7 methods, with 3 runs per question-method pair to check for flukes. 1,680 runs total.
           </p>
-          <p>A couple things stood out.</p>
+
+          <h2 id="results">Results</h2>
           <p>
-            First, hard for search didn’t mean hard for the agent. These questions were built so the question’s own words wouldn’t get the answer into the top 10. The agent still found it by rewriting searches and opening files until it had what it needed. Every method got every buried-answer question right, and all 7 were within 5 points of each other on coverage overall.
+            Hard for search didn’t mean hard for the agent. These questions were built so the question’s own words wouldn’t get the answer into the top 10. The agent still found it by rewriting searches and opening files until it had what it needed. Every method got every buried-answer question right, and all 7 were within 5 points of each other on coverage overall.
           </p>
           <p>
-            Second, the agent rarely took the same route twice, but usually ended up in the same place. It gave the same answer 83 to 94% of the time. The first file it opened only matched 41 to 55% of the time.
+            The route changed between runs more than the answer did. Across repeat runs it gave the same answer 83 to 94% of the time, while the first file it opened matched only 41 to 55% of the time.
           </p>
           <p>
             The main result was the 500-character preview. It was the only method that clearly beat the baseline on choosing relevant files. 60% of the files it opened were relevant, compared with 51% for 200 characters.
@@ -175,7 +146,7 @@ export default function AgentPreviewsPost() {
           <CoverageDots />
 
           <p>
-            In this setup, 500-character previews reduced wasted opens by 24%, for about 11% more cost. Coverage stayed within 5 points of the baseline, and median time was about the same. That’s a useful tradeoff if you’re trying to cut unnecessary file reads, not evidence that 500 characters is best for every personal agent.
+            So the tradeoff is a bit more context per search result in exchange for fewer wasted reads, with coverage and median time about the same. That’s useful if you’re trying to cut unnecessary file reads, not evidence that 500 characters is best for every personal agent.
           </p>
 
           <h2 id="limitations">Limitations</h2>
@@ -186,7 +157,7 @@ export default function AgentPreviewsPost() {
             Speed was also a tie all around, and I ran these on my subscription rather than the API. Local file reads were almost free in terms of time. In a real personal agent, those reads would be much slower API calls.
           </p>
 
-          <h2 id="whats-next">What’s next</h2>
+          <h2 id="conclusion">Conclusion and future work</h2>
           <ul>
             <li><strong>Tiered previews.</strong> Longer ones for the top hits, shorter ones for the rest, to keep the savings at lower cost.</li>
             <li><strong>Corpus maps.</strong> Give the agent a summarized map of the files before it starts.</li>
@@ -194,17 +165,48 @@ export default function AgentPreviewsPost() {
             <li>A public benchmark other people can run.</li>
           </ul>
 
-          <details className="ctx-details" id="how-i-tested">
-            <summary>How I tested</summary>
-            <ul>
-              <li><strong>Corpus:</strong> my own data, frozen as a read-only snapshot. About 3B tokens and 119k files across code, email, Drive, Notion and AI chat logs. Secrets were redacted. Financial, medical and credential content was excluded. About 82% of the tokens came from two large third-party repos, kept as realistic clutter.</li>
-              <li><strong>Agent:</strong> Claude Code running Opus 5.5 at high effort.</li>
-              <li>Rules for each test were written and committed to git before any run.</li>
-              <li>Questions were checked independently. A fresh AI judge graded answers blind, without knowing the method. I also spot-checked the reference answers.</li>
-              <li>Replaying the same agent on the same question produced the same tool path 36 to 48% of the time.</li>
-              <li>Only question types are published. No real questions, answers, file names or transcripts.</li>
-            </ul>
-          </details>
+          <h2 id="appendix">Appendix: How I got here</h2>
+          <h3 id="predicting-the-agent">Predicting the agent</h3>
+          <p>
+            I started by trying to predict what the agent would do next, so I could give it the right tools without it spending too long deciding.
+          </p>
+          <p>
+            First I built tool bundles, basically groups of tools for a common task or intent. Then I added a small scout model to plan the main model’s first step. I also tried switching models between turns. All three failed the rules I’d written down before testing.
+          </p>
+          <p>
+            The problem is that models don’t agree with themselves. Give an agent the same question again and it’ll chase different leads and call different tools, then often end up with the same answer anyway. It repeated its path less than half the time. That makes the changing path hard to predict.
+          </p>
+
+          <h3 id="search-vs-grep">Search vs grep</h3>
+          <p>
+            Next I looked at the search methods themselves. I compared 4 methods on 97 questions: plain grep, keyword search returning full chunks, keyword search returning 200-character previews, and those same previews with dates so the agent could see what was newest.
+          </p>
+          <p>
+            They all ended up around 97% coverage. Again, the agents were usually capable enough to get the expected facts regardless of the method. But the questions were also a bit too easy. For 42% of them, keyword searching the question’s own words put the right document first.
+          </p>
+          <p>
+            Time and cost were where things changed. Full chunks were fastest at 22.7 seconds, but dumping all that text into context made them cost around 50% more. Grep was slowest at around 37.8 seconds. The 200-character previews had the fewest errors.
+          </p>
+          <p>
+            For the fourth method, I thought dates would help the agent get to the right, most recent answer in fewer turns. My prediction was at least 15% faster than grep at the same coverage. It passed the coverage, cost and error checks, but missed the speed bar: 34.9 s against a 32.1 s target (15% under grep’s 37.8 s). So I reported it as a failure.
+          </p>
+
+          <CoverageTimeScatter />
+
+          <p>
+            Time followed how many turns the agent took. Cost followed how much text piled up in its context.
+          </p>
+
+          <h3 id="picking-a-method">Picking a method per question</h3>
+          <p>
+            Since nothing won outright, I went back to prediction. What if I could pick the best method for each question before the agent started?
+          </p>
+          <p>
+            A perfect picker would’ve saved about 21 to 24% of the cost. But the classifiers I built only saw the question, and they did worse than just sticking with one method.
+          </p>
+          <p>
+            At that point I stopped trying to predict the agent. There was a best choice, but I couldn’t reliably pick it before the agent started searching. So instead of guessing where it would go, I looked at what it sees when it searches. That became the preview study in <a href="#methods">Methods</a> and <a href="#results">Results</a> above.
+          </p>
         </div>
       </article>
 
