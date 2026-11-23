@@ -70,7 +70,7 @@ export default function AgentPreviewsPost() {
               So I tested this on my own data, about 3 billion tokens across 119k files. Across what I tested, the search method didn’t change coverage much. The agents usually got to the answer eventually. The difference was how efficiently they got there.
             </p>
             <p>
-              In this setup, 500-character document previews <mark>cut wasted file opens by 24%</mark> and saved about 1 turn per question, for about 11% more cost, with coverage within 5 points, across 1,680 runs. I also ran the same test inside a real personal agent, Amuse, on two more models, and preview length didn’t change accuracy there either.
+              In this setup, 500-character document previews <mark>cut wasted file opens by 24%</mark> and saved about 1 turn per question, for about 11% more cost, with coverage within 5 points, across 1,680 runs. I also ran the same test inside a real personal agent, Amuse, on two more models, and preview length didn’t measurably change accuracy there either.
             </p>
           </section>
 
@@ -195,7 +195,7 @@ export default function AgentPreviewsPost() {
           </figure>
 
           <p>
-            Accuracy didn’t move with preview length in any of the 3 setups: 500 characters vs 200 was +0.014 coverage in Claude Code, +0.013 with luna and +0.019 with sol. For luna, the 95% CI (-0.049 to +0.075) includes 0, but the 90% CI (-0.039 to +0.065) runs past the pre-registered 0.05 bound, so equivalence wasn’t shown either. Sol, with 1 run and descriptive only, had a 90% CI of -0.052 to +0.090. Luna scored about 0.40, far from the ceiling, so “the questions were too easy” can’t explain it.
+            Accuracy didn’t measurably move with preview length in any of the 3 setups: 500 characters vs 200 was +0.014 coverage in Claude Code, +0.013 with luna and +0.019 with sol. For luna, the 95% CI (-0.049 to +0.075) includes 0, but the 90% CI (-0.039 to +0.065) runs past the pre-registered 0.05 bound, so equivalence wasn’t shown either. Sol, with 1 run and descriptive only, had a 90% CI of -0.052 to +0.090. Luna scored about 0.40, far from the ceiling, so “the questions were too easy” can’t explain it.
           </p>
           <p>
             Two luna 500-character runs hit the 128,000-token output limit and scored 0. Without them, the luna difference is +0.025 (90% CI -0.029 to +0.081), still not shown.
@@ -210,7 +210,7 @@ export default function AgentPreviewsPost() {
           <CoverageAcrossSetups />
 
           <p>
-            On the same questions and tools, coverage was about 0.95 in Claude Code, 0.72 with sol and 0.40 with luna. That comparison is descriptive, since the model and harness both differ. Search layers matter most for cheaper agents.
+            On the same questions and tools, coverage was about 0.95 in Claude Code, 0.72 with sol and 0.40 with luna. That comparison is descriptive, since the model and harness both differ.
           </p>
 
           <h2 id="limitations">Limitations</h2>
