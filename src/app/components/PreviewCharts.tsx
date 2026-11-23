@@ -301,3 +301,105 @@ export function CoverageDots() {
     </ChartFigure>
   );
 }
+
+type SetupKey = "w200" | "w500" | "grep";
+
+const setupData: { label: string; values: Partial<Record<SetupKey, number>> }[] = [
+  { label: "Claude Code", values: { w200: 0.945, w500: 0.959, grep: 0.958 } },
+  { label: "Amuse, gpt-6.2-sol", values: { w200: 0.71, w500: 0.729 } },
+  { label: "Amuse, gpt-6-luna", values: { w200: 0.39, w500: 0.402, grep: 0.212 } },
+];
+
+// Each method gets its own sub-lane so near-identical values (0.958 vs 0.959) stay visible.
+const setupSeries: { key: SetupKey; label: string; offset: number }[] = [
+  { key: "w200", label: "200-character", offset: -14 },
+  { key: "w500", label: "500-character", offset: 0 },
+  { key: "grep", label: "grep", offset: 14 },
+];
+
+function SetupMark({ kind, cx, cy }: { kind: SetupKey; cx: number; cy: number }) {
+  if (kind === "grep") return <rect className="chart-mark-grep" x={cx - 4.5} y={cy - 4.5} width={9} height={9} />;
+  return <circle className={kind === "w500" ? "chart-dot-accent" : "chart-dot-neutral"} cx={cx} cy={cy} r={5} />;
+}
+
+export function CoverageAcrossSetups() {
+  const [ref, w] = useWidth(640);
+  const id = useId();
+  const stacked = w < 520;
+  const m = { top: 8, right: 52, bottom: 30, left: stacked ? 0 : 160 };
+  const rowH = stacked ? 80 : 64;
+  const center = stacked ? 50 : rowH / 2;
+  const h = m.top + rowH * setupData.length + m.bottom;
+  const x = scale(0, 1, m.left, w - m.right);
+  const plotBottom = h - m.bottom;
+  const lanes = stacked
+    ? setupData.map((_, i) => ({ y1: m.top + i * rowH + center - 24, y2: m.top + i * rowH + center + 24 }))
+    : [{ y1: m.top, y2: plotBottom }];
+
+  return (
+    <ChartFigure
+      title="Coverage by method across setups"
+      caption="Preview length never moved accuracy. Grep held up in Claude Code and collapsed with the weaker model."
+    >
+      <div className="chart-legend" aria-hidden>
+        {setupSeries.map((s) => (
+          <span key={s.key}>
+            <svg width="12" height="12" viewBox="0 0 12 12"><SetupMark kind={s.key} cx={6} cy={6} /></svg>
+            {s.label}
+          </span>
+        ))}
+      </div>
+      <div ref={ref} className="blog-chart-canvas">
+        <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-labelledby={`${id}t ${id}d`}>
+          <title id={`${id}t`}>Coverage by method in Claude Code and in Amuse with two models</title>
+          <desc id={`${id}d`}>
+            Dot plot of coverage from 0 to 1.
+            {setupData
+              .map((r) => ` ${r.label}: ${setupSeries.filter((s) => r.values[s.key] !== undefined).map((s) => `${s.label} ${r.values[s.key]!.toFixed(3)}`).join(", ")}.`)
+              .join("")}
+            {" "}gpt-6.2-sol was not run with grep.
+          </desc>
+          {range(0, 1, 0.2).map((t, i) => (
+            <g key={t}>
+              {lanes.map((l) => (
+                <line key={l.y1} className="chart-grid" x1={x(t)} x2={x(t)} y1={l.y1} y2={l.y2} />
+              ))}
+              <text className="chart-tick" x={x(t)} y={plotBottom + 18} textAnchor={stacked && i === 0 ? "start" : "middle"}>
+                {t === 0 ? "0" : t.toFixed(1)}
+              </text>
+            </g>
+          ))}
+          {setupData.map((r, i) => {
+            const cy = m.top + i * rowH + center;
+            return (
+              <g key={r.label}>
+                <text
+                  className="chart-label"
+                  x={stacked ? m.left : m.left - 12}
+                  y={stacked ? m.top + i * rowH + 12 : cy}
+                  dy="0.32em"
+                  textAnchor={stacked ? "start" : "end"}
+                >
+                  {r.label}
+                </text>
+                {setupSeries.map((s) => {
+                  const v = r.values[s.key];
+                  if (v === undefined) return null;
+                  const y = cy + s.offset;
+                  return (
+                    <g key={s.key}>
+                      <title>{`${r.label}, ${s.label}: ${v.toFixed(3)}`}</title>
+                      <rect className="chart-hit" x={x(v) - 8} y={y - 7} width={60} height={14} />
+                      <SetupMark kind={s.key} cx={x(v)} cy={y} />
+                      <ValueLabel x={x(v) + 10} y={y} text={v.toFixed(3)} accent={s.key === "w500"} />
+                    </g>
+                  );
+                })}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </ChartFigure>
+  );
+}
