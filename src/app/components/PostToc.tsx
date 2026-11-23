@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 export interface TocItem {
   id: string;
   label: string;
+  sub?: boolean;
 }
 
 export default function PostToc({ items }: { items: TocItem[] }) {
@@ -31,7 +32,7 @@ export default function PostToc({ items }: { items: TocItem[] }) {
   return (
     <nav className="ctx-toc" aria-label="On this page">
       {items.map((i) => (
-        <a key={i.id} href={`#${i.id}`} className={i.id === active ? "on" : undefined}>
+        <a key={i.id} href={`#${i.id}`} className={[i.sub && "sub", i.id === active && "on"].filter(Boolean).join(" ") || undefined}>
           {i.label}
         </a>
       ))}

@@ -13,6 +13,6 @@ export const Posts: Post[] = [
     date: "Nov 2026",
     dateTime: "2026-11",
     description:
-      "I think personal agents are the future of interacting with AI. But the more they can do for you, the more of your life they need access to.",
+      "Personal agents are the future of AI interactions. But the more they can do for you, the more of your life they need access to.",
   },
 ];
