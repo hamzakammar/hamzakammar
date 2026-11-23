@@ -67,10 +67,10 @@ export default function AgentPreviewsPost() {
               Personal agents are the future of AI interactions. But the more they can do for you, the more of your life they need access to. Email, notes, docs, code, old chats. Once that pile gets big enough, the question stops being whether the agent can find the answer. It becomes how much it wastes getting there.
             </p>
             <p>
-              So I tested this on my own data, about 3 billion tokens across 119k files. Across what I tested, the search method didn’t change coverage much. The agents usually got to the answer eventually. The difference was how efficiently they got there.
+              So I tested this on my own data, about 3 billion tokens across 119k files. Preview length didn’t change coverage much. The agents usually got to the answer eventually. The difference was how efficiently they got there.
             </p>
             <p>
-              In this setup, 500-character document previews <mark>cut wasted file opens by 24%</mark> and saved about 1 turn per question, for about 11% more cost, with coverage within 5 points, across 1,680 runs. I also ran the same test inside a real personal agent, Amuse, on two more models, and preview length didn’t measurably change accuracy there either.
+              In Claude Code, 500-character document previews <mark>cut wasted file opens by 24%</mark> and saved about 1 turn per question, for about 11% more cost, with coverage within 5 points, across 1,680 runs. I also ran the same test inside a real personal agent, Amuse, on two more models, and preview length didn’t measurably change accuracy there either.
             </p>
           </section>
 
@@ -133,7 +133,7 @@ export default function AgentPreviewsPost() {
 
           <h2 id="results">Results</h2>
           <p>
-            Hard for search didn’t mean hard for the agent. These questions were built so the question’s own words wouldn’t get the answer into the top 10. The agent still found it by rewriting searches and opening files until it had what it needed. In Claude Code, every method got every buried-answer question right, and all 7 were within 5 points of each other on coverage overall.
+            These questions were built so the question’s own words wouldn’t get the answer into the top 10. The agent still found it by rewriting searches and opening files until it had what it needed. In Claude Code, every method got every buried-answer question right, and all 7 were within 5 points of each other on coverage overall.
           </p>
           <p>
             Across repeat runs, it opened the same first file only 41 to 55% of the time, but gave the same answer 83 to 94% of the time.
@@ -185,7 +185,7 @@ export default function AgentPreviewsPost() {
           </figure>
 
           <p>
-            Preview length didn’t measurably change accuracy here either. Going from 200 to 500 characters, coverage went from 0.390 to 0.402 with luna and from 0.710 to 0.729 with sol. For luna, the 95% CI of the difference runs from -0.049 to +0.075, so the true effect could be a small drop or a small gain, and 0 sits comfortably inside. I also can’t call the two equal: the pre-registered test needed the 90% CI to stay within ±0.05, and it reached +0.065. Luna scored about 0.40, far from the ceiling, so the questions being too easy can’t explain why preview length made no difference.
+            Preview length didn’t measurably change accuracy here either. Going from 200 to 500 characters, coverage went from 0.390 to 0.402 with luna and from 0.710 to 0.729 with sol. For luna, the difference could be anywhere from a small drop to a small gain (95% CI -0.049 to +0.075), so I can’t call it a change. I also can’t call them equal, because the range went past the ±0.05 bound I set beforehand (90% CI up to +0.065). Luna scored about 0.40, far from the ceiling, so the questions being too easy can’t explain why preview length made no difference.
           </p>
           <p>
             Longer previews still saved work. With 500 characters, both models opened about 0.60 fewer files per run, wasted fewer opens and took fewer turns. What didn’t carry over was the open precision gain from Claude Code, where a bigger share of opened files were relevant. With luna that share changed by -0.031, but the 95% CI runs from -0.145 to +0.080, so it could have gone either way. The range is that wide because Amuse only opened 0.56 to 1.30 files per run, and one file more or less moves the share a lot.
@@ -197,7 +197,7 @@ export default function AgentPreviewsPost() {
           <CoverageAcrossSetups />
 
           <p>
-            Coverage was about 0.95 in Claude Code, 0.72 with sol and 0.40 with luna on the same questions. That comparison is descriptive, since the model and harness both differ.
+            Coverage was about 0.95 in Claude Code, 0.72 with sol and 0.40 with luna on the same questions. That’s not a fair head-to-head, since both the model and the harness changed.
           </p>
 
           <h2 id="limitations">Limitations</h2>
