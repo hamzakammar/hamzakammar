@@ -9,7 +9,7 @@ export interface Post {
 export const Posts: Post[] = [
   {
     slug: "agent-previews",
-    title: "What should an AI agent see before it opens a file?",
+    title: "What search previews do to agent efficiency",
     date: "Nov 2026",
     dateTime: "2026-11",
     description:
