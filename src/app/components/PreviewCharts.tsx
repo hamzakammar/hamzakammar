@@ -339,7 +339,7 @@ export function CoverageAcrossSetups() {
   return (
     <ChartFigure
       title="Coverage by method across setups"
-      caption="Preview length never measurably moved accuracy. Grep held up in Claude Code and collapsed with the weaker model."
+      caption="I didn’t detect a coverage difference from preview length in any setup. Grep held up in Claude Code and collapsed with the weaker model."
     >
       <div className="chart-legend" aria-hidden>
         {setupSeries.map((s) => (

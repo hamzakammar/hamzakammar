@@ -56,7 +56,7 @@ export default function AgentPreviewsPost() {
           <Link href="/context" className="ctx-crumb">&larr; context</Link>
           <h1 className="ctx-title">{post.title}</h1>
           <p className="ctx-meta">
-            <time dateTime={post.dateTime}>{post.date}</time> · 8 min read
+            <time dateTime={post.dateTime}>{post.date}</time> · 9 min read
           </p>
         </header>
 
@@ -67,10 +67,10 @@ export default function AgentPreviewsPost() {
               Personal agents are the future of AI interactions. But the more they can do for you, the more of your life they need access to. Email, notes, docs, code, old chats. Once that pile gets big enough, the question stops being whether the agent can find the answer. It becomes how much it wastes getting there.
             </p>
             <p>
-              So I tested this on my own data, about 3 billion tokens across 119k files. Preview length didn’t change coverage much. The agents usually got to the answer eventually. The difference was how efficiently they got there.
+              So I tested this on a mixed corpus of about 3 billion tokens across 119k files: my own code, email, Drive, Notion and AI chat logs, plus two large third-party repos that make up about 82% of the tokens. I didn’t detect a coverage difference from preview length. The agents usually got to the answer eventually. The difference was how efficiently they got there.
             </p>
             <p>
-              In Claude Code, 500-character document previews <mark>cut wasted file opens by 24%</mark> and saved about 1 turn per question, for about 11% more cost, with coverage within 5 points, across 1,680 runs. I also ran the same test inside a real personal agent, Amuse, on two more models, and preview length didn’t measurably change accuracy there either.
+              In Claude Code, 500-character document previews <mark>cut wasted file opens by 24%</mark> and saved about 1 turn per question, with coverage within 5 points, across 1,680 runs. Median runtime stayed roughly the same (25.3 s vs 25.8 s with 200 characters), and cost was about 11% higher. I also ran the same test inside a real personal agent, Amuse, on two more models, and didn’t detect a coverage difference there either.
             </p>
           </section>
 
@@ -97,7 +97,7 @@ export default function AgentPreviewsPost() {
 
           <h2 id="methods">Methods</h2>
           <ul>
-            <li><strong>Corpus:</strong> my own data, frozen as a read-only snapshot. About 3B tokens and 119k files across code, email, Drive, Notion and AI chat logs. Secrets were redacted. Financial, medical and credential content was excluded. About 82% of the tokens came from two large third-party repos, kept as realistic clutter.</li>
+            <li><strong>Corpus:</strong> a mixed corpus, frozen as a read-only snapshot. About 3B tokens and 119k files: my own code, email, Drive, Notion and AI chat logs, plus two large third-party repos. Secrets were redacted. Financial, medical and credential content was excluded. About 82% of the tokens came from the two third-party repos, kept as realistic clutter. It isn’t meant to represent a typical user’s data.</li>
             <li><strong>Agent:</strong> Claude Code running Opus 5.5 at high effort.</li>
             <li><strong>Amuse:</strong> Replit’s open-source local assistant on localhost, with my patch adding MCP client support. gpt-6-luna on 3 methods × 80 questions × 2 runs, gpt-6.2-sol on 2 methods × 80 × 1. Fresh database every run, same blind grading.</li>
             <li>Rules for each test were written and committed to git before any run.</li>
@@ -142,10 +142,10 @@ export default function AgentPreviewsPost() {
             The main result was the 500-character preview. In Claude Code, it was the only method that clearly beat the baseline on choosing relevant files. 60% of the files it opened were relevant, compared with 51% for 200 characters.
           </p>
           <p>
-            That worked out to 24% fewer wasted opens and about 1 fewer turn per question, for about 11% more cost. It wasn’t faster though. The extra text cancelled out the turn it saved, at 25.3 vs 25.8 seconds median. Path-only previews were worst, with about 1 extra file opened per question because the agent had nothing to go on.
+            That worked out to 24% fewer wasted opens and about 1 fewer turn per question, for about 11% more cost. The fewer turns didn’t translate into a lower median runtime: 25.3 s vs 25.8 s (difference -0.6 s, 95% CI -2.3 to +2.5). The extra preview text adds tokens to every search result, which may explain it, but I didn’t measure that. Path-only previews were worst, with about 1 extra file opened per question because the agent had nothing to go on.
           </p>
           <p>
-            What held in every setup, including the Amuse runs below, was fewer opens, fewer wasted opens and fewer turns with 500 characters. Wasted opens per run went from 2.06 to 1.57 in Claude Code, and from 0.67 to 0.38 and 0.47 to 0.30 in the two Amuse setups.
+            In all three setups I ran, including the Amuse runs below, 500 characters meant fewer opens, fewer wasted opens and fewer turns. Wasted opens per run went from 2.06 to 1.57 in Claude Code, and from 0.67 to 0.38 and 0.47 to 0.30 in the two Amuse setups.
           </p>
 
           <OpenPrecisionBars />
@@ -185,10 +185,10 @@ export default function AgentPreviewsPost() {
           </figure>
 
           <p>
-            Preview length didn’t measurably change accuracy here either. Going from 200 to 500 characters, coverage went from 0.390 to 0.402 with luna and from 0.710 to 0.729 with sol. For luna, the difference could be anywhere from a small drop to a small gain (95% CI -0.049 to +0.075), so I can’t call it a change. I also can’t call them equal, because the range went past the ±0.05 bound I set beforehand (90% CI up to +0.065). Luna scored about 0.40, far from the ceiling, so the questions being too easy can’t explain why preview length made no difference.
+            I didn’t detect a coverage difference from preview length here either. Going from 200 to 500 characters, coverage went from 0.390 to 0.402 with luna and from 0.710 to 0.729 with sol. For luna, the difference could be anywhere from a small drop to a small gain (95% CI -0.049 to +0.075), so I can’t call it a change. I also can’t call them equal, because the range went past the ±0.05 bound I set beforehand (90% CI up to +0.065). Luna scored about 0.40, far from the ceiling, so the questions being too easy can’t explain why I didn’t detect a difference.
           </p>
           <p>
-            Longer previews still saved work. With 500 characters, both models opened about 0.60 fewer files per run, wasted fewer opens and took fewer turns. What didn’t carry over was the open precision gain from Claude Code, where a bigger share of opened files were relevant. With luna that share changed by -0.031, but the 95% CI runs from -0.145 to +0.080, so it could have gone either way. The range is that wide because Amuse only opened 0.56 to 1.30 files per run, and one file more or less moves the share a lot.
+            In these runs, longer previews still saved work: with 500 characters, both models opened about 0.60 fewer files per run, wasted fewer opens and took fewer turns. What didn’t carry over was the open precision gain from Claude Code, where a bigger share of opened files were relevant. With luna that share changed by -0.031, but the 95% CI runs from -0.145 to +0.080, so it could have gone either way. The range is that wide because Amuse only opened 0.56 to 1.30 files per run, and one file more or less moves the share a lot.
           </p>
           <p>
             Grep collapsed with luna: coverage fell from 0.390 to 0.212 (90% CI of the difference -0.254 to -0.101), with 0.000 on buried-answer questions. In Claude Code it tied (0.958 vs 0.945).
@@ -202,7 +202,7 @@ export default function AgentPreviewsPost() {
 
           <h2 id="limitations">Limitations</h2>
           <p>
-            This is three models and two harnesses, still one person’s data. Amuse had 2 runs per question with luna and 1 with sol. I want to try more data and more models before assuming it generalizes.
+            This is three models and two harnesses, still one person’s corpus. Amuse had 2 runs per question with luna and 1 with sol. I want to try more data and more models before assuming it generalizes.
           </p>
           <p>
             In Claude Code, speed was also a tie all around, and I ran those runs on my subscription rather than the API. Local file reads were almost free in terms of time. In a real personal agent, those reads would be much slower API calls.
