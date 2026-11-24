@@ -7,11 +7,11 @@ const description = "Writing by Hamza Ammar";
 export const metadata: Metadata = {
   title: "Context · Hamza Ammar",
   description,
-  alternates: { canonical: "https://hamzaammar.ca/context" },
+  alternates: { canonical: "https://www.hamzaammar.ca/context" },
   openGraph: {
     title: "Context · Hamza Ammar",
     description,
-    url: "https://hamzaammar.ca/context",
+    url: "https://www.hamzaammar.ca/context",
     siteName: "Hamza Ammar",
     images: [{ url: "/HA.jpg", width: 1200, height: 630, alt: "Hamza Ammar" }],
     locale: "en_US",

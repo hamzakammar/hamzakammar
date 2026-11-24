@@ -6,7 +6,7 @@ import { CoverageAcrossSetups, CoverageDots, CoverageTimeScatter, OpenPrecisionB
 import { Posts } from "../posts";
 
 const post = Posts.find((p) => p.slug === "agent-previews")!;
-const url = `https://hamzaammar.ca/context/${post.slug}`;
+const url = `https://www.hamzaammar.ca/context/${post.slug}`;
 
 const toc = [
   { id: "tldr", label: "tl;dr" },
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     description: post.description,
     url,
     siteName: "Hamza Ammar",
-    images: [{ url: "/og/agent-previews.png", width: 1200, height: 630, alt: "Dot map of an agent searching with short previews and with 500-character previews" }],
+    images: [{ url: "/og/agent-previews-dotmap.png", width: 1200, height: 630, alt: "Dot map of an agent searching with short previews and with 500-character previews" }],
     locale: "en_US",
     type: "article",
     publishedTime: "2026-11-23",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: post.title,
     description: post.description,
-    images: ["/og/agent-previews.png"],
+    images: ["/og/agent-previews-dotmap.png"],
     creator: "@hamzakammar",
   },
 };
