@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     description: post.description,
     url,
     siteName: "Hamza Ammar",
-    images: [{ url: "/HA.jpg", width: 1200, height: 630, alt: "Hamza Ammar" }],
+    images: [{ url: "/og/agent-previews.png", width: 1200, height: 630, alt: "Dot map of an agent searching with short previews and with 500-character previews" }],
     locale: "en_US",
     type: "article",
     publishedTime: "2026-11-23",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: post.title,
     description: post.description,
-    images: ["/HA.jpg"],
+    images: ["/og/agent-previews.png"],
     creator: "@hamzakammar",
   },
 };
