@@ -182,10 +182,11 @@ export default function AgentPreviewsPost() {
                 </tbody>
               </table>
             </div>
+            <figcaption>Luna rows average 2 runs per question. Sol rows are 1 run per question (n=1), so they carry no run-to-run variation.</figcaption>
           </figure>
 
           <p>
-            I didn’t detect a coverage difference from preview length here either. Going from 200 to 500 characters, coverage went from 0.390 to 0.402 with luna and from 0.710 to 0.729 with sol. For luna, the difference could be anywhere from a small drop to a small gain (95% CI -0.049 to +0.075), so I can’t call it a change. I also can’t call them equal, because the range went past the ±0.05 bound I set beforehand (90% CI up to +0.065). Luna scored about 0.40, far from the ceiling, so the questions being too easy can’t explain why I didn’t detect a difference.
+            I didn’t detect a coverage difference from preview length here either. Going from 200 to 500 characters, coverage went from 0.390 to 0.402 with luna and from 0.710 to 0.729 with sol. For luna, the difference could be anywhere from a small drop to a small gain (95% CI -0.049 to +0.075), so I can’t call it a measurable change. I also can’t call them equal, because the range went past the ±0.05 bound I set beforehand (90% CI up to +0.065). Luna scored about 0.40, far from the ceiling, so the questions being too easy can’t explain why I didn’t detect a difference.
           </p>
           <p>
             In these runs, longer previews still saved work: with 500 characters, both models opened about 0.60 fewer files per run, wasted fewer opens and took fewer turns. What didn’t carry over was the open precision gain from Claude Code, where a bigger share of opened files were relevant. With luna that share changed by -0.031, but the 95% CI runs from -0.145 to +0.080, so it could have gone either way. The range is that wide because Amuse only opened 0.56 to 1.30 files per run, and one file more or less moves the share a lot.
