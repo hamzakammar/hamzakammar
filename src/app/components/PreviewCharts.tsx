@@ -307,7 +307,7 @@ type SetupKey = "w200" | "w500" | "grep";
 const setupData: { label: string; values: Partial<Record<SetupKey, number>> }[] = [
   { label: "Claude Code", values: { w200: 0.945, w500: 0.959, grep: 0.958 } },
   { label: "Amuse, gpt-6.2-sol", values: { w200: 0.71, w500: 0.729 } },
-  { label: "Amuse, gpt-6-luna", values: { w200: 0.39, w500: 0.402, grep: 0.212 } },
+  { label: "Amuse, gpt-6-luna", values: { w200: 0.39, w500: 0.402 } },
 ];
 
 // Each method gets its own sub-lane so near-identical values (0.958 vs 0.959) stay visible.
@@ -339,7 +339,7 @@ export function CoverageAcrossSetups() {
   return (
     <ChartFigure
       title="Coverage by method across setups"
-      caption="I didn’t detect a coverage difference from preview length in any setup. Grep held up in Claude Code and collapsed with the weaker model."
+      caption="No setup showed a measurable accuracy change from preview length. Only Claude Code showed the two were equivalent."
     >
       <div className="chart-legend" aria-hidden>
         {setupSeries.map((s) => (
@@ -357,7 +357,6 @@ export function CoverageAcrossSetups() {
             {setupData
               .map((r) => ` ${r.label}: ${setupSeries.filter((s) => r.values[s.key] !== undefined).map((s) => `${s.label} ${r.values[s.key]!.toFixed(3)}`).join(", ")}.`)
               .join("")}
-            {" "}gpt-6.2-sol was not run with grep.
           </desc>
           {range(0, 1, 0.2).map((t, i) => (
             <g key={t}>

@@ -56,7 +56,7 @@ export default function AgentPreviewsPost() {
           <Link href="/context" className="ctx-crumb">&larr; context</Link>
           <h1 className="ctx-title">{post.title}</h1>
           <p className="ctx-meta">
-            <time dateTime={post.dateTime}>{post.date}</time> · 9 min read
+            <time dateTime={post.dateTime}>{post.date}</time> · Updated Nov 24 · 9 min read
           </p>
         </header>
 
@@ -67,7 +67,7 @@ export default function AgentPreviewsPost() {
               Personal agents are the future of AI interactions. But the more they can do for you, the more of your life they need access to. Email, notes, docs, code, old chats. Once that pile gets big enough, the question stops being whether the agent can find the answer. It becomes how much it wastes getting there.
             </p>
             <p>
-              So I tested this on a mixed corpus of about 3 billion tokens across 119k files: my own code, email, Drive, Notion and AI chat logs, plus two large third-party repos that make up about 82% of the tokens. I didn’t detect a coverage difference from preview length. The agents usually got to the answer eventually. The difference was how efficiently they got there.
+              So I tested this on a mixed corpus of 119k files: my own code, email, Drive, Notion and AI chat logs, plus two large third-party repos that make up most of it. I didn’t detect a coverage difference from preview length. The agents usually got to the answer eventually. The difference was how efficiently they got there.
             </p>
             <p>
               In Claude Code, 500-character document previews <mark>cut wasted file opens by 24%</mark> and saved about 1 turn per question, with coverage within 5 points, across 1,680 runs. Median runtime stayed roughly the same (25.3 s vs 25.8 s with 200 characters), and cost was about 11% higher. I also ran the same test inside a real personal agent, Amuse, on two more models, and didn’t detect a coverage difference there either.
@@ -97,12 +97,11 @@ export default function AgentPreviewsPost() {
 
           <h2 id="methods">Methods</h2>
           <ul>
-            <li><strong>Corpus:</strong> a mixed corpus, frozen as a read-only snapshot. About 3B tokens and 119k files: my own code, email, Drive, Notion and AI chat logs, plus two large third-party repos. Secrets were redacted. Financial, medical and credential content was excluded. About 82% of the tokens came from the two third-party repos, kept as realistic clutter. It isn’t meant to represent a typical user’s data.</li>
+            <li><strong>Corpus:</strong> a mixed corpus, frozen as a read-only snapshot. About 119k files: my own code, email, Drive, Notion and AI chat logs, plus two large third-party repos. Secrets were redacted. Financial, medical and credential content was excluded. An earlier 100k-file snapshot came to about 3.1B tokens, about 82% of them from the two third-party repos, kept as realistic clutter. It isn’t meant to represent a typical user’s data.</li>
             <li><strong>Agent:</strong> Claude Code running Opus 5.5 at high effort.</li>
-            <li><strong>Amuse:</strong> Replit’s open-source local assistant on localhost, with my patch adding MCP client support. gpt-6-luna on 3 methods × 80 questions × 2 runs, gpt-6.2-sol on 2 methods × 80 × 1. Fresh database every run, same blind grading.</li>
+            <li><strong>Amuse:</strong> Replit’s open-source local assistant on localhost, with my patch adding MCP client support. gpt-6-luna on both preview lengths (200 and 500 characters) × 80 questions × 2 runs, gpt-6.2-sol on both × 80 × 1. A grep arm was also run but excluded after a tool setup error; a rerun is in progress. Fresh database every run, same blind grading.</li>
             <li>Rules for each test were written and committed to git before any run.</li>
             <li>Questions were checked independently. A fresh AI judge graded answers blind, without knowing the method. I also spot-checked the reference answers.</li>
-            <li>Replaying the same agent on the same question produced the same tool path 36 to 48% of the time.</li>
             <li>Only question types are published. No real questions, answers, file names or transcripts.</li>
           </ul>
 
@@ -112,10 +111,10 @@ export default function AgentPreviewsPost() {
             The questions in my first tests were too easy, so I built 80 new ones where searching the question’s own words never put the answer in the top 10. They covered the kinds of things you’d ask a personal agent: what’s the latest on something, questions needing two or three sources, lists and counts, answers buried in long files, specific time windows, and questions with no answer at all.
           </p>
           <p>
-            An independent check rejected 21 of the 104 questions the generator made. I used 80 of the 83 questions that were left, and I spot-checked 15 myself.
+            An independent check rejected 21 of the 104 questions that passed the generator’s own filter. I used 80 of the 83 questions that were left, and I spot-checked 15 myself.
           </p>
           <p>
-            Then I tested 7 ways to show search results. Same engine, same tools. Only the preview changed.
+            Then I tested 7 ways to show search results. Same corpus and harness, and the preview was the main thing that changed: grep had no search engine, and the dates method also got a recent-first option.
           </p>
           <ul className="ctx-methods">
             <li>Grep without a preview</li>
@@ -139,10 +138,10 @@ export default function AgentPreviewsPost() {
             Across repeat runs, it opened the same first file only 41 to 55% of the time, but gave the same answer 83 to 94% of the time.
           </p>
           <p>
-            The main result was the 500-character preview. In Claude Code, it was the only method that clearly beat the baseline on choosing relevant files. 60% of the files it opened were relevant, compared with 51% for 200 characters.
+            The main result was the 500-character preview. In Claude Code, it was the only method that clearly beat the baseline on choosing relevant files, though open precision was a secondary measure with no multiple-comparison correction. 60% of the files it opened were relevant, compared with 51% for 200 characters.
           </p>
           <p>
-            That worked out to 24% fewer wasted opens and about 1 fewer turn per question, for about 11% more cost. The fewer turns didn’t translate into a lower median runtime: 25.3 s vs 25.8 s (difference -0.6 s, 95% CI -2.3 to +2.5). The extra preview text adds tokens to every search result, which may explain it, but I didn’t measure that. Path-only previews were worst, with about 1 extra file opened per question because the agent had nothing to go on.
+            That worked out to 24% fewer wasted opens and about 1 fewer turn per question, for about 11% more cost. The fewer turns didn’t translate into a lower median runtime: 25.3 s vs 25.8 s (95% CI of the difference -2.3 to +2.5 s). The extra preview text adds tokens to every search result, which may explain it, but I didn’t measure that. Path-only previews were worst, with about 1.3 extra files opened per question, likely because the agent had nothing to go on.
           </p>
           <p>
             In all three setups I ran, including the Amuse runs below, 500 characters meant fewer opens, fewer wasted opens and fewer turns. Wasted opens per run went from 2.06 to 1.57 in Claude Code, and from 0.67 to 0.38 and 0.47 to 0.30 in the two Amuse setups.
@@ -157,7 +156,7 @@ export default function AgentPreviewsPost() {
 
           <h2 id="real-agent">Does it hold in a real personal agent?</h2>
           <p>
-            I reran the study inside Amuse, Replit’s open-source local assistant, with a patch that lets it call the same search tools over MCP (<a href="https://github.com/hamzakammar/amuse/tree/mcp-support" target="_blank" rel="noopener noreferrer">fork</a>). Same 80 questions, corpus and tools, pre-registered and blind-graded the same way. I used two models: gpt-6-luna, a cheaper and weaker one, on both preview lengths and grep with 2 runs per question, and gpt-6.2-sol, Amuse’s default, on both preview lengths with 1 run. I didn’t run grep with sol.
+            I reran the study inside Amuse, Replit’s open-source local assistant, with a patch that lets it call the same search tools over MCP (<a href="https://github.com/hamzakammar/amuse/tree/mcp-support" target="_blank" rel="noopener noreferrer">fork</a>). Same 80 questions, corpus and tools, pre-registered and blind-graded the same way. I used two models: gpt-6-luna, a cheaper and weaker one, on both preview lengths with 2 runs per question, and gpt-6.2-sol, Amuse’s default, on both preview lengths with 1 run.
           </p>
 
           <figure className="ctx-table">
@@ -176,23 +175,19 @@ export default function AgentPreviewsPost() {
                 <tbody>
                   <tr><th scope="row">luna, 200 characters</th><td>0.390</td><td>1.16</td><td>0.67</td><td>12.37</td></tr>
                   <tr><th scope="row">luna, 500 characters</th><td>0.402</td><td>0.56</td><td>0.38</td><td>11.20</td></tr>
-                  <tr><th scope="row">luna, grep</th><td>0.212</td><td>1.23</td><td>0.73</td><td>10.08</td></tr>
                   <tr><th scope="row">sol, 200 characters</th><td>0.710</td><td>1.30</td><td>0.47</td><td>10.29</td></tr>
                   <tr><th scope="row">sol, 500 characters</th><td>0.729</td><td>0.70</td><td>0.30</td><td>9.14</td></tr>
                 </tbody>
               </table>
             </div>
-            <figcaption>Luna rows average 2 runs per question. Sol rows are 1 run per question (n=1), so they carry no run-to-run variation.</figcaption>
+            <figcaption>Luna rows average 2 runs per question. Sol rows are 1 run per question (n=1), so run-to-run variation isn’t averaged out or measured.</figcaption>
           </figure>
 
           <p>
             I didn’t detect a coverage difference from preview length here either. Going from 200 to 500 characters, coverage went from 0.390 to 0.402 with luna and from 0.710 to 0.729 with sol. For luna, the difference could be anywhere from a small drop to a small gain (95% CI -0.049 to +0.075), so I can’t call it a measurable change. I also can’t call them equal, because the range went past the ±0.05 bound I set beforehand (90% CI up to +0.065). Luna scored about 0.40, far from the ceiling, so the questions being too easy can’t explain why I didn’t detect a difference.
           </p>
           <p>
-            In these runs, longer previews still saved work: with 500 characters, both models opened about 0.60 fewer files per run, wasted fewer opens and took fewer turns. What didn’t carry over was the open precision gain from Claude Code, where a bigger share of opened files were relevant. With luna that share changed by -0.031, but the 95% CI runs from -0.145 to +0.080, so it could have gone either way. The range is that wide because Amuse only opened 0.56 to 1.30 files per run, and one file more or less moves the share a lot.
-          </p>
-          <p>
-            Grep collapsed with luna: coverage fell from 0.390 to 0.212 (90% CI of the difference -0.254 to -0.101), with 0.000 on buried-answer questions. In Claude Code it tied (0.958 vs 0.945).
+            In these runs, longer previews still meant less work: with 500 characters, both models opened about 0.60 fewer files per run, wasted fewer opens and took fewer turns. Part of that is more runs opening nothing at all (34% to 59% of runs with luna, 26% to 53% with sol), so some of it may be the agent stopping early rather than choosing better. What didn’t carry over was the open precision gain from Claude Code, where a bigger share of opened files were relevant. With luna that share changed by -0.031, but the 95% CI runs from -0.145 to +0.080, so it could have gone either way. The range is that wide because Amuse only opened 0.56 to 1.30 files per run, so the comparison covers just the 45 questions where both arms opened something, and one file more or less moves the share a lot.
           </p>
 
           <CoverageAcrossSetups />
@@ -206,7 +201,7 @@ export default function AgentPreviewsPost() {
             This is three models and two harnesses, still one person’s corpus. Amuse had 2 runs per question with luna and 1 with sol. I want to try more data and more models before assuming it generalizes.
           </p>
           <p>
-            In Claude Code, speed was also a tie all around, and I ran those runs on my subscription rather than the API. Local file reads were almost free in terms of time. In a real personal agent, those reads would be much slower API calls.
+            In Claude Code, 200 and 500 characters tied on median time (grep and path-only were slower), and I ran those runs on my subscription rather than the API, with files read locally. In a real personal agent, reads would go through API calls, which I didn’t time.
           </p>
 
           <h2 id="conclusion">Conclusion and future work</h2>
@@ -227,7 +222,7 @@ export default function AgentPreviewsPost() {
             First I built tool bundles, basically groups of tools for a common task or intent. Then I added a small scout model to plan the main model’s first step. I also tried switching models between turns. All three failed the rules I’d written down before testing.
           </p>
           <p>
-            The problem is that models don’t agree with themselves. Give an agent the same question again and it’ll chase different leads and call different tools, then often end up with the same answer anyway. It repeated its path less than half the time. That makes the changing path hard to predict.
+            The problem is that models don’t agree with themselves. Give an agent the same question again and it’ll chase different leads and call different tools. In a replay test on MCP-Atlas tasks, Sonnet picked the same tool with equivalent arguments only 36 to 48% of the time per turn. That makes the changing path hard to predict.
           </p>
 
           <h3 id="search-vs-grep">Search vs grep</h3>
@@ -238,7 +233,7 @@ export default function AgentPreviewsPost() {
             They all ended up around 97% coverage. Again, the agents were usually capable enough to get the expected facts regardless of the method. But the questions were also a bit too easy. For 42% of them, keyword searching the question’s own words put the right document first.
           </p>
           <p>
-            Time and cost were where things changed. Full chunks were fastest at 22.7 seconds, but dumping all that text into context made them cost around 50% more. Grep was slowest at around 37.8 seconds. The 200-character previews had the fewest errors.
+            Time and cost were where things changed. Full chunks were fastest at 22.7 seconds, but dumping all that text into context made them cost around 50% more. Grep was slowest at around 37.8 seconds. The 200-character previews had the fewest errors (0.021 per answer vs 0.031 to 0.052).
           </p>
           <p>
             For the fourth method, I thought dates would help the agent get to the right, most recent answer in fewer turns. My prediction was at least 15% faster than grep at the same coverage. It passed the coverage, cost and error checks, but missed the speed bar: 34.9 s against a 32.1 s target (15% under grep’s 37.8 s). So I reported it as a failure.
@@ -247,7 +242,7 @@ export default function AgentPreviewsPost() {
           <CoverageTimeScatter />
 
           <p>
-            Time followed how many turns the agent took. Cost followed how much text piled up in its context.
+            Time mostly followed how many turns the agent took. Cost followed how much text piled up in its context.
           </p>
 
           <h3 id="picking-a-method">Picking a method per question</h3>
